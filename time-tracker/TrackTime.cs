@@ -20,10 +20,11 @@ namespace DSaladin.TimeTracker
         public string Title { get; set; }
         public bool IsBreak { get; set; }
 
-        public TrackTime(DateTime trackingStarted, string title)
+        public TrackTime(DateTime trackingStarted, string title, bool isBreak)
         {
             TrackingStarted = trackingStarted;
             Title = title;
+            IsBreak = isBreak;
         }
     }
 }

@@ -8,6 +8,7 @@
                  mc:Ignorable="d"
                  WindowType="NoBar"
                  WindowStartupLocation="CenterScreen"
+                 d:DataContext="{d:DesignInstance local:QuickTimeTracker}"
                  Topmost="True"
                  Title="QuickTimeTracker" Height="120" Width="600">
     <Grid Margin="10,10,10,0" FocusManager.FocusedElement="{Binding ElementName=dtb_title}">
@@ -15,14 +16,14 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <potato:DSTextBox x:Name="dtb_title" Grid.Row="0" Icon="SolidHeading" IconSize="Large" Placeholder="The title of your work" TabIndex="0" />
+        <potato:DSTextBox x:Name="dtb_title" Grid.Row="0" Icon="SolidHeading" IconSize="Large" Placeholder="The title of your work" TabIndex="0" Text="{Binding WorkTitle}" />
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <CheckBox x:Name="ckb_break" Grid.Column="0" Content="Break" Margin="5,0,0,0" />
+            <CheckBox x:Name="ckb_break" Grid.Column="0" Content="Break" Margin="5,0,0,0" IsChecked="{Binding IsBreak}" />
             <Label Grid.Column="1" Content="Last Entry: 15:12" Foreground="{DynamicResource ForegroundA}" HorizontalContentAlignment="Right" />
         </Grid>
     </Grid>

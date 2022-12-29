@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace DSaladin.TimeTracker
 {
@@ -20,24 +21,62 @@ namespace DSaladin.TimeTracker
     /// </summary>
     public partial class QuickTimeTracker : DSWindow
     {
-        public QuickTimeTracker()
+        private string workTitle;
+        public string WorkTitle
+        {
+            get { return workTitle; }
+            set
+            {
+                workTitle = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private bool? isBreak = false;
+        public bool? IsBreak
+        {
+            get { return isBreak; }
+            set
+            {
+                isBreak = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private QuickTimeTracker()
         {
             InitializeComponent();
 
             KeyUp += QuickTimeTracker_KeyUp;
         }
 
+        public static TrackTime? Open(Window parent)
+        {
+            return parent.Dispatcher.Invoke<TrackTime?>(() =>
+            {
+                QuickTimeTracker quickTimeTracker = new();
+                quickTimeTracker.Focus();
+                quickTimeTracker.ShowDialog();
+
+                if (quickTimeTracker.WorkTitle == "")
+                    return null;
+
+                return new(DateTime.Now, quickTimeTracker.WorkTitle, quickTimeTracker.IsBreak != null && quickTimeTracker.IsBreak != false);
+            });
+        }
+
         private void QuickTimeTracker_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {
+                WorkTitle = "";
                 Close();
                 return;
             }
 
             if (e.Key == Key.Enter)
             {
-                SaveAndClose();
+                Close();
                 return;
             }
 
@@ -49,11 +88,6 @@ namespace DSaladin.TimeTracker
                     return;
                 }
             }
-        }
-
-        private void SaveAndClose()
-        {
-            throw new NotImplementedException();
         }
     }
 }

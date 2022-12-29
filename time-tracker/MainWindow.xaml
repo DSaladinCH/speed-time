@@ -11,6 +11,15 @@
         <local:MainWindowViewModel />
     </potato:DSWindow.DataContext>
     <Grid>
-
+        <ListView ItemsSource="{Binding TrackedTimes}">
+            <ListView.ItemTemplate>
+                <DataTemplate DataType="{x:Type local:TrackTime}">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{Binding Title}" />
+                        <Label Content="{Binding TrackingStarted}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </potato:DSWindow>
