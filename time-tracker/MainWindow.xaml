@@ -4,20 +4,53 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:potato="https://dsaladin.dev/products/fancypotato/wpf/xaml"
+                 xmlns:converter="clr-namespace:DSaladin.TimeTracker.Converter"
+                 xmlns:fa="https://dsaladin.dev/products/fontawesome/wpf/xaml"
                  xmlns:local="clr-namespace:DSaladin.TimeTracker"
                  mc:Ignorable="d"
                  Title="MainWindow" Height="450" Width="800">
     <potato:DSWindow.DataContext>
         <local:MainWindowViewModel />
     </potato:DSWindow.DataContext>
+    <potato:DSWindow.Resources>
+        <converter:DateTimeConverter x:Key="DateTimeConverter" />
+    </potato:DSWindow.Resources>
     <Grid>
-        <ListView ItemsSource="{Binding TrackedTimes}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="50" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="{Binding CurrentTime.Title}" ContentStringFormat="Current: {0}" Style="{DynamicResource Title3Label}" />
+            <Label Grid.Column="1" Content="{Binding CurrentTime.TrackingToNow}" ContentStringFormat="Time: {0:N2}h" Style="{DynamicResource Title4Label}" />
+            <Button Grid.Column="2" fa:Content.Icon="RegularCircleStop" FontSize="30" Padding="0,0,0,0" Style="{DynamicResource TransparentAccentButton}" />
+        </Grid>
+        <Line X1='0'
+         X2='{Binding ActualWidth, Mode=OneWay, 
+              RelativeSource={RelativeSource FindAncestor,
+              AncestorType={x:Type local:MainWindow}}}'
+          Y1='50' 
+          Y2='50'
+          Stroke="{DynamicResource BackgroundC}"
+          StrokeThickness='3' />
+        <ListView Grid.Row="1" ItemsSource="{Binding TrackedTimes}">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type local:TrackTime}">
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="{Binding Title}" />
-                        <Label Content="{Binding TrackingStarted}" />
-                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="90" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="{Binding Title}" />
+                        <Label Grid.Column="1" Content="{Binding TrackingStarted, Converter={StaticResource DateTimeConverter}, ConverterParameter='dd. MMM yyyy'}" HorizontalContentAlignment="Right" />
+                        <Label Grid.Column="2" Content="{Binding TrackingTime}" />
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
