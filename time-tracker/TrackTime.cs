@@ -11,7 +11,6 @@ namespace DSaladin.TimeTracker
     public class TrackTime : INotifyPropertyChanged
     {
         public DateTime TrackingStarted { get; set; }
-        public double TrackingToNow { get => DateTime.Now.TimeOfDay.TotalHours - TrackingStarted.TimeOfDay.TotalHours; }
 
         private DateTime trackingStopped = new();
         public DateTime TrackingStopped
@@ -30,7 +29,16 @@ namespace DSaladin.TimeTracker
         {
             get
             {
-                return TrackingStopped.TimeOfDay.TotalHours - TrackingStarted.TimeOfDay.TotalHours;
+                double hours = 0;
+                if (TrackingStopped == default)
+                    hours = DateTime.Now.TimeOfDay.TotalHours - TrackingStarted.TimeOfDay.TotalHours;
+                else
+                    hours = TrackingStopped.TimeOfDay.TotalHours - TrackingStarted.TimeOfDay.TotalHours;
+
+                if (IsBreak)
+                    return hours * -1;
+
+                return hours;
             }
         }
 
@@ -56,7 +64,7 @@ namespace DSaladin.TimeTracker
             IsBreak = isBreak;
         }
 
-        public void StopTime(TimeSpan? stopTime)
+        public void StopTime(TimeSpan? stopTime = null)
         {
             if (stopTime is null)
                 stopTime = DateTime.Now.TimeOfDay;
@@ -66,7 +74,7 @@ namespace DSaladin.TimeTracker
 
         public void UpdateTrackingToNow()
         {
-            NotifyPropertyChanged(nameof(TrackingToNow));
+            NotifyPropertyChanged(nameof(Hours));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

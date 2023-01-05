@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -9,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -21,7 +24,7 @@ namespace DSaladin.TimeTracker
     /// </summary>
     public partial class QuickTimeTracker : DSWindow
     {
-        private string workTitle;
+        private string workTitle = "";
         public string WorkTitle
         {
             get { return workTitle; }
@@ -48,21 +51,24 @@ namespace DSaladin.TimeTracker
             InitializeComponent();
 
             KeyUp += QuickTimeTracker_KeyUp;
+            ContentRendered += (s, e) =>
+            {
+                SetForegroundWindow(new WindowInteropHelper(this).Handle);
+            };
         }
+
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
 
         public static TrackTime? Open(Window parent)
         {
-            return parent.Dispatcher.Invoke<TrackTime?>(() =>
-            {
-                QuickTimeTracker quickTimeTracker = new();
-                quickTimeTracker.Focus();
-                quickTimeTracker.ShowDialog();
+            QuickTimeTracker quickTimeTracker = new();
+            quickTimeTracker.ShowDialog();
 
-                if (quickTimeTracker.WorkTitle == "")
-                    return null;
+            if (quickTimeTracker.WorkTitle == "")
+                return null;
 
-                return new(DateTime.Now, quickTimeTracker.WorkTitle, quickTimeTracker.IsBreak != null && quickTimeTracker.IsBreak != false);
-            });
+            return new(DateTime.Now, quickTimeTracker.WorkTitle, quickTimeTracker.IsBreak != null && quickTimeTracker.IsBreak != false);
         }
 
         private void QuickTimeTracker_KeyUp(object sender, KeyEventArgs e)

@@ -30,20 +30,21 @@ namespace DSaladin.TimeTracker
             }
         }
 
-        public TrackTime CurrentTime { get => TrackedTimes.Last(); }
+        public TrackTime? CurrentTime { get => TrackedTimes.LastOrDefault(); }
+        public double TotalHours { get => TrackedTimes.Where(tt => !tt.IsBreak).Sum(tt => tt.Hours); }
 
         public MainWindowViewModel()
         {
             openQuickTimeTracker = hotKeyManager.Register(Key.T, ModifierKeys.Control | ModifierKeys.Alt);
             hotKeyManager.KeyPressed += HotKeyManagerPressed;
 
-            TrackedTimes.Add(new(DateTime.Now.AddHours(-8).AddMinutes(-27), "Something, don't know...", false));
-            TrackedTimes.Last().StopTime(DateTime.Now.AddHours(-5).AddMinutes(-14).TimeOfDay);
-            TrackedTimes.Add(new(DateTime.Now.AddHours(-5).AddMinutes(-14), "Programming", false));
-            TrackedTimes.Last().StopTime(DateTime.Now.AddHours(-2).AddMinutes(-32).TimeOfDay);
-            TrackedTimes.Add(new(DateTime.Now.AddHours(-2).AddMinutes(-32), "Fixing bugs", false));
-            TrackedTimes.Last().StopTime(DateTime.Now.AddHours(-0).AddMinutes(-58).TimeOfDay);
-            TrackedTimes.Add(new(DateTime.Now.AddHours(-0).AddMinutes(-58), "Helping Customer on phone", false));
+            //TrackedTimes.Add(new(DateTime.Now.AddHours(-8).AddMinutes(-27), "Something, don't know...", false));
+            //TrackedTimes.Last().StopTime(DateTime.Now.AddHours(-5).AddMinutes(-14).TimeOfDay);
+            //TrackedTimes.Add(new(DateTime.Now.AddHours(-5).AddMinutes(-14), "Programming", false));
+            //TrackedTimes.Last().StopTime(DateTime.Now.AddHours(-2).AddMinutes(-32).TimeOfDay);
+            //TrackedTimes.Add(new(DateTime.Now.AddHours(-2).AddMinutes(-32), "Fixing bugs", false));
+            //TrackedTimes.Last().StopTime(DateTime.Now.AddHours(-0).AddMinutes(-58).TimeOfDay);
+            //TrackedTimes.Add(new(DateTime.Now.AddHours(-0).AddMinutes(-58), "Helping Customer on phone", false));
 
             UpdateCurrentTime();
         }
@@ -52,18 +53,18 @@ namespace DSaladin.TimeTracker
         {
             if (e.HotKey.Equals(openQuickTimeTracker))
             {
-                TrackTime? trackTime = QuickTimeTracker.Open(Application.Current.MainWindow);
-                if (trackTime is null)
-                    return;
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    TrackTime? trackTime = QuickTimeTracker.Open(Application.Current.MainWindow);
+                    if (trackTime is null)
+                        return;
 
-                TrackedTimes.Add(trackTime);
+                    if (TrackedTimes.Count > 0)
+                        TrackedTimes.Last().StopTime();
+                    TrackedTimes.Add(trackTime);
+                    NotifyPropertyChanged(nameof(CurrentTime));
+                });
             }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        private void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new(propertyName));
         }
 
         async Task UpdateCurrentTime()
@@ -71,8 +72,18 @@ namespace DSaladin.TimeTracker
             var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(1));
             while (await periodicTimer.WaitForNextTickAsync())
             {
-                Application.Current.Dispatcher.Invoke(CurrentTime.UpdateTrackingToNow);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    CurrentTime?.UpdateTrackingToNow();
+                    NotifyPropertyChanged(nameof(TotalHours));
+                });
             }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new(propertyName));
         }
     }
 }
