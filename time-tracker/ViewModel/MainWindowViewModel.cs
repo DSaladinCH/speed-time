@@ -1,4 +1,6 @@
-﻿using GlobalHotKey;
+﻿using DSaladin.FancyPotato.DSWindows;
+using GlobalHotKey;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,9 +13,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace DSaladin.TimeTracker
+namespace DSaladin.TimeTracker.ViewModel
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : DSViewModel
     {
         readonly HotKeyManager hotKeyManager = new();
         readonly HotKey openQuickTimeTracker;
@@ -35,8 +37,8 @@ namespace DSaladin.TimeTracker
 
         public MainWindowViewModel()
         {
-            openQuickTimeTracker = hotKeyManager.Register(Key.T, ModifierKeys.Control | ModifierKeys.Alt);
-            hotKeyManager.KeyPressed += HotKeyManagerPressed;
+            //openQuickTimeTracker = hotKeyManager.Register(Key.T, ModifierKeys.Control | ModifierKeys.Alt);
+            //hotKeyManager.KeyPressed += HotKeyManagerPressed;
 
             //TrackedTimes.Add(new(DateTime.Now.AddHours(-8).AddMinutes(-27), "Something, don't know...", false));
             //TrackedTimes.Last().StopTime(DateTime.Now.AddHours(-5).AddMinutes(-14).TimeOfDay);
@@ -49,20 +51,31 @@ namespace DSaladin.TimeTracker
             UpdateCurrentTime();
         }
 
+        public override void WindowLoaded(object sender, RoutedEventArgs eventArgs)
+        {
+            // load the entities into EF Core
+            App.dbContext.TrackedTimes.Load();
+
+            // bind to the source
+            TrackedTimes = App.dbContext.TrackedTimes.Local.ToObservableCollection();
+            App.dbContext.SavedChanges += (s,e) => NotifyPropertyChanged(nameof(TrackedTimes));
+        }
+
         private void HotKeyManagerPressed(object? sender, KeyPressedEventArgs e)
         {
             if (e.HotKey.Equals(openQuickTimeTracker))
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    TrackTime? trackTime = QuickTimeTracker.Open(Application.Current.MainWindow);
-                    if (trackTime is null)
-                        return;
+                    //TrackTime? trackTime = QuickTimeTracker.Open(Application.Current.MainWindow, CurrentTime);
+                    //new QuickTimeTracker(CurrentTime).ShowDialog();
+                    //if (trackTime is null)
+                    //    return;
 
-                    if (TrackedTimes.Count > 0)
-                        TrackedTimes.Last().StopTime();
-                    TrackedTimes.Add(trackTime);
-                    NotifyPropertyChanged(nameof(CurrentTime));
+                    //if (TrackedTimes.Count > 0)
+                    //    TrackedTimes.Last().StopTime();
+                    //TrackedTimes.Add(trackTime);
+                    //NotifyPropertyChanged(nameof(CurrentTime));
                 });
             }
         }
@@ -78,12 +91,6 @@ namespace DSaladin.TimeTracker
                     NotifyPropertyChanged(nameof(TotalHours));
                 });
             }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        private void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new(propertyName));
         }
     }
 }

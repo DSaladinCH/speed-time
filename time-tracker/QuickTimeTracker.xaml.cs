@@ -1,4 +1,5 @@
 ﻿using DSaladin.FancyPotato.DSWindows;
+using DSaladin.TimeTracker.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,76 +25,23 @@ namespace DSaladin.TimeTracker
     /// </summary>
     public partial class QuickTimeTracker : DSWindow
     {
-        private string workTitle = "";
-        public string WorkTitle
-        {
-            get { return workTitle; }
-            set
-            {
-                workTitle = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        private bool? isBreak = false;
-        public bool? IsBreak
-        {
-            get { return isBreak; }
-            set
-            {
-                isBreak = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        private QuickTimeTracker()
+        public QuickTimeTracker(DSViewModel viewModel)
         {
             InitializeComponent();
-
-            KeyUp += QuickTimeTracker_KeyUp;
-            ContentRendered += (s, e) =>
-            {
-                SetForegroundWindow(new WindowInteropHelper(this).Handle);
-            };
+            DataContext = viewModel;
         }
 
-        [DllImport("user32.dll")]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        public static TrackTime? Open(Window parent)
+        internal static TrackTime? Open(TrackTime? lastTrackTime)
         {
-            QuickTimeTracker quickTimeTracker = new();
+            QuickTimeTrackerViewModel viewModel = new(lastTrackTime);
+            QuickTimeTracker quickTimeTracker = new(viewModel);
             quickTimeTracker.ShowDialog();
 
-            if (quickTimeTracker.WorkTitle == "")
+            if (string.IsNullOrEmpty(viewModel.WorkTitle))
                 return null;
 
-            return new(DateTime.Now, quickTimeTracker.WorkTitle, quickTimeTracker.IsBreak != null && quickTimeTracker.IsBreak != false);
-        }
-
-        private void QuickTimeTracker_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape)
-            {
-                WorkTitle = "";
-                Close();
-                return;
-            }
-
-            if (e.Key == Key.Enter)
-            {
-                Close();
-                return;
-            }
-
-            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
-            {
-                if (e.Key == Key.B)
-                {
-                    ckb_break.IsChecked = !ckb_break.IsChecked;
-                    return;
-                }
-            }
+            TrackTime trackTime = new(DateTime.Now, viewModel.WorkTitle, viewModel.IsBreak.Value);
+            return trackTime;
         }
     }
 }

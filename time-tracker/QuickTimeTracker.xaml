@@ -3,12 +3,14 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+                 xmlns:viewmodel="clr-namespace:DSaladin.TimeTracker.ViewModel"
                  xmlns:potato="https://dsaladin.dev/products/fancypotato/wpf/xaml"
                  xmlns:local="clr-namespace:DSaladin.TimeTracker"
                  mc:Ignorable="d"
+                 d:DataContext="{d:DesignInstance viewmodel:QuickTimeTrackerViewModel}"
                  WindowType="NoBar"
                  WindowStartupLocation="CenterScreen"
-                 d:DataContext="{d:DesignInstance local:QuickTimeTracker}"
                  Topmost="True"
                  Title="QuickTimeTracker" Height="120" Width="600">
     <Grid Margin="10,10,10,0" FocusManager.FocusedElement="{Binding ElementName=dtb_title}">
@@ -24,7 +26,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <CheckBox x:Name="ckb_break" Grid.Column="0" Content="Break" Margin="5,0,0,0" IsChecked="{Binding IsBreak}" />
-            <Label Grid.Column="1" Content="Last Entry: 15:12" Foreground="{DynamicResource ForegroundA}" HorizontalContentAlignment="Right" />
+            <Label Grid.Column="1" Content="{Binding LastTrackTime.TrackingStarted}" ContentStringFormat="Last Entry: {0}" Foreground="{DynamicResource ForegroundA}" HorizontalContentAlignment="Right" />
         </Grid>
     </Grid>
 </potato:DSWindow>

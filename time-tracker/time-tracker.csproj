@@ -15,9 +15,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSaladin.FancyPotato" Version="0.2.0.25" />
+    <PackageReference Include="DSaladin.FancyPotato" Version="0.3.1" />
     <PackageReference Include="DSaladin.FontAwesome.WPF" Version="6.2.1" />
     <PackageReference Include="GlobalHotKey" Version="1.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -5,15 +5,15 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:potato="https://dsaladin.dev/products/fancypotato/wpf/xaml"
                  xmlns:converter="clr-namespace:DSaladin.TimeTracker.Converter"
+                 xmlns:viewmodel="clr-namespace:DSaladin.TimeTracker.ViewModel"
                  xmlns:fa="https://dsaladin.dev/products/fontawesome/wpf/xaml"
                  xmlns:local="clr-namespace:DSaladin.TimeTracker"
                  mc:Ignorable="d"
+                 d:DataContext="{d:DesignInstance viewmodel:MainWindowViewModel}"
                  Title="Time Tracker" Height="450" Width="800" MinWidth="450" MinHeight="300">
-    <potato:DSWindow.DataContext>
-        <local:MainWindowViewModel />
-    </potato:DSWindow.DataContext>
     <potato:DSWindow.Resources>
         <converter:DateTimeConverter x:Key="DateTimeConverter" />
+        <CollectionViewSource x:Key="trackedTimesViewSource" Source="{Binding TrackedTimes}" />
     </potato:DSWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -27,8 +27,8 @@
                 <ColumnDefinition Width="110" />
                 <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="{Binding CurrentTime.Title}" ContentStringFormat="Current: {0}" Style="{DynamicResource Title3Label}" />
-            <Label Grid.Column="1" Content="{Binding CurrentTime.Hours}" ContentStringFormat="Time: {0:N2}h" Style="{DynamicResource Title4Label}" />
+            <Label Grid.Column="0" Content="{Binding CurrentTime.Title, TargetNullValue=''}" ContentStringFormat="Current: {0}" Style="{DynamicResource Title3Label}" />
+            <Label Grid.Column="1" Content="{Binding CurrentTime.Hours, TargetNullValue=''}" ContentStringFormat="Time: {0:N2}h" Style="{DynamicResource Title4Label}" />
             <Button Grid.Column="2" fa:Content.Icon="RegularCircleStop" FontSize="30" Padding="0,0,0,0" Style="{DynamicResource TransparentAccentButton}" />
         </Grid>
         <Line X1='0'
@@ -39,7 +39,7 @@
           Y2='60'
           Stroke="{DynamicResource BackgroundC}"
           StrokeThickness='3' />
-        <ListView Grid.Row="1" Margin="10,10,10,0" ItemsSource="{Binding TrackedTimes}" ScrollViewer.CanContentScroll="False">
+        <ListView Grid.Row="1" Margin="10,10,10,0" ItemsSource="{Binding Source={StaticResource trackedTimesViewSource}}" ScrollViewer.CanContentScroll="False">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type local:TrackTime}">
                     <Grid>
@@ -80,7 +80,7 @@
                     <ColumnDefinition Width="60" />
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="3" Content="Total" />
-                <Label Grid.Column="4" Content="{Binding TotalHours}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
+                <Label Grid.Column="4" Content="{Binding TotalHours, TargetNullValue=''}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
             </Grid>
         </StackPanel>
     </Grid>

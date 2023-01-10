@@ -1,4 +1,7 @@
-﻿using GlobalHotKey;
+﻿using DSaladin.FontAwesome.WPF;
+using DSaladin.TimeTracker.Model;
+using GlobalHotKey;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -15,31 +18,39 @@ namespace DSaladin.TimeTracker
     /// </summary>
     public partial class App : Application
     {
-        //private HotKeyManager hotKeyManager = new();
-        //private HotKey openQuickTimeTracker;
+        internal static readonly TimeTrackerContext dbContext = new();
+        private HotKeyManager hotKeyManager = new();
+        private HotKey openQuickTimeTracker;
 
-        //protected override void OnStartup(StartupEventArgs e)
-        //{
-        //    base.OnStartup(e);
-        //    openQuickTimeTracker = hotKeyManager.Register(Key.T, ModifierKeys.Control | ModifierKeys.Alt);
-        //    hotKeyManager.KeyPressed += HotKeyManagerPressed;
-        //}
+        protected override async void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            await dbContext.Database.EnsureCreatedAsync();
+            await dbContext.Database.MigrateAsync();
 
-        //private void HotKeyManagerPressed(object? sender, KeyPressedEventArgs e)
-        //{
-        //    if (e.HotKey.Equals(openQuickTimeTracker))
-        //    {
-        //        Application.Current.Dispatcher.Invoke(() =>
-        //        {
-        //            TrackTime? trackTime = QuickTimeTracker.Open(Application.Current.MainWindow);
-        //            if (trackTime is null)
-        //                return;
+            openQuickTimeTracker = hotKeyManager.Register(Key.T, ModifierKeys.Control | ModifierKeys.Alt);
+            hotKeyManager.KeyPressed += HotKeyManagerPressed;
+        }
 
-        //            //if (TrackedTimes.Count > 0)
-        //            //    TrackedTimes.Last().StopTime();
-        //            //TrackedTimes.Add(trackTime);
-        //        });
-        //    }
-        //}
+        private async void HotKeyManagerPressed(object? sender, KeyPressedEventArgs e)
+        {
+            if (e.HotKey.Equals(openQuickTimeTracker))
+            {
+                TrackTime? trackTime = QuickTimeTracker.Open(await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync());
+                if (trackTime is null)
+                    return;
+
+                // TODO: Add to AppModel
+                TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
+                if (lastTrackedTime is not null)
+                {
+                    lastTrackedTime.StopTime();
+                    dbContext.TrackedTimes.Update(lastTrackedTime);
+                }
+
+                await dbContext.TrackedTimes.AddAsync(trackTime);
+                await dbContext.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DSaladin.FancyPotato.DSWindows;
+using DSaladin.TimeTracker.ViewModel;
 using GlobalHotKey;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace DSaladin.TimeTracker
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainWindowViewModel();
         }
     }
 }
