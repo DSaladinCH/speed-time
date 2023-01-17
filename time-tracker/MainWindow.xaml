@@ -10,14 +10,14 @@
                  xmlns:local="clr-namespace:DSaladin.TimeTracker"
                  mc:Ignorable="d"
                  d:DataContext="{d:DesignInstance viewmodel:MainWindowViewModel}"
-                 Title="Time Tracker" Height="450" Width="800" MinWidth="450" MinHeight="300">
+                 Title="Time Tracker" Height="450" Width="800" MinWidth="500" MinHeight="350">
     <potato:DSWindow.Resources>
         <converter:DateTimeConverter x:Key="DateTimeConverter" />
-        <CollectionViewSource x:Key="trackedTimesViewSource" Source="{Binding TrackedTimes}" />
     </potato:DSWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
@@ -39,7 +39,20 @@
           Y2='60'
           Stroke="{DynamicResource BackgroundC}"
           StrokeThickness='3' />
-        <ListView Grid.Row="1" Margin="10,10,10,0" ItemsSource="{Binding Source={StaticResource trackedTimesViewSource}}" ScrollViewer.CanContentScroll="False">
+        <Grid Grid.Row="1" Margin="0,5,0,0">
+            <StackPanel Orientation="Horizontal">
+                <Button fa:Content.Icon="SolidAnglesLeft" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="-7" />
+                <Button fa:Content.Icon="SolidAngleLeft" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="-1" />
+                <Label Content="{Binding CurrentDateTime, Converter={StaticResource DateTimeConverter}, ConverterParameter='dd. MMM yyyy'}" Width="100" HorizontalContentAlignment="Center">
+                    <Label.InputBindings>
+                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding CurrentDateTimeDoubleClickCommand}" />
+                    </Label.InputBindings>
+                </Label>
+                <Button fa:Content.Icon="SolidAngleRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="1" />
+                <Button fa:Content.Icon="SolidAnglesRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="7" />
+            </StackPanel>
+        </Grid>
+        <ListView Grid.Row="2" Margin="10,5,10,0" ItemsSource="{Binding TrackedTimesViewSource.View}" ScrollViewer.CanContentScroll="False">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type local:TrackTime}">
                     <Grid>
@@ -50,7 +63,18 @@
                             <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="60" />
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Content="{Binding Title}" />
+                        <Label Grid.Column="0" Content="{Binding Title}">
+                            <Label.Style>
+                                <Style TargetType="Label" BasedOn="{StaticResource DefaultLabel}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsBreak}" Value="True">
+                                            <Setter Property="FontStyle" Value="Italic" />
+                                            <Setter Property="Foreground" Value="{DynamicResource ForegroundA}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                        </Label>
                         <Label Grid.Column="1">
                             <Label.Style>
                                 <Style TargetType="Label" BasedOn="{StaticResource DefaultLabel}">
@@ -69,7 +93,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <StackPanel Grid.Row="2" Margin="10,10,10,0">
+        <StackPanel Grid.Row="3" Margin="10,10,10,0">
             <Separator Background="{DynamicResource BackgroundC}" Width="255" HorizontalAlignment="Right" />
             <Grid>
                 <Grid.ColumnDefinitions>
