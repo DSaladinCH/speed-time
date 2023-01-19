@@ -29,6 +29,15 @@ namespace DSaladin.TimeTracker
             await dbContext.Database.EnsureCreatedAsync();
             await dbContext.Database.MigrateAsync();
 
+            TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
+            if (lastTrackedTime is not null && lastTrackedTime.TrackingStopped == default)
+                if (lastTrackedTime.TrackingStarted.Date < DateTime.Today)
+                {
+                    lastTrackedTime.StopTime(new(23, 59, 59));
+                    dbContext.TrackedTimes.Update(lastTrackedTime);
+                    await dbContext.SaveChangesAsync();
+                }
+
             openQuickTimeTracker = hotKeyManager.Register(Key.T, ModifierKeys.Control | ModifierKeys.Alt);
             hotKeyManager.KeyPressed += HotKeyManagerPressed;
 
@@ -43,7 +52,6 @@ namespace DSaladin.TimeTracker
                 if (trackTime is null)
                     return;
 
-                // TODO: Add to AppModel
                 TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
                 if (lastTrackedTime is not null)
                 {
@@ -60,9 +68,6 @@ namespace DSaladin.TimeTracker
         {
             if (e.Reason == SessionSwitchReason.SessionLock)
             {
-                //I left my desk
-                Console.WriteLine("I left my desk");
-
                 // TODO: Add settings to check if this option is enabled
                 TrackTime? lastWorkTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
 
@@ -76,21 +81,30 @@ namespace DSaladin.TimeTracker
             }
             else if (e.Reason == SessionSwitchReason.SessionUnlock)
             {
-                //I returned to my desk
-                Console.WriteLine("I returned to my desk");
-
                 // TODO: Add settings to check if this option is enabled
                 TrackTime? lastWorkTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).Reverse().Skip(1).Take(1).FirstOrDefaultAsync();
                 TrackTime? breakTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
 
                 if (lastWorkTime is null || breakTime is null)
                     return;
-                
+
                 breakTime.StopTime();
                 dbContext.TrackedTimes.Update(breakTime);
                 await dbContext.TrackedTimes.AddAsync(new(DateTime.Now, lastWorkTime.Title, lastWorkTime.IsBreak));
                 await dbContext.SaveChangesAsync();
             }
+        }
+
+        async void App_SessionEnding(object sender, SessionEndingCancelEventArgs e)
+        {
+            TrackTime? lastWorkTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
+
+            if (lastWorkTime is null)
+                return;
+
+            lastWorkTime.StopTime();
+            dbContext.TrackedTimes.Update(lastWorkTime);
+            await dbContext.SaveChangesAsync();
         }
     }
 }
