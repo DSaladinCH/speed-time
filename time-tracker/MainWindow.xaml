@@ -29,7 +29,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="{Binding CurrentTime.Title, TargetNullValue=''}" ContentStringFormat="Current: {0}" Style="{DynamicResource Title3Label}" />
             <Label Grid.Column="1" Content="{Binding CurrentTime.Hours, TargetNullValue=''}" ContentStringFormat="Time: {0:N2}h" Style="{DynamicResource Title4Label}" />
-            <Button Grid.Column="2" fa:Content.Icon="RegularCircleStop" FontSize="30" Padding="0,0,0,0" Style="{DynamicResource TransparentAccentButton}" />
+            <Button Grid.Column="2" fa:Content.Icon="RegularCircleStop" FontSize="30" Padding="0,0,0,0" Style="{DynamicResource TransparentAccentButton}" Command="{Binding StopCurrentTrackingCommand}" />
         </Grid>
         <Line X1='0'
          X2='{Binding ActualWidth, Mode=OneWay, 

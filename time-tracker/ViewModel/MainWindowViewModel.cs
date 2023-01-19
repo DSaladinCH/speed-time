@@ -36,7 +36,7 @@ namespace DSaladin.TimeTracker.ViewModel
 
         public CollectionViewSource TrackedTimesViewSource { get; private set; } = new();
 
-        public TrackTime? CurrentTime { get => TrackedTimes.LastOrDefault(); }
+        public TrackTime? CurrentTime { get => GetCurrentTrackTime(); }
         public double TotalHours { get => TrackedTimes.Where(tt => tt.TrackingStarted.Date == CurrentDateTime.Date && !tt.IsBreak).Sum(tt => tt.Hours); }
 
         private DateTime currentTime = DateTime.Today;
@@ -52,6 +52,7 @@ namespace DSaladin.TimeTracker.ViewModel
 
         public RelayCommand ChangeCurrentDateTimeCommand { get; set; }
         public RelayCommand CurrentDateTimeDoubleClickCommand { get; set; }
+        public RelayCommand StopCurrentTrackingCommand { get; set; }
 
         public MainWindowViewModel()
         {
@@ -78,6 +79,18 @@ namespace DSaladin.TimeTracker.ViewModel
             CurrentDateTimeDoubleClickCommand = new((_) =>
             {
                 CurrentDateTime = DateTime.Today;
+                UpdateView();
+            });
+
+            StopCurrentTrackingCommand = new(async (_) =>
+            {
+                TrackTime? lastTrackedTime = await App.dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
+                if (lastTrackedTime is null)
+                    return;
+
+                lastTrackedTime.StopTime();
+                App.dbContext.TrackedTimes.Update(lastTrackedTime);
+                await App.dbContext.SaveChangesAsync();
                 UpdateView();
             });
 
@@ -135,6 +148,15 @@ namespace DSaladin.TimeTracker.ViewModel
                     NotifyPropertyChanged(nameof(TotalHours));
                 });
             }
+        }
+
+        private TrackTime? GetCurrentTrackTime()
+        {
+            TrackTime? lastTime = TrackedTimes.LastOrDefault();
+            if (lastTime is null || lastTime.TrackingStopped != default)
+                return null;
+
+            return lastTime;
         }
     }
 }
