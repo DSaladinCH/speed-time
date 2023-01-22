@@ -32,13 +32,15 @@ namespace DSaladin.TimeTracker
             }
         }
 
+        public bool IsTimeStopped { get => TrackingStopped != default; }
+
         [NotMapped]
         public double Hours
         {
             get
             {
-                double hours = 0;
-                if (TrackingStopped == default)
+                double hours;
+                if (!IsTimeStopped)
                     hours = DateTime.Now.TimeOfDay.TotalHours - TrackingStarted.TimeOfDay.TotalHours;
                 else
                     hours = TrackingStopped.TimeOfDay.TotalHours - TrackingStarted.TimeOfDay.TotalHours;
@@ -57,7 +59,7 @@ namespace DSaladin.TimeTracker
             {
                 string time = TrackingStarted.ToString("HH:mm");
 
-                if (TrackingStopped != default)
+                if (IsTimeStopped)
                     time += " - " + TrackingStopped.ToString("HH:mm");
 
                 return time;

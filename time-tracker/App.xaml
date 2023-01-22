@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:DSaladin.TimeTracker"
              StartupUri="MainWindow.xaml"
-             SessionEnding="App_SessionEnding">
+             SessionEnding="App_SessionEnding"
+             Exit="Application_Exit">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

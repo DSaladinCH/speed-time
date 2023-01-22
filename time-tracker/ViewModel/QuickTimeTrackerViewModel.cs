@@ -13,7 +13,7 @@ using DSaladin.FancyPotato.DSWindows;
 
 namespace DSaladin.TimeTracker.ViewModel
 {
-    public class QuickTimeTrackerViewModel : DSViewModel
+    public partial class QuickTimeTrackerViewModel : DSViewModel
     {
         private string workTitle = "";
         public string WorkTitle
@@ -51,8 +51,9 @@ namespace DSaladin.TimeTracker.ViewModel
             window.KeyUp += QuickTimeTracker_KeyUp;
         }
         
-        [DllImport("user32.dll")]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool SetForegroundWindow(IntPtr hWnd);
 
         private void QuickTimeTracker_KeyUp(object sender, KeyEventArgs e)
         {

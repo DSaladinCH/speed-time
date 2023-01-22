@@ -8,7 +8,7 @@ namespace DSaladin.TimeTracker.Model
 {
     internal interface IDataService
     {
-        Task SaveTrackedTimes(List<TrackTime> trackedTimes);
-        Task<List<TrackTime>> LoadTrackedTimes();
+        Task SaveSettings();
+        Task LoadSettings();
     }
 }

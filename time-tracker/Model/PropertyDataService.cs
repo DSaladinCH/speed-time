@@ -9,23 +9,27 @@ namespace DSaladin.TimeTracker.Model
 {
     internal class PropertyDataService : IDataService
     {
-        public async Task<List<TrackTime>> LoadTrackedTimes()
+        public async Task LoadSettings()
         {
-            string json = Properties.Settings.Default.TrackedTimes;
+            string json = Properties.Settings.Default.AppSettings;
             var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
-            List<TrackTime>? trackedTimes = await System.Text.Json.JsonSerializer.DeserializeAsync<List<TrackTime>>(stream);
+            SettingsModel? settings = null;
+            try
+            {
+                settings = await System.Text.Json.JsonSerializer.DeserializeAsync<SettingsModel>(stream);
+            }
+            catch { }
 
-            if (trackedTimes is null)
-                return new();
+            settings ??= new();
 
-            return trackedTimes;
+            SettingsModel.Load(settings);
         }
 
-        public async Task SaveTrackedTimes(List<TrackTime> trackedTimes)
+        public async Task SaveSettings()
         {
             var stream = new MemoryStream();
-            await System.Text.Json.JsonSerializer.SerializeAsync(stream, trackedTimes);
-            Properties.Settings.Default.TrackedTimes = Encoding.UTF8.GetString(stream.ToArray());
+            await System.Text.Json.JsonSerializer.SerializeAsync(stream, SettingsModel.Instance);
+            Properties.Settings.Default.AppSettings = Encoding.UTF8.GetString(stream.ToArray());
             Properties.Settings.Default.Save();
         }
     }

@@ -47,6 +47,11 @@
                     <Label.InputBindings>
                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding CurrentDateTimeDoubleClickCommand}" />
                     </Label.InputBindings>
+                    <Label.ContextMenu>
+                        <ContextMenu>
+                            <potato:DSMenuItem Header="Is free Day" IsCheckable="{Binding IsCurrentDateTimeFreeDayChangeable}" IsChecked="{Binding IsCurrentDateTimeFreeDay}" />
+                        </ContextMenu>
+                    </Label.ContextMenu>
                 </Label>
                 <Button fa:Content.Icon="SolidAngleRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="1" />
                 <Button fa:Content.Icon="SolidAnglesRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="7" />
@@ -93,19 +98,28 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <StackPanel Grid.Row="3" Margin="10,10,10,0">
-            <Separator Background="{DynamicResource BackgroundC}" Width="255" HorizontalAlignment="Right" />
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="25" />
-                    <ColumnDefinition Width="90" />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="60" />
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="3" Content="Total" />
-                <Label Grid.Column="4" Content="{Binding TotalHours, TargetNullValue=''}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
-            </Grid>
-        </StackPanel>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
+                <Button Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidGear" FontSize="20" Padding="0,0,0,0" Width="40" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Margin="10,10,10,0">
+                <Separator Background="{DynamicResource BackgroundC}" Width="255" HorizontalAlignment="Right" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="25" />
+                        <ColumnDefinition Width="90" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="60" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="3" Content="Total" />
+                    <Label Grid.Column="4" Content="{Binding TotalHours, TargetNullValue=''}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
+                </Grid>
+            </StackPanel>
+        </Grid>
     </Grid>
 </potato:DSWindow>

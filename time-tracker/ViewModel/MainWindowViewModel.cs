@@ -1,10 +1,12 @@
 ﻿using DSaladin.FancyPotato.DSWindows;
+using DSaladin.TimeTracker.Model;
 using GlobalHotKey;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -19,9 +21,6 @@ namespace DSaladin.TimeTracker.ViewModel
 {
     public class MainWindowViewModel : DSViewModel
     {
-        readonly HotKeyManager hotKeyManager = new();
-        readonly HotKey openQuickTimeTracker;
-
         private ObservableCollection<TrackTime> trackedTimes = new();
         public ObservableCollection<TrackTime> TrackedTimes
         {
@@ -50,23 +49,35 @@ namespace DSaladin.TimeTracker.ViewModel
             }
         }
 
+        public bool IsCurrentDateTimeFreeDayChangeable { get; private set; }
+        public bool IsCurrentDateTimeFreeDay
+        {
+            get
+            {
+                if (CurrentDateTime.DayOfWeek == DayOfWeek.Saturday || CurrentDateTime.Date.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    IsCurrentDateTimeFreeDayChangeable = false;
+                    return true;
+                }
+
+                IsCurrentDateTimeFreeDayChangeable = true;
+                return SettingsModel.Instance.SpecialWorkHours.Any(sph => sph.Item1 == CurrentDateTime && sph.Item2 == 0);
+            }
+            set
+            {
+                if (value)
+                    SettingsModel.Instance.SpecialWorkHours.Add(new(CurrentDateTime, 0));
+                else
+                    SettingsModel.Instance.SpecialWorkHours.Remove(new(CurrentDateTime, 0));
+            }
+        }
+
         public RelayCommand ChangeCurrentDateTimeCommand { get; set; }
         public RelayCommand CurrentDateTimeDoubleClickCommand { get; set; }
         public RelayCommand StopCurrentTrackingCommand { get; set; }
 
         public MainWindowViewModel()
         {
-            //openQuickTimeTracker = hotKeyManager.Register(Key.T, ModifierKeys.Control | ModifierKeys.Alt);
-            //hotKeyManager.KeyPressed += HotKeyManagerPressed;
-
-            //TrackedTimes.Add(new(DateTime.Now.AddHours(-8).AddMinutes(-27), "Something, don't know...", false));
-            //TrackedTimes.Last().StopTime(DateTime.Now.AddHours(-5).AddMinutes(-14).TimeOfDay);
-            //TrackedTimes.Add(new(DateTime.Now.AddHours(-5).AddMinutes(-14), "Programming", false));
-            //TrackedTimes.Last().StopTime(DateTime.Now.AddHours(-2).AddMinutes(-32).TimeOfDay);
-            //TrackedTimes.Add(new(DateTime.Now.AddHours(-2).AddMinutes(-32), "Fixing bugs", false));
-            //TrackedTimes.Last().StopTime(DateTime.Now.AddHours(-0).AddMinutes(-58).TimeOfDay);
-            //TrackedTimes.Add(new(DateTime.Now.AddHours(-0).AddMinutes(-58), "Helping Customer on phone", false));
-
             ChangeCurrentDateTimeCommand = new((parameter) =>
             {
                 if (parameter is null)
@@ -106,6 +117,8 @@ namespace DSaladin.TimeTracker.ViewModel
             TrackedTimesViewSource = new();
             TrackedTimesViewSource.Source = App.dbContext.TrackedTimes.Local.ToObservableCollection();
             TrackedTimesViewSource.Filter += (s, e) => e.Accepted = (e.Item as TrackTime)!.TrackingStarted.Date == CurrentDateTime.Date;
+            TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStarted", ListSortDirection.Descending));
+            TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStopped", ListSortDirection.Descending));
             TrackedTimes = App.dbContext.TrackedTimes.Local.ToObservableCollection();
             App.dbContext.SavedChanges += (s, e) => UpdateView();
 
@@ -116,25 +129,6 @@ namespace DSaladin.TimeTracker.ViewModel
         {
             NotifyPropertyChanged("");
             TrackedTimesViewSource.View.Refresh();
-        }
-
-        private void HotKeyManagerPressed(object? sender, KeyPressedEventArgs e)
-        {
-            if (e.HotKey.Equals(openQuickTimeTracker))
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    //TrackTime? trackTime = QuickTimeTracker.Open(Application.Current.MainWindow, CurrentTime);
-                    //new QuickTimeTracker(CurrentTime).ShowDialog();
-                    //if (trackTime is null)
-                    //    return;
-
-                    //if (TrackedTimes.Count > 0)
-                    //    TrackedTimes.Last().StopTime();
-                    //TrackedTimes.Add(trackTime);
-                    //NotifyPropertyChanged(nameof(CurrentTime));
-                });
-            }
         }
 
         async Task UpdateCurrentTime()
@@ -153,7 +147,7 @@ namespace DSaladin.TimeTracker.ViewModel
         private TrackTime? GetCurrentTrackTime()
         {
             TrackTime? lastTime = TrackedTimes.LastOrDefault();
-            if (lastTime is null || lastTime.TrackingStopped != default)
+            if (lastTime is null || lastTime.IsTimeStopped)
                 return null;
 
             return lastTime;

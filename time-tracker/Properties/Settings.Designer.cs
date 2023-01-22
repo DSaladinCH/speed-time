@@ -26,12 +26,12 @@ namespace DSaladin.TimeTracker.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string TrackedTimes {
+        public string AppSettings {
             get {
-                return ((string)(this["TrackedTimes"]));
+                return ((string)(this["AppSettings"]));
             }
             set {
-                this["TrackedTimes"] = value;
+                this["AppSettings"] = value;
             }
         }
     }

@@ -20,17 +20,20 @@ namespace DSaladin.TimeTracker
     public partial class App : Application
     {
         internal static readonly TimeTrackerContext dbContext = new();
+        internal static readonly IDataService DataService = new PropertyDataService();
+
         private HotKeyManager hotKeyManager = new();
-        private HotKey openQuickTimeTracker;
+        private HotKey? openQuickTimeTracker;
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             await dbContext.Database.EnsureCreatedAsync();
             await dbContext.Database.MigrateAsync();
+            await DataService.LoadSettings();
 
             TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
-            if (lastTrackedTime is not null && lastTrackedTime.TrackingStopped == default)
+            if (lastTrackedTime is not null && !lastTrackedTime.IsTimeStopped)
                 if (lastTrackedTime.TrackingStarted.Date < DateTime.Today)
                 {
                     lastTrackedTime.StopTime(new(23, 59, 59));
@@ -105,6 +108,11 @@ namespace DSaladin.TimeTracker
             lastWorkTime.StopTime();
             dbContext.TrackedTimes.Update(lastWorkTime);
             await dbContext.SaveChangesAsync();
+        }
+
+        private async void Application_Exit(object sender, ExitEventArgs e)
+        {
+            await DataService.SaveSettings();
         }
     }
 }
