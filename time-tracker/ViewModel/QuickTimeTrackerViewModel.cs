@@ -18,7 +18,7 @@ namespace DSaladin.TimeTracker.ViewModel
         private string workTitle = "";
         public string WorkTitle
         {
-            get { return workTitle; }
+            get => workTitle;
             set
             {
                 workTitle = value;
@@ -29,15 +29,39 @@ namespace DSaladin.TimeTracker.ViewModel
         private bool? isBreak = false;
         public bool? IsBreak
         {
-            get { return isBreak; }
+            get => isBreak;
             set
             {
                 isBreak = value;
+                if (IsBreak == true)
+                    IsAFK = false;
                 NotifyPropertyChanged();
             }
         }
 
-        public TrackTime? LastTrackTime = default;
+        private bool? isAFK = false;
+        public bool? IsAFK
+        {
+            get => isAFK;
+            set
+            {
+                isAFK = value;
+                if (IsAFK == true)
+                    IsBreak = false;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private TrackTime? lastTrackTime = default;
+        public TrackTime? LastTrackTime
+        {
+            get => lastTrackTime;
+            set
+            {
+                lastTrackTime = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public QuickTimeTrackerViewModel(TrackTime? lastTrackTime)
         {
@@ -75,6 +99,12 @@ namespace DSaladin.TimeTracker.ViewModel
                 if (e.Key == Key.B)
                 {
                     IsBreak = !IsBreak;
+                    return;
+                }
+
+                if (e.Key == Key.F)
+                {
+                    IsAFK = !isAFK;
                     return;
                 }
             }

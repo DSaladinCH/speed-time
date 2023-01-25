@@ -32,6 +32,7 @@ namespace DSaladin.TimeTracker
             }
         }
 
+        [NotMapped]
         public bool IsTimeStopped { get => TrackingStopped != default; }
 
         [NotMapped]
@@ -65,8 +66,12 @@ namespace DSaladin.TimeTracker
                 return time;
             }
         }
+
         public string Title { get; set; } = "";
         public bool IsBreak { get; set; } = false;
+
+        [NotMapped]
+        public bool IsAFK { get; set; } = false;
 
         public TrackTime(DateTime trackingStarted, string title, bool isBreak)
         {

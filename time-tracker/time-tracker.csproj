@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSaladin.FancyPotato" Version="0.3.2" />
+    <PackageReference Include="DSaladin.FancyPotato" Version="0.4.2" />
     <PackageReference Include="DSaladin.FontAwesome.WPF" Version="6.2.1" />
     <PackageReference Include="GlobalHotKey" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.2" />

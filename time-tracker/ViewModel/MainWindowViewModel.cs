@@ -1,4 +1,6 @@
-﻿using DSaladin.FancyPotato.DSWindows;
+﻿using DSaladin.FancyPotato;
+using DSaladin.FancyPotato.DSWindows;
+using DSaladin.TimeTracker.Dialogs;
 using DSaladin.TimeTracker.Model;
 using GlobalHotKey;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +77,7 @@ namespace DSaladin.TimeTracker.ViewModel
         public RelayCommand ChangeCurrentDateTimeCommand { get; set; }
         public RelayCommand CurrentDateTimeDoubleClickCommand { get; set; }
         public RelayCommand StopCurrentTrackingCommand { get; set; }
+        public RelayCommand OpenUserSettingsCommand { get; set; }
 
         public MainWindowViewModel()
         {
@@ -103,6 +106,13 @@ namespace DSaladin.TimeTracker.ViewModel
                 App.dbContext.TrackedTimes.Update(lastTrackedTime);
                 await App.dbContext.SaveChangesAsync();
                 UpdateView();
+            });
+
+            OpenUserSettingsCommand = new(async (window) =>
+            {
+                // TODO: Call ShowDialog from ViewModel
+                await ShowDialog(new UserSettings());
+                await App.DataService.SaveSettings();
             });
 
             UpdateCurrentTime();

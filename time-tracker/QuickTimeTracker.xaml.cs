@@ -41,6 +41,7 @@ namespace DSaladin.TimeTracker
                 return null;
 
             TrackTime trackTime = new(DateTime.Now, viewModel.WorkTitle, viewModel.IsBreak.Value);
+            trackTime.IsAFK = viewModel.IsAFK.Value;
             return trackTime;
         }
     }

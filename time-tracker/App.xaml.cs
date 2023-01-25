@@ -69,12 +69,17 @@ namespace DSaladin.TimeTracker
 
         private async void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
         {
+            if (SettingsModel.Instance.AutoAddBreak != true)
+                return;
+
             if (e.Reason == SessionSwitchReason.SessionLock)
             {
-                // TODO: Add settings to check if this option is enabled
                 TrackTime? lastWorkTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
 
                 if (lastWorkTime is null)
+                    return;
+
+                if (lastWorkTime.IsAFK)
                     return;
 
                 lastWorkTime.StopTime();
@@ -88,7 +93,7 @@ namespace DSaladin.TimeTracker
                 TrackTime? lastWorkTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).Reverse().Skip(1).Take(1).FirstOrDefaultAsync();
                 TrackTime? breakTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
 
-                if (lastWorkTime is null || breakTime is null)
+                if (lastWorkTime is null || breakTime is null || !breakTime.IsBreak)
                     return;
 
                 breakTime.StopTime();

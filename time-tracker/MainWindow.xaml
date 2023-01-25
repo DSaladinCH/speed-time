@@ -10,7 +10,7 @@
                  xmlns:local="clr-namespace:DSaladin.TimeTracker"
                  mc:Ignorable="d"
                  d:DataContext="{d:DesignInstance viewmodel:MainWindowViewModel}"
-                 Title="Time Tracker" Height="450" Width="800" MinWidth="500" MinHeight="350">
+                 Title="Time Tracker" Height="650" Width="500" MinWidth="500" MinHeight="350">
     <potato:DSWindow.Resources>
         <converter:DateTimeConverter x:Key="DateTimeConverter" />
     </potato:DSWindow.Resources>
@@ -64,7 +64,6 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="25" />
-                            <ColumnDefinition Width="90" />
                             <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="60" />
                         </Grid.ColumnDefinitions>
@@ -91,9 +90,8 @@
                                 </Style>
                             </Label.Style>
                         </Label>
-                        <Label Grid.Column="2" Content="{Binding TrackingStarted, Converter={StaticResource DateTimeConverter}, ConverterParameter='dd. MMM yyyy'}" HorizontalContentAlignment="Right" />
-                        <Label Grid.Column="3" Content="{Binding TrackingTime}" />
-                        <Label Grid.Column="4" Content="{Binding Hours}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
+                        <Label Grid.Column="2" Content="{Binding TrackingTime}" />
+                        <Label Grid.Column="3" Content="{Binding Hours}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -104,7 +102,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
-                <Button Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidGear" FontSize="20" Padding="0,0,0,0" Width="40" />
+                <Button Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidGear" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" />
             </StackPanel>
             <StackPanel Grid.Column="1" Margin="10,10,10,0">
                 <Separator Background="{DynamicResource BackgroundC}" Width="255" HorizontalAlignment="Right" />
@@ -112,12 +110,11 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="25" />
-                        <ColumnDefinition Width="90" />
                         <ColumnDefinition Width="80" />
                         <ColumnDefinition Width="60" />
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="3" Content="Total" />
-                    <Label Grid.Column="4" Content="{Binding TotalHours, TargetNullValue=''}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
+                    <Label Grid.Column="2" Content="Total" />
+                    <Label Grid.Column="3" Content="{Binding TotalHours, TargetNullValue=''}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
                 </Grid>
             </StackPanel>
         </Grid>
