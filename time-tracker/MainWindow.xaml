@@ -10,7 +10,7 @@
                  xmlns:local="clr-namespace:DSaladin.TimeTracker"
                  mc:Ignorable="d"
                  d:DataContext="{d:DesignInstance viewmodel:MainWindowViewModel}"
-                 Title="Time Tracker" Height="650" Width="500" MinWidth="500" MinHeight="350">
+                 Title="Time Tracker" Height="650" Width="500" MinWidth="500" MinHeight="400">
     <potato:DSWindow.Resources>
         <converter:DateTimeConverter x:Key="DateTimeConverter" />
     </potato:DSWindow.Resources>
@@ -57,10 +57,15 @@
                 <Button fa:Content.Icon="SolidAnglesRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="7" />
             </StackPanel>
         </Grid>
-        <ListView Grid.Row="2" Margin="10,5,10,0" ItemsSource="{Binding TrackedTimesViewSource.View}" ScrollViewer.CanContentScroll="False">
+        <ListView x:Name="lst_times" Grid.Row="2" Margin="10,5,10,0" ItemsSource="{Binding TrackedTimesViewSource.View}" ScrollViewer.CanContentScroll="False">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type local:TrackTime}">
-                    <Grid>
+                    <Grid Margin="5,0,5,0">
+                        <Grid.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick"
+                                          Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type potato:DSWindow}}, Path=DataContext.TrackTimeDoubleClickCommand}"
+                                          CommandParameter="{Binding ElementName=lst_times, Path=SelectedItem}" />
+                        </Grid.InputBindings>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="25" />

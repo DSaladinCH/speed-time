@@ -36,7 +36,7 @@ namespace DSaladin.TimeTracker
             if (lastTrackedTime is not null && !lastTrackedTime.IsTimeStopped)
                 if (lastTrackedTime.TrackingStarted.Date < DateTime.Today)
                 {
-                    lastTrackedTime.StopTime(new(23, 59, 59));
+                    lastTrackedTime.StopTime();
                     dbContext.TrackedTimes.Update(lastTrackedTime);
                     await dbContext.SaveChangesAsync();
                 }

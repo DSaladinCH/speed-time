@@ -1,0 +1,71 @@
+﻿<potato:DSDialogControl x:Class="DSaladin.TimeTracker.Dialogs.TrackTimeEditor"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:potato="https://dsaladin.dev/products/fancypotato/wpf/xaml"
+                        xmlns:fa="https://dsaladin.dev/products/fontawesome/wpf/xaml"
+                        xmlns:converter="clr-namespace:DSaladin.TimeTracker.Converter"
+                        xmlns:local="clr-namespace:DSaladin.TimeTracker.Dialogs"
+                        d:DataContext="{d:DesignInstance local:TrackTimeEditor}"
+                        mc:Ignorable="d" 
+                        d:DesignHeight="300" d:DesignWidth="450" MaxHeight="300" MaxWidth="400">
+    <potato:DSDialogControl.Resources>
+        <converter:DateTimeConverter x:Key="DateTimeConverter" />
+    </potato:DSDialogControl.Resources>
+    <potato:DSDialogControl.InputBindings>
+        <KeyBinding Key="Esc" Command="{Binding SaveAndCloseCommand}" />
+    </potato:DSDialogControl.InputBindings>
+    <Grid FocusManager.FocusedElement="{Binding ElementName=tbx_title}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="60" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" fa:Content.Icon="SolidArrowLeft" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentButton}"
+                    Click="Close_Click" />
+            <Label Grid.Column="1" Content="Time Editor" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" />
+        </Grid>
+        <Grid Grid.Row="1" Margin="15,10,15,15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="50" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <potato:DSTextBox x:Name="tbx_title" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,5,0,5" Text="{Binding TrackTimeTitle}" />
+            <Grid Grid.Row="1" Margin="90,0,90,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <potato:DSTextBox x:Name="tbx_startTime" Grid.Column="0" Margin="10,5,10,5" HorizontalContentAlignment="Center">
+                    <potato:DSTextBox.Text>
+                        <Binding Path="TrackingStarted" ConverterParameter="HH:mm">
+                            <Binding.Converter>
+                                <converter:DateTimeConverter />
+                            </Binding.Converter>
+                        </Binding>
+                    </potato:DSTextBox.Text>
+                </potato:DSTextBox>
+                <potato:DSTextBox x:Name="tbx_endTime" Grid.Column="1" Margin="10,5,10,5" HorizontalContentAlignment="Center">
+                    <potato:DSTextBox.Text>
+                        <Binding Path="TrackingStopped" ConverterParameter="HH:mm">
+                            <Binding.Converter>
+                                <converter:DateTimeConverter />
+                            </Binding.Converter>
+                        </Binding>
+                    </potato:DSTextBox.Text>
+                </potato:DSTextBox>
+            </Grid>
+            <CheckBox x:Name="ckb_break" Grid.Row="2" Content="Break" Margin="5,0,0,0" IsChecked="{Binding IsBreak}" HorizontalAlignment="Center" />
+            <Button Grid.Row="3" Content="Cancel" Style="{DynamicResource AccentButton}" Width="100" Margin="0,10,0,0" HorizontalAlignment="Left" Command="{Binding CancelAndCloseCommand}" />
+        </Grid>
+    </Grid>
+</potato:DSDialogControl>

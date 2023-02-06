@@ -82,8 +82,10 @@ namespace DSaladin.TimeTracker
 
         public void StopTime(TimeSpan? stopTime = null)
         {
-            if (stopTime is null)
-                stopTime = DateTime.Now.TimeOfDay;
+            if (stopTime is null && TrackingStarted.Date < DateTime.Today)
+                stopTime = new(23, 59, 59);
+
+            stopTime ??= DateTime.Now.TimeOfDay;
 
             TrackingStopped = TrackingStarted.Date.Add((TimeSpan)stopTime);
         }

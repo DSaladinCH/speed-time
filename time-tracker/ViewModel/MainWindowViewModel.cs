@@ -77,6 +77,7 @@ namespace DSaladin.TimeTracker.ViewModel
         public RelayCommand ChangeCurrentDateTimeCommand { get; set; }
         public RelayCommand CurrentDateTimeDoubleClickCommand { get; set; }
         public RelayCommand StopCurrentTrackingCommand { get; set; }
+        public RelayCommand TrackTimeDoubleClickCommand { get; set; }
         public RelayCommand OpenUserSettingsCommand { get; set; }
 
         public MainWindowViewModel()
@@ -108,9 +109,15 @@ namespace DSaladin.TimeTracker.ViewModel
                 UpdateView();
             });
 
-            OpenUserSettingsCommand = new(async (window) =>
+            TrackTimeDoubleClickCommand = new(async (sender) =>
             {
-                // TODO: Call ShowDialog from ViewModel
+                await ShowDialog(new TrackTimeEditor((TrackTime)sender));
+                await App.dbContext.SaveChangesAsync();
+                UpdateView();
+            });
+
+            OpenUserSettingsCommand = new(async (_) =>
+            {
                 await ShowDialog(new UserSettings());
                 await App.DataService.SaveSettings();
             });
