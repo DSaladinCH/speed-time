@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace DSaladin.TimeTracker.Converter
+namespace DSaladin.SpeedTime.Converter
 {
     public class DateTimeConverter : DependencyObject, IValueConverter
     {

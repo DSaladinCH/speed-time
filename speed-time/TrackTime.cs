@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DSaladin.TimeTracker
+namespace DSaladin.SpeedTime
 {
     public class TrackTime : INotifyPropertyChanged
     {

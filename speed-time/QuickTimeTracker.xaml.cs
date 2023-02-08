@@ -1,5 +1,5 @@
 ﻿using DSaladin.FancyPotato.DSWindows;
-using DSaladin.TimeTracker.ViewModel;
+using DSaladin.SpeedTime.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace DSaladin.TimeTracker
+namespace DSaladin.SpeedTime
 {
     /// <summary>
     /// Interaction logic for QuickTimeTracker.xaml

@@ -6,14 +6,34 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
-    <AssemblyName>DSaladin.TimeTracker</AssemblyName>
+    <AssemblyName>DSaladin.SpeedTime</AssemblyName>
     <Authors>DSaladin</Authors>
     <Company>DSaladin</Company>
-    <Product>Time-Tracker</Product>
-    <PackageId>DSaladin.TimeTracker</PackageId>
-    <RootNamespace>DSaladin.TimeTracker</RootNamespace>
+    <Product>Speed Time</Product>
+    <PackageId>DSaladin.SpeedTime</PackageId>
+    <RootNamespace>DSaladin.SpeedTime</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x64</PlatformTarget>
+    <Title>Speed Time</Title>
+    <PackageIcon>Icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\Pictures\Logo\Speed Time\Icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DSaladin.FancyPotato" Version="0.4.3" />

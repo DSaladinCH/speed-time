@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DSaladin.TimeTracker
+namespace DSaladin.SpeedTime
 {
     internal class TimeTrackerContext : DbContext
     {

@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DSaladin.TimeTracker.Model
+namespace DSaladin.SpeedTime.Model
 {
     internal class SettingsModel : INotifyPropertyChanged
     {

@@ -1,5 +1,5 @@
 ﻿using DSaladin.FontAwesome.WPF;
-using DSaladin.TimeTracker.Model;
+using DSaladin.SpeedTime.Model;
 using GlobalHotKey;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace DSaladin.TimeTracker
+namespace DSaladin.SpeedTime
 {
     /// <summary>
     /// Interaction logic for App.xaml

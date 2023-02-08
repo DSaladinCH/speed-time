@@ -1,7 +1,7 @@
-﻿<Application x:Class="DSaladin.TimeTracker.App"
+﻿<Application x:Class="DSaladin.SpeedTime.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:DSaladin.TimeTracker"
+             xmlns:local="clr-namespace:DSaladin.SpeedTime"
              StartupUri="MainWindow.xaml"
              SessionEnding="App_SessionEnding"
              Exit="Application_Exit">

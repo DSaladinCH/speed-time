@@ -1,7 +1,7 @@
 ﻿using DSaladin.FancyPotato;
 using DSaladin.FancyPotato.DSWindows;
-using DSaladin.TimeTracker.Dialogs;
-using DSaladin.TimeTracker.Model;
+using DSaladin.SpeedTime.Dialogs;
+using DSaladin.SpeedTime.Model;
 using GlobalHotKey;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,7 +19,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace DSaladin.TimeTracker.ViewModel
+namespace DSaladin.SpeedTime.ViewModel
 {
     public class MainWindowViewModel : DSViewModel
     {

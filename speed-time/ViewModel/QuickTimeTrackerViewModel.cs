@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Interop;
 using DSaladin.FancyPotato.DSWindows;
 
-namespace DSaladin.TimeTracker.ViewModel
+namespace DSaladin.SpeedTime.ViewModel
 {
     public partial class QuickTimeTrackerViewModel : DSViewModel
     {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DSaladin.TimeTracker.Properties {
+namespace DSaladin.SpeedTime.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

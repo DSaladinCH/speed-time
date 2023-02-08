@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DSaladin.TimeTracker.Dialogs
+namespace DSaladin.SpeedTime.Dialogs
 {
     /// <summary>
     /// Interaction logic for TrackTimeEditor.xaml

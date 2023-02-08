@@ -1,5 +1,5 @@
 ﻿using DSaladin.FancyPotato.DSWindows;
-using DSaladin.TimeTracker.ViewModel;
+using DSaladin.SpeedTime.ViewModel;
 using GlobalHotKey;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DSaladin.TimeTracker
+namespace DSaladin.SpeedTime
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
