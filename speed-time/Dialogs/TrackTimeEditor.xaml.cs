@@ -32,13 +32,13 @@ namespace DSaladin.SpeedTime.Dialogs
                 trackTime = value;
                 TrackTimeTitle = value.Title;
                 TrackingStarted = value.TrackingStarted;
-                TrackingStopped = value.TrackingStarted;
+                TrackingStopped = value.TrackingStopped;
                 IsBreak = value.IsBreak;
                 NotifyPropertyChanged();
             }
         }
 
-        public string TrackTimeTitle { get; set; }
+        public string TrackTimeTitle { get; set; } = "";
         public DateTime TrackingStarted { get; set; }
         public DateTime TrackingStopped { get; set; }
         public bool IsBreak { get; set; }

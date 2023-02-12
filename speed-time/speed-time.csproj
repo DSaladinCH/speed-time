@@ -20,6 +20,8 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Version>0.5.0</Version>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>speed-time.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
