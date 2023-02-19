@@ -46,24 +46,45 @@ namespace DSaladin.SpeedTime.Dialogs
         public RelayCommand SaveAndCloseCommand { get; set; }
         public RelayCommand CancelAndCloseCommand { get; set; }
 
-        public TrackTimeEditor(TrackTime trackTime)
+        public TrackTimeEditor(TrackTime? trackTime = null)
         {
             InitializeComponent();
             DataContext = this;
-            TrackTime = trackTime;
+
+            if (trackTime is not null)
+                TrackTime = trackTime;
 
             SaveAndCloseCommand = new((_) => SaveAndClose());
             CancelAndCloseCommand = new((_) => CancelAndClose());
+
+            Loaded += (s, e) =>
+            {
+                tbx_title.Focus();
+                tbx_title.SelectAll();
+            };
         }
 
         private void SaveAndClose()
         {
+            if (string.IsNullOrEmpty(TrackTimeTitle))
+            {
+                Close();
+                return;
+            }
+
+            if (string.IsNullOrEmpty(TrackTime.Title))
+            {
+                DateTime newDateTime = DateTime.Today.Date + TrackingStarted.TimeOfDay;
+                TrackTime.TrackingStarted = newDateTime;
+            }
+            else
+                TrackTime.TrackingStarted = TrackingStarted;
+
             TrackTime.Title = TrackTimeTitle;
-            TrackTime.TrackingStarted = TrackingStarted;
             TrackTime.StopTime(TrackingStopped.TimeOfDay);
             TrackTime.IsBreak = IsBreak;
 
-            Close();
+            Close(TrackTime);
         }
 
         private void CancelAndClose()

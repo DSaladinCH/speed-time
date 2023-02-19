@@ -76,12 +76,15 @@ namespace DSaladin.SpeedTime.ViewModel
 
         public RelayCommand ChangeCurrentDateTimeCommand { get; set; }
         public RelayCommand CurrentDateTimeDoubleClickCommand { get; set; }
+        public RelayCommand AddTrackingCommand { get; set; }
         public RelayCommand StopCurrentTrackingCommand { get; set; }
         public RelayCommand TrackTimeDoubleClickCommand { get; set; }
+        public RelayCommand TrackTimeDeleteCommand { get; set; }
         public RelayCommand OpenUserSettingsCommand { get; set; }
 
         public MainWindowViewModel()
         {
+            #region Commands
             ChangeCurrentDateTimeCommand = new((parameter) =>
             {
                 if (parameter is null)
@@ -95,6 +98,17 @@ namespace DSaladin.SpeedTime.ViewModel
             {
                 CurrentDateTime = DateTime.Today;
                 UpdateView();
+            });
+
+            AddTrackingCommand = new(async (_) =>
+            {
+                TrackTime? newTime = await ShowDialog<TrackTime>(new TrackTimeEditor());
+                if (newTime is not null)
+                {
+                    await App.dbContext.TrackedTimes.AddAsync(newTime);
+                    await App.dbContext.SaveChangesAsync();
+                    UpdateView();
+                }
             });
 
             StopCurrentTrackingCommand = new(async (_) =>
@@ -116,11 +130,19 @@ namespace DSaladin.SpeedTime.ViewModel
                 UpdateView();
             });
 
+            TrackTimeDeleteCommand = new(async (sender) =>
+            {
+                App.dbContext.TrackedTimes.Remove((TrackTime)sender);
+                await App.dbContext.SaveChangesAsync();
+                UpdateView();
+            });
+
             OpenUserSettingsCommand = new(async (_) =>
             {
                 await ShowDialog(new UserSettings());
                 await App.DataService.SaveSettings();
             });
+            #endregion
 
             UpdateCurrentTime();
         }
