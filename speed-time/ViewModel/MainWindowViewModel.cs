@@ -9,7 +9,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -18,6 +22,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace DSaladin.SpeedTime.ViewModel
 {
@@ -144,7 +149,8 @@ namespace DSaladin.SpeedTime.ViewModel
             });
             #endregion
 
-            UpdateCurrentTime();
+            new Task(async () => await UpdateCurrentTime()).Start();
+            new Task(async () => await CheckForUpdate()).Start();
         }
 
         public override void WindowLoaded(object sender, RoutedEventArgs eventArgs)
@@ -175,11 +181,15 @@ namespace DSaladin.SpeedTime.ViewModel
             var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(1));
             while (await periodicTimer.WaitForNextTickAsync())
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                try
                 {
-                    CurrentTime?.UpdateTrackingToNow();
-                    NotifyPropertyChanged(nameof(TotalHours));
-                });
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        CurrentTime?.UpdateTrackingToNow();
+                        NotifyPropertyChanged(nameof(TotalHours));
+                    });
+                }
+                catch { }
             }
         }
 
@@ -190,6 +200,51 @@ namespace DSaladin.SpeedTime.ViewModel
                 return null;
 
             return lastTime;
+        }
+
+        private async Task CheckForUpdate()
+        {
+            string assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+            string exeFile = Path.Combine(assemblyDirectory, "Downloads/setup.exe");
+
+            if (File.Exists(exeFile))
+                File.Delete(exeFile);
+
+            HttpResponseMessage responseMessage = await new HttpClient().SendAsync(new(HttpMethod.Get, "https://dev.dsaladin.ch/downloads/speedtime/app.json"));
+            if (!responseMessage.IsSuccessStatusCode)
+                return;
+
+            AppInfo? appInfo = await System.Text.Json.JsonSerializer.DeserializeAsync<AppInfo>(responseMessage.Content.ReadAsStream());
+            if (appInfo is null)
+                return;
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            AssemblyName assemblyName = Assembly.GetExecutingAssembly().GetName();
+            if (Assembly.GetExecutingAssembly().GetName().Version!.CompareTo(appInfo.Versions.First().Version) >= 0)
+                return;
+
+            bool result = await Application.Current.Dispatcher.Invoke(async () =>
+            {
+                return await ShowDialog<bool>(new UpdateApp());
+            });
+
+            if (result == false)
+                return;
+
+            HttpResponseMessage exeResponseMessage = await new HttpClient().SendAsync(new(HttpMethod.Get, appInfo.Versions.First().Link));
+            if (!exeResponseMessage.IsSuccessStatusCode)
+                return;
+
+            Directory.CreateDirectory(Path.GetDirectoryName(exeFile)!);
+            using var fileStream = new FileStream(exeFile, FileMode.CreateNew);
+            await exeResponseMessage.Content.CopyToAsync(fileStream);
+            fileStream.Close();
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Process.Start(exeFile);
+                Application.Current.Shutdown(0);
+            });
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using DSaladin.FancyPotato;
 using DSaladin.FancyPotato.CustomControls;
+using DSaladin.SpeedTime.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,32 +20,20 @@ using System.Windows.Shapes;
 namespace DSaladin.SpeedTime.Dialogs
 {
     /// <summary>
-    /// Interaction logic for UserSettings.xaml
+    /// Interaction logic for UpdateApp.xaml
     /// </summary>
-    public partial class UserSettings : DSDialogControl
+    public partial class UpdateApp : DSDialogControl
     {
-        private string currentVersion;
-        public string CurrentVersion
-        {
-            get { return currentVersion; }
-            set
-            {
-                currentVersion = value;
-                NotifyPropertyChanged();
-            }
-        }
+        public RelayCommand DenyCommand { get; set; }
+        public RelayCommand DownloadCommand { get; set; }
 
-        public UserSettings()
+        public UpdateApp()
         {
             InitializeComponent();
             DataContext = this;
 
-            CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
-        }
-
-        private void Close_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
+            DenyCommand = new((_) => Close(false));
+            DownloadCommand = new((_) => Close(true));
         }
     }
 }

@@ -13,6 +13,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
@@ -36,6 +37,10 @@
                 <Label Grid.Column="0" Content="Auto add break on lock" FontWeight="Bold" />
                 <CheckBox Grid.Column="1" HorizontalAlignment="Right" Content="" IsChecked="{Binding Source={x:Static models:SettingsModel.Instance}, Path=AutoAddBreak}" />
             </Grid>
+        </StackPanel>
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center">
+            <Line X1="0" X2="230" Y1="0" Y2="0" Stroke="{DynamicResource BackgroundA}" StrokeThickness="1" />
+            <Label Content="{Binding CurrentVersion}" ContentStringFormat="Speed Time • Version {0}" Padding="0,10,0,0" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" />
         </StackPanel>
     </Grid>
 </potato:DSDialogControl>
