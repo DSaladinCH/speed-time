@@ -1,4 +1,6 @@
-﻿using DSaladin.FontAwesome.WPF;
+﻿using DSaladin.FancyPotato.DSWindows;
+using DSaladin.FontAwesome.WPF;
+using DSaladin.SpeedTime.Dialogs;
 using DSaladin.SpeedTime.Model;
 using GlobalHotKey;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -19,10 +25,12 @@ namespace DSaladin.SpeedTime
     /// </summary>
     public partial class App : Application
     {
+        internal const string ProductId = "61dd9fcc-ba93-406f-89b9-99763fd2077c";
+
         internal static readonly TimeTrackerContext dbContext = new();
         internal static readonly IDataService DataService = new PropertyDataService();
 
-        private HotKeyManager hotKeyManager = new();
+        private readonly HotKeyManager hotKeyManager = new();
         private HotKey? openQuickTimeTracker;
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -34,12 +42,14 @@ namespace DSaladin.SpeedTime
 
             TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
             if (lastTrackedTime is not null && !lastTrackedTime.IsTimeStopped)
+            {
                 if (lastTrackedTime.TrackingStarted.Date < DateTime.Today)
                 {
                     lastTrackedTime.StopTime();
                     dbContext.TrackedTimes.Update(lastTrackedTime);
                     await dbContext.SaveChangesAsync();
                 }
+            }
 
             openQuickTimeTracker = hotKeyManager.Register(Key.T, ModifierKeys.Control | ModifierKeys.Alt);
             hotKeyManager.KeyPressed += HotKeyManagerPressed;
@@ -56,7 +66,7 @@ namespace DSaladin.SpeedTime
                     return;
 
                 TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
-                if (lastTrackedTime is not null)
+                if (lastTrackedTime is not null && !lastTrackedTime.IsTimeStopped)
                 {
                     lastTrackedTime.StopTime();
                     dbContext.TrackedTimes.Update(lastTrackedTime);
@@ -105,9 +115,20 @@ namespace DSaladin.SpeedTime
 
         async void App_SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
+            await StopTimeAndSave();
+        }
+
+        private async void Application_Exit(object sender, ExitEventArgs e)
+        {
+            await StopTimeAndSave();
+            await DataService.SaveSettings();
+        }
+
+        private static async Task StopTimeAndSave()
+        {
             TrackTime? lastWorkTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
 
-            if (lastWorkTime is null)
+            if (lastWorkTime is null || lastWorkTime.IsTimeStopped)
                 return;
 
             lastWorkTime.StopTime();
@@ -115,9 +136,45 @@ namespace DSaladin.SpeedTime
             await dbContext.SaveChangesAsync();
         }
 
-        private async void Application_Exit(object sender, ExitEventArgs e)
+        internal static async Task CheckForUpdate()
         {
-            await DataService.SaveSettings();
+            string assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+            string exeFile = Path.Combine(assemblyDirectory, "Downloads/setup.exe");
+
+            if (File.Exists(exeFile))
+                File.Delete(exeFile);
+
+            HttpRequestMessage requestMessage = new(HttpMethod.Get, $"https://api.dsaladin.dev/v1/product/{ProductId}/versions?fromVersion={Assembly.GetExecutingAssembly().GetName().Version!}");
+            HttpResponseMessage responseMessage = await new HttpClient().SendAsync(requestMessage);
+            if (!responseMessage.IsSuccessStatusCode)
+                return;
+
+            List<object>? versions = await System.Text.Json.JsonSerializer.DeserializeAsync<List<object>>(responseMessage.Content.ReadAsStream());
+            if (versions is null || versions.Count == 0)
+                return;
+
+            bool result = await Current.Dispatcher.Invoke(async () =>
+            {
+                return await (Current.MainWindow as DSWindow)!.ShowDialog<bool>(new UpdateApp());
+            });
+
+            if (result == false)
+                return;
+
+            HttpResponseMessage exeResponseMessage = await new HttpClient().SendAsync(new(HttpMethod.Get, $"https://api.dsaladin.dev/v1/product/{ProductId}/latest"));
+            if (!exeResponseMessage.IsSuccessStatusCode)
+                return;
+
+            Directory.CreateDirectory(Path.GetDirectoryName(exeFile)!);
+            using var fileStream = new FileStream(exeFile, FileMode.CreateNew);
+            await exeResponseMessage.Content.CopyToAsync(fileStream);
+            fileStream.Close();
+
+            Current.Dispatcher.Invoke(() =>
+            {
+                Process.Start(exeFile);
+                Current.Shutdown(0);
+            });
         }
     }
 }

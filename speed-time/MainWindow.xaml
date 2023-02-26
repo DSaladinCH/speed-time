@@ -60,10 +60,10 @@
                 <Button fa:Content.Icon="SolidAnglesRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="7" />
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,3,10,3">
-                <Button Grid.Column="2" fa:Content.Icon="SolidCirclePlus" FontSize="25" Padding="0,0,0,0" Margin="10,0,0,0" Style="{DynamicResource TransparentAccentButton}"
-                        Command="{Binding AddTrackingCommand}" />
-                <Button Grid.Column="2" fa:Content.Icon="SolidCircleStop" FontSize="25" Padding="0,0,0,0" Margin="10,0,0,0" Style="{DynamicResource TransparentAccentButton}"
-                        Command="{Binding StopCurrentTrackingCommand}" />
+                <Button Grid.Column="2" fa:Content.Icon="SolidPlus" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0" Style="{DynamicResource TransparentAccentButton}"
+                        Command="{Binding AddTrackingCommand}" Width="30" />
+                <Button Grid.Column="2" fa:Content.Icon="SolidStop" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0" Style="{DynamicResource TransparentAccentButton}"
+                        Command="{Binding StopCurrentTrackingCommand}" Width="30" IsEnabled="{Binding IsCurrentlyTracking}" />
             </StackPanel>
         </Grid>
         <ListView x:Name="lst_times" Grid.Row="2" Margin="10,5,10,0" ItemsSource="{Binding TrackedTimesViewSource.View}" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -128,6 +128,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
                 <Button Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidGear" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" />
+                <Button Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidChartArea" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" Visibility="Collapsed" />
             </StackPanel>
             <StackPanel Grid.Column="1" Margin="10,10,10,0">
                 <Separator Background="{DynamicResource BackgroundC}" Width="255" HorizontalAlignment="Right" />

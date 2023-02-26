@@ -56,6 +56,8 @@ namespace DSaladin.SpeedTime.ViewModel
             }
         }
 
+        public bool IsCurrentlyTracking { get => CurrentTime != null; }
+
         public bool IsCurrentDateTimeFreeDayChangeable { get; private set; }
         public bool IsCurrentDateTimeFreeDay
         {
@@ -119,7 +121,7 @@ namespace DSaladin.SpeedTime.ViewModel
             StopCurrentTrackingCommand = new(async (_) =>
             {
                 TrackTime? lastTrackedTime = await App.dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
-                if (lastTrackedTime is null)
+                if (lastTrackedTime is null || lastTrackedTime.IsTimeStopped)
                     return;
 
                 lastTrackedTime.StopTime();
@@ -150,7 +152,7 @@ namespace DSaladin.SpeedTime.ViewModel
             #endregion
 
             new Task(async () => await UpdateCurrentTime()).Start();
-            new Task(async () => await CheckForUpdate()).Start();
+            new Task(async () => await App.CheckForUpdate()).Start();
         }
 
         public override void WindowLoaded(object sender, RoutedEventArgs eventArgs)
@@ -200,51 +202,6 @@ namespace DSaladin.SpeedTime.ViewModel
                 return null;
 
             return lastTime;
-        }
-
-        private async Task CheckForUpdate()
-        {
-            string assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-            string exeFile = Path.Combine(assemblyDirectory, "Downloads/setup.exe");
-
-            if (File.Exists(exeFile))
-                File.Delete(exeFile);
-
-            HttpResponseMessage responseMessage = await new HttpClient().SendAsync(new(HttpMethod.Get, "https://dev.dsaladin.ch/downloads/speedtime/app.json"));
-            if (!responseMessage.IsSuccessStatusCode)
-                return;
-
-            AppInfo? appInfo = await System.Text.Json.JsonSerializer.DeserializeAsync<AppInfo>(responseMessage.Content.ReadAsStream());
-            if (appInfo is null)
-                return;
-
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            AssemblyName assemblyName = Assembly.GetExecutingAssembly().GetName();
-            if (Assembly.GetExecutingAssembly().GetName().Version!.CompareTo(appInfo.Versions.First().Version) >= 0)
-                return;
-
-            bool result = await Application.Current.Dispatcher.Invoke(async () =>
-            {
-                return await ShowDialog<bool>(new UpdateApp());
-            });
-
-            if (result == false)
-                return;
-
-            HttpResponseMessage exeResponseMessage = await new HttpClient().SendAsync(new(HttpMethod.Get, appInfo.Versions.First().Link));
-            if (!exeResponseMessage.IsSuccessStatusCode)
-                return;
-
-            Directory.CreateDirectory(Path.GetDirectoryName(exeFile)!);
-            using var fileStream = new FileStream(exeFile, FileMode.CreateNew);
-            await exeResponseMessage.Content.CopyToAsync(fileStream);
-            fileStream.Close();
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Process.Start(exeFile);
-                Application.Current.Shutdown(0);
-            });
         }
     }
 }
