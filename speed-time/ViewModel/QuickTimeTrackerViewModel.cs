@@ -10,6 +10,10 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Interop;
 using DSaladin.FancyPotato.DSWindows;
+using System.Windows.Media.Animation;
+using System.Windows.Data;
+using System.Diagnostics;
+using DSaladin.FancyPotato;
 
 namespace DSaladin.SpeedTime.ViewModel
 {
@@ -23,6 +27,7 @@ namespace DSaladin.SpeedTime.ViewModel
             {
                 workTitle = value;
                 NotifyPropertyChanged();
+                RefreshSuggestions();
             }
         }
 
@@ -52,6 +57,30 @@ namespace DSaladin.SpeedTime.ViewModel
             }
         }
 
+        private double windowHeight = 110;
+        public double WindowHeight
+        {
+            get => windowHeight + SuggestionsHeight;
+        }
+
+        public double SuggestionsHeight
+        {
+            get
+            {
+                if (TrackedTimesViewSource.View is null || string.IsNullOrEmpty(WorkTitle))
+                    return 0;
+
+                int count = TrackedTimesViewSource.View.Cast<object>().Count();
+                return count switch
+                {
+                    0 => 0,
+                    1 => 40,
+                    2 => 70,
+                    _ => (double)110,
+                };
+            }
+        }
+
         private TrackTime? lastTrackTime = default;
         public TrackTime? LastTrackTime
         {
@@ -63,9 +92,47 @@ namespace DSaladin.SpeedTime.ViewModel
             }
         }
 
+        public CollectionViewSource TrackedTimesViewSource { get; private set; } = new();
+
+        private int suggestionSelectedIndex = -1;
+        public int SuggestionSelectedIndex
+        {
+            get => suggestionSelectedIndex;
+            set
+            {
+                suggestionSelectedIndex = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public RelayCommand TabButtonCommand { get; set; }
+        public RelayCommand UpButtonCommand { get; set; }
+        public RelayCommand DownButtonCommand { get; set; }
+
         public QuickTimeTrackerViewModel(TrackTime? lastTrackTime)
         {
             LastTrackTime = lastTrackTime;
+
+            TabButtonCommand = new((_) =>
+            {
+                WorkTitle = TrackedTimesViewSource.View.Cast<TrackTime>().ElementAt(SuggestionSelectedIndex).Title;
+            });
+
+            UpButtonCommand = new((_) =>
+            {
+                if (SuggestionSelectedIndex <= 0)
+                    return;
+
+                SuggestionSelectedIndex--;
+            });
+
+            DownButtonCommand = new((_) =>
+            {
+                if (SuggestionSelectedIndex >= TrackedTimesViewSource.View.Cast<object>().Count() - 1)
+                    return;
+
+                SuggestionSelectedIndex++;
+            });
         }
 
         public override void WindowContentRendered(object? sender, EventArgs eventArgs)
@@ -74,7 +141,32 @@ namespace DSaladin.SpeedTime.ViewModel
             SetForegroundWindow(new WindowInteropHelper(window).Handle);
             window.KeyUp += QuickTimeTracker_KeyUp;
         }
-        
+
+        public override void WindowLoaded(object sender, RoutedEventArgs eventArgs)
+        {
+            TrackedTimesViewSource = new();
+            TrackedTimesViewSource.Source = App.dbContext.TrackedTimes.Local.DistinctBy(t => t.Title);
+            TrackedTimesViewSource.Filter += TrackedTimesViewSource_Filter;
+            TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStarted", ListSortDirection.Descending));
+            TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStopped", ListSortDirection.Descending));
+            //TrackedTimes = App.dbContext.TrackedTimes.Local.ToObservableCollection();
+        }
+
+        private void TrackedTimesViewSource_Filter(object sender, FilterEventArgs e)
+        {
+            CollectionViewSource viewSource = (CollectionViewSource)sender;
+            e.Accepted = (e.Item as TrackTime)!.Title.Contains(WorkTitle, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void RefreshSuggestions()
+        {
+            TrackedTimesViewSource.View.Refresh();
+
+            NotifyPropertyChanged(nameof(TrackedTimesViewSource));
+            NotifyPropertyChanged(nameof(SuggestionsHeight));
+            NotifyPropertyChanged(nameof(WindowHeight));
+        }
+
         [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool SetForegroundWindow(IntPtr hWnd);
