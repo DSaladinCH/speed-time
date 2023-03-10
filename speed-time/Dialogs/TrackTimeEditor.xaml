@@ -11,7 +11,7 @@
                         mc:Ignorable="d" 
                         d:DesignHeight="300" d:DesignWidth="450" MaxHeight="300" MaxWidth="400">
     <potato:DSDialogControl.Resources>
-        <converter:DateTimeConverter x:Key="DateTimeConverter" />
+        <converter:DateTimeTimeConverter x:Key="DateTimeTimeConverter" />
     </potato:DSDialogControl.Resources>
     <potato:DSDialogControl.InputBindings>
         <KeyBinding Key="Esc" Command="{Binding SaveAndCloseCommand}" />
@@ -49,7 +49,7 @@
                     <potato:DSTextBox.Text>
                         <Binding Path="TrackingStarted" ConverterParameter="HH:mm">
                             <Binding.Converter>
-                                <converter:DateTimeConverter />
+                                <converter:DateTimeTimeConverter />
                             </Binding.Converter>
                         </Binding>
                     </potato:DSTextBox.Text>
@@ -58,7 +58,7 @@
                     <potato:DSTextBox.Text>
                         <Binding Path="TrackingStopped" ConverterParameter="HH:mm">
                             <Binding.Converter>
-                                <converter:DateTimeConverter />
+                                <converter:DateTimeTimeConverter />
                             </Binding.Converter>
                         </Binding>
                     </potato:DSTextBox.Text>
