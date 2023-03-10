@@ -1,0 +1,27 @@
+﻿<potato:DSDialogControl x:Class="DSaladin.SpeedTime.Dialogs.UpdateApp"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:potato="https://dsaladin.dev/products/fancypotato/wpf/xaml"
+                        xmlns:local="clr-namespace:DSaladin.SpeedTime.Dialogs"
+                        d:DataContext="{d:DesignInstance local:UpdateApp}"
+                        mc:Ignorable="d"
+                        d:DesignHeight="250" d:DesignWidth="350" MaxHeight="250" MaxWidth="350">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="60" />
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Content="Update available!" Style="{DynamicResource Title2Label}" HorizontalAlignment="Center" />
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Label Content="You know you want the latest version 😏" Style="{DynamicResource Title5Label}" HorizontalContentAlignment="Center" />
+            <Label Content="Come on, just click the button!" Style="{DynamicResource Title5Label}" HorizontalContentAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="Nah" Style="{DynamicResource AccentButton}" Margin="15,0,15,15" Width="100" Command="{Binding DenyCommand}" />
+            <Button Content="Download" Style="{DynamicResource AccentButton}" Margin="15,0,15,15" Width="100" Command="{Binding DownloadCommand}" />
+        </StackPanel>
+    </Grid>
+</potato:DSDialogControl>
