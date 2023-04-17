@@ -22,7 +22,7 @@ namespace DSaladin.SpeedTime.Dialogs
     /// </summary>
     public partial class TrackTimeEditor : DSDialogControl
     {
-        private TrackTime trackTime = new(default, "", false);
+        private TrackTime trackTime = TrackTime.Empty();
 
         public TrackTime TrackTime
         {
@@ -31,15 +31,17 @@ namespace DSaladin.SpeedTime.Dialogs
             {
                 trackTime = value;
                 TrackTimeTitle = value.Title;
+                SelectedDate = value.TrackingStarted;
                 TrackingStarted = value.TrackingStarted;
                 TrackingStopped = value.TrackingStopped;
                 IsBreak = value.IsBreak;
-                NotifyPropertyChanged();
+                NotifyPropertyChanged("");
             }
         }
 
         public string TrackTimeTitle { get; set; } = "";
-        public DateTime TrackingStarted { get; set; }
+        public DateTime SelectedDate { get; set; } = DateTime.Today;
+        public DateTime TrackingStarted { get; set; } = DateTime.Today;
         public DateTime TrackingStopped { get; set; }
         public bool IsBreak { get; set; }
 
@@ -72,16 +74,9 @@ namespace DSaladin.SpeedTime.Dialogs
                 return;
             }
 
-            if (string.IsNullOrEmpty(TrackTime.Title))
-            {
-                DateTime newDateTime = DateTime.Today.Date + TrackingStarted.TimeOfDay;
-                TrackTime.TrackingStarted = newDateTime;
-            }
-            else
-                TrackTime.TrackingStarted = TrackingStarted;
-
             TrackTime.Title = TrackTimeTitle;
-            TrackTime.StopTime(TrackingStopped.TimeOfDay);
+            TrackTime.TrackingStarted = SelectedDate.Date + TrackingStarted.TimeOfDay;
+            TrackTime.StopTime(SelectedDate.Date + TrackingStopped.TimeOfDay);
             TrackTime.IsBreak = IsBreak;
 
             Close(TrackTime);

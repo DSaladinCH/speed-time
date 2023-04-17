@@ -11,6 +11,7 @@ namespace DSaladin.SpeedTime.Model
     {
         public async Task LoadSettings()
         {
+            Properties.Settings.Default.Upgrade();
             string json = Properties.Settings.Default.AppSettings;
             var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
             SettingsModel? settings = null;

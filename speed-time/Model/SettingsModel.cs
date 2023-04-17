@@ -35,6 +35,17 @@ namespace DSaladin.SpeedTime.Model
             }
         }
 
+        private double weeklyWorkHours;
+        public double WeeklyWorkHours
+        {
+            get { return weeklyWorkHours; }
+            set
+            {
+                weeklyWorkHours = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public static void Load(SettingsModel settings)
         {
             Instance = settings;
