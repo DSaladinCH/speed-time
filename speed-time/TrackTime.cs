@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace DSaladin.SpeedTime
 {
+    [DebuggerDisplay("{TrackingStarted.ToString(\"dd.MM.yyyy\")} | {TrackingTime} | IsBreak: {IsBreak}")]
     public class TrackTime : INotifyPropertyChanged
     {
         [Key]
@@ -80,6 +82,14 @@ namespace DSaladin.SpeedTime
             IsBreak = isBreak;
         }
 
+        public void StopTime(DateTime stopTime)
+        {
+            if (TrackingStarted.Date != stopTime.Date)
+                stopTime = TrackingStarted.Date.Add(new(23, 59, 59));
+
+            TrackingStopped = stopTime;
+        }
+
         public void StopTime(TimeSpan? stopTime = null)
         {
             if (stopTime is null && TrackingStarted.Date < DateTime.Today)
@@ -93,6 +103,11 @@ namespace DSaladin.SpeedTime
         public void UpdateTrackingToNow()
         {
             NotifyPropertyChanged(nameof(Hours));
+        }
+
+        public static TrackTime Empty()
+        {
+            return new(DateTime.Today, "", false);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

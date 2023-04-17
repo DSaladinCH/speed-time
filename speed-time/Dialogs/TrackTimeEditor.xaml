@@ -18,10 +18,14 @@
     </potato:DSDialogControl.InputBindings>
     <Grid FocusManager.FocusedElement="{Binding ElementName=tbx_title}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
+            <RowDefinition Height="60" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="10" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60" />
                 <ColumnDefinition Width="*" />
@@ -31,34 +35,44 @@
             <Button Grid.Column="0" fa:Content.Icon="SolidArrowLeft" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentButton}"
                     Click="Close_Click" />
             <Label Grid.Column="1" Content="Time Editor" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" />
+            <potato:DSTextBox Style="{DynamicResource TransparentTextBox}" Grid.Column="1" Grid.RowSpan="2" FontSize="11" FontWeight="Bold"
+                              HorizontalAlignment="Center" VerticalAlignment="Bottom" SelectAllOnFocus="True">
+                <potato:DSTextBox.Text>
+                    <Binding Path="SelectedDate">
+                        <Binding.Converter>
+                            <converter:DateConverter />
+                        </Binding.Converter>
+                    </Binding>
+                </potato:DSTextBox.Text>
+            </potato:DSTextBox>
         </Grid>
-        <Grid Grid.Row="1" Margin="15,10,15,15">
+        <Grid Grid.Row="1" Margin="15,0,15,15">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50" />
                 <RowDefinition Height="50" />
                 <RowDefinition Height="50" />
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
-            <potato:DSTextBox x:Name="tbx_title" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,5,0,5" Text="{Binding TrackTimeTitle}" />
+            <potato:DSTextBox x:Name="tbx_title" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,5,0,5" Text="{Binding TrackTimeTitle}" SelectAllOnFocus="True" />
             <Grid Grid.Row="1" Margin="90,0,90,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <potato:DSTextBox x:Name="tbx_startTime" Grid.Column="0" Margin="10,5,10,5" HorizontalContentAlignment="Center">
+                <potato:DSTextBox x:Name="tbx_startTime" Grid.Column="0" Margin="10,5,10,5" HorizontalContentAlignment="Center" SelectAllOnFocus="True">
                     <potato:DSTextBox.Text>
                         <Binding Path="TrackingStarted" ConverterParameter="HH:mm">
                             <Binding.Converter>
-                                <converter:DateTimeTimeConverter />
+                                <converter:TimeConverter />
                             </Binding.Converter>
                         </Binding>
                     </potato:DSTextBox.Text>
                 </potato:DSTextBox>
-                <potato:DSTextBox x:Name="tbx_endTime" Grid.Column="1" Margin="10,5,10,5" HorizontalContentAlignment="Center">
+                <potato:DSTextBox x:Name="tbx_endTime" Grid.Column="1" Margin="10,5,10,5" HorizontalContentAlignment="Center" SelectAllOnFocus="True">
                     <potato:DSTextBox.Text>
                         <Binding Path="TrackingStopped" ConverterParameter="HH:mm">
                             <Binding.Converter>
-                                <converter:DateTimeTimeConverter />
+                                <converter:TimeConverter />
                             </Binding.Converter>
                         </Binding>
                     </potato:DSTextBox.Text>

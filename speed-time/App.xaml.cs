@@ -28,7 +28,7 @@ namespace DSaladin.SpeedTime
         internal const string ProductId = "61dd9fcc-ba93-406f-89b9-99763fd2077c";
 
         internal static readonly TimeTrackerContext dbContext = new();
-        internal static readonly IDataService DataService = new PropertyDataService();
+        internal static readonly IDataService DataService = new FileDataService();
 
         private readonly HotKeyManager hotKeyManager = new();
         private HotKey? openQuickTimeTracker;

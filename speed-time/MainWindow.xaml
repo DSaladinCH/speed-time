@@ -124,22 +124,23 @@
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
                 <Button Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidGear" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" />
                 <Button Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidChartArea" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" Visibility="Collapsed" />
             </StackPanel>
             <StackPanel Grid.Column="1" Margin="10,10,10,0">
-                <Separator Background="{DynamicResource BackgroundC}" Width="255" HorizontalAlignment="Right" />
+                <Separator Background="{DynamicResource BackgroundC}" Width="225" HorizontalAlignment="Right" />
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="25" />
-                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="105" />
+                        <ColumnDefinition Width="60" />
                         <ColumnDefinition Width="60" />
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="2" Content="Total" />
+                    <Label Grid.Column="1" Content="{Binding TotalWeekHoursDisplay}" Foreground="{DynamicResource ForegroundA}" />
+                    <Label Grid.Column="2" Content="Total" HorizontalContentAlignment="Right" />
                     <Label Grid.Column="3" Content="{Binding TotalHours, TargetNullValue=''}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
                 </Grid>
             </StackPanel>

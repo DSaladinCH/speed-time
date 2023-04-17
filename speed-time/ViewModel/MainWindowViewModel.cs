@@ -10,15 +10,19 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
+using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -45,13 +49,23 @@ namespace DSaladin.SpeedTime.ViewModel
         public TrackTime? CurrentTime { get => GetCurrentTrackTime(); }
         public double TotalHours { get => TrackedTimes.Where(tt => tt.TrackingStarted.Date == CurrentDateTime.Date && !tt.IsBreak).Sum(tt => tt.Hours); }
 
-        private DateTime currentTime = DateTime.Today;
+        private DateRange weekRange = new();
+        public string TotalWeekHoursDisplay
+        {
+            get
+            {
+                return string.Format("{0:00.00}h / {1:00.00}h", TrackedTimes.Where(tt => tt.TrackingStarted.Date >= weekRange.Start && tt.TrackingStarted <= weekRange.End && !tt.IsBreak).Sum(tt => tt.Hours),
+                    SettingsModel.Instance.WeeklyWorkHours);
+            }
+        }
+
+        private DateTime currentDateTime = DateTime.Today;
         public DateTime CurrentDateTime
         {
-            get => currentTime;
+            get => currentDateTime;
             set
             {
-                currentTime = value;
+                currentDateTime = value;
                 NotifyPropertyChanged();
             }
         }
@@ -120,12 +134,13 @@ namespace DSaladin.SpeedTime.ViewModel
 
             StopCurrentTrackingCommand = new(async (_) =>
             {
-                TrackTime? lastTrackedTime = await App.dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
-                if (lastTrackedTime is null || lastTrackedTime.IsTimeStopped)
+                if (CurrentTime is null || CurrentTime.IsTimeStopped)
                     return;
 
-                lastTrackedTime.StopTime();
-                App.dbContext.TrackedTimes.Update(lastTrackedTime);
+                int id = CurrentTime.Id;
+                CurrentTime.StopTime();
+
+                App.dbContext.TrackedTimes.Update(App.dbContext.TrackedTimes.First(t => t.Id == id));
                 await App.dbContext.SaveChangesAsync();
                 UpdateView();
             });
@@ -153,6 +168,7 @@ namespace DSaladin.SpeedTime.ViewModel
 
             new Task(async () => await UpdateCurrentTime()).Start();
             new Task(async () => await App.CheckForUpdate()).Start();
+            UpdateView();
         }
 
         public override void WindowLoaded(object sender, RoutedEventArgs eventArgs)
@@ -174,8 +190,9 @@ namespace DSaladin.SpeedTime.ViewModel
 
         private void UpdateView()
         {
+            weekRange = GetWeekRange(CurrentDateTime);
             NotifyPropertyChanged("");
-            TrackedTimesViewSource.View.Refresh();
+            TrackedTimesViewSource.View?.Refresh();
         }
 
         async Task UpdateCurrentTime()
@@ -189,6 +206,7 @@ namespace DSaladin.SpeedTime.ViewModel
                     {
                         CurrentTime?.UpdateTrackingToNow();
                         NotifyPropertyChanged(nameof(TotalHours));
+                        NotifyPropertyChanged(nameof(TotalWeekHoursDisplay));
                     });
                 }
                 catch { }
@@ -197,11 +215,32 @@ namespace DSaladin.SpeedTime.ViewModel
 
         private TrackTime? GetCurrentTrackTime()
         {
-            TrackTime? lastTime = TrackedTimes.LastOrDefault();
+            TrackTime? lastTime = TrackedTimes.LastOrDefault(t => !t.IsTimeStopped);
             if (lastTime is null || lastTime.IsTimeStopped)
                 return null;
 
             return lastTime;
+        }
+
+        public struct DateRange
+        {
+            public DateTime Start { get; set; }
+            public DateTime End { get; set; }
+        }
+
+        public static DateRange GetWeekRange(DateTime date)
+        {            
+            DayOfWeek firstDayOfWeek = DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek;
+
+            int diff = (date.DayOfWeek - firstDayOfWeek + 7) % 7;
+            DateTime startOfWeek = date.AddDays(-1 * diff).Date;
+            DateTime endOfWeek = startOfWeek.AddDays(7).AddSeconds(-1);
+
+            return new()
+            {
+                Start = startOfWeek,
+                End = endOfWeek
+            };
         }
     }
 }
