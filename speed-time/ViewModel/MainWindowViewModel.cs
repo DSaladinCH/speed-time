@@ -161,8 +161,14 @@ namespace DSaladin.SpeedTime.ViewModel
 
             OpenUserSettingsCommand = new(async (_) =>
             {
-                await ShowDialog(new UserSettings());
+                bool shouldRestart = await ShowDialog<bool>(new UserSettings());
                 await App.DataService.SaveSettings();
+
+                if (shouldRestart)
+                {
+                    Process.Start(Environment.ProcessPath!);
+                    Application.Current.Shutdown();
+                }
             });
             #endregion
 

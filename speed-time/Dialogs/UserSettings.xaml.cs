@@ -1,5 +1,6 @@
 ﻿using DSaladin.FancyPotato;
 using DSaladin.FancyPotato.CustomControls;
+using DSaladin.SpeedTime.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +45,13 @@ namespace DSaladin.SpeedTime.Dialogs
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            if (string.IsNullOrEmpty(SettingsModel.Instance.UiLanguage))
+            {
+                Close(false);
+                return;
+            }
+
+            Close(SpeedTime.Language.SpeedTime.Culture.Name != SettingsModel.Instance.UiLanguage);
         }
     }
 }

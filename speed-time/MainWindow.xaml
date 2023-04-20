@@ -6,6 +6,7 @@
                  xmlns:potato="https://dsaladin.dev/products/fancypotato/wpf/xaml"
                  xmlns:converter="clr-namespace:DSaladin.SpeedTime.Converter"
                  xmlns:viewmodel="clr-namespace:DSaladin.SpeedTime.ViewModel"
+                 xmlns:language="clr-namespace:DSaladin.SpeedTime.Language"
                  xmlns:fa="https://dsaladin.dev/products/fontawesome/wpf/xaml"
                  xmlns:local="clr-namespace:DSaladin.SpeedTime"
                  mc:Ignorable="d"
@@ -27,8 +28,8 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="110" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="{Binding CurrentTime.Title, TargetNullValue=''}" ContentStringFormat="Current: {0}" d:Content="Searching bugs" Style="{DynamicResource Title3Label}" />
-            <Label Grid.Column="1" Content="{Binding CurrentTime.Hours, TargetNullValue=''}" ContentStringFormat="Time: {0:N2}h" d:Content="1.25" Style="{DynamicResource Title4Label}" HorizontalAlignment="Right" />
+            <Label Grid.Column="0" Content="{Binding CurrentTime.Title, TargetNullValue=''}" ContentStringFormat="{x:Static language:SpeedTime.times_current_title}" d:Content="Searching bugs" Style="{DynamicResource Title3Label}" />
+            <Label Grid.Column="1" Content="{Binding CurrentTime.Hours, TargetNullValue=''}" ContentStringFormat="{x:Static language:SpeedTime.times_current_hours}" d:Content="1.25" Style="{DynamicResource Title4Label}" HorizontalAlignment="Right" />
         </Grid>
         <Line X1='0'
          X2='{Binding ActualWidth, Mode=OneWay, 
@@ -46,13 +47,14 @@
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <Button fa:Content.Icon="SolidAnglesLeft" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="-7" />
                 <Button fa:Content.Icon="SolidAngleLeft" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="-1" />
-                <Label Content="{Binding CurrentDateTime, Converter={StaticResource DateTimeConverter}, ConverterParameter='dd. MMM yyyy'}" Width="100" HorizontalContentAlignment="Center">
+                <Label Content="{Binding CurrentDateTime, Converter={StaticResource DateTimeConverter}, ConverterParameter={x:Static language:SpeedTime.times_current_date_format}}" d:Content="01. Jan 2023"
+                       Width="100" HorizontalContentAlignment="Center">
                     <Label.InputBindings>
                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding CurrentDateTimeDoubleClickCommand}" />
                     </Label.InputBindings>
                     <Label.ContextMenu>
                         <ContextMenu>
-                            <potato:DSMenuItem Header="Is free Day" IsCheckable="{Binding IsCurrentDateTimeFreeDayChangeable}" IsChecked="{Binding IsCurrentDateTimeFreeDay}" />
+                            <potato:DSMenuItem Header="{x:Static language:SpeedTime.times_date_is_free_day}" IsCheckable="{Binding IsCurrentDateTimeFreeDayChangeable}" IsChecked="{Binding IsCurrentDateTimeFreeDay}" />
                         </ContextMenu>
                     </Label.ContextMenu>
                 </Label>
@@ -140,7 +142,7 @@
                         <ColumnDefinition Width="60" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="1" Content="{Binding TotalWeekHoursDisplay}" Foreground="{DynamicResource ForegroundA}" />
-                    <Label Grid.Column="2" Content="Total" HorizontalContentAlignment="Right" />
+                    <Label Grid.Column="2" Content="{x:Static language:SpeedTime.times_totals_title}" HorizontalContentAlignment="Right" />
                     <Label Grid.Column="3" Content="{Binding TotalHours, TargetNullValue=''}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
                 </Grid>
             </StackPanel>
