@@ -8,6 +8,7 @@
                  xmlns:viewmodel="clr-namespace:DSaladin.SpeedTime.ViewModel"
                  xmlns:converter="clr-namespace:DSaladin.SpeedTime.Converter"
                  xmlns:potato="https://dsaladin.dev/products/fancypotato/wpf/xaml"
+                 xmlns:language="clr-namespace:DSaladin.SpeedTime.Language"
                  xmlns:local="clr-namespace:DSaladin.SpeedTime"
                  mc:Ignorable="d"
                  d:DataContext="{d:DesignInstance viewmodel:QuickTimeTrackerViewModel}"
@@ -55,8 +56,8 @@
             <RowDefinition Height="Auto" MaxHeight="110" />
             <RowDefinition Height="45" />
         </Grid.RowDefinitions>
-        <potato:DSTextBox x:Name="dtb_title" Grid.Row="0" Icon="SolidHeading" IconSize="Large" Placeholder="The title of your work" TabIndex="0" Text="{Binding WorkTitle, UpdateSourceTrigger=PropertyChanged}"
-                          Margin="10,10,10,10">
+        <potato:DSTextBox x:Name="dtb_title" Grid.Row="0" Icon="SolidHeading" IconSize="Large" Placeholder="{x:Static language:SpeedTime.quicktimetracker_placeholder}" TabIndex="0"
+                          Text="{Binding WorkTitle, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10">
             <potato:DSTextBox.InputBindings>
                 <KeyBinding Key="Tab" Command="{Binding TabButtonCommand}" />
                 <KeyBinding Key="Up" Command="{Binding UpButtonCommand}" />
@@ -75,10 +76,10 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
-            <CheckBox x:Name="ckb_break" Grid.Column="0" Content="Break" Margin="5,0,0,0" IsChecked="{Binding IsBreak}" />
-            <CheckBox x:Name="ckb_isAFK" Grid.Column="1" Content="AFK" Margin="5,0,0,0" IsChecked="{Binding IsAFK}" />
+            <CheckBox x:Name="ckb_break" Grid.Column="0" Content="{x:Static language:SpeedTime.quicktimetracker_break}" Margin="5,0,0,0" IsChecked="{Binding IsBreak}" />
+            <CheckBox x:Name="ckb_isAFK" Grid.Column="1" Content="{x:Static language:SpeedTime.quicktimetracker_afk}" Margin="5,0,0,0" IsChecked="{Binding IsAFK}" />
             <Label Grid.Column="2" Content="{Binding LastTrackTime.TrackingStarted, Converter={StaticResource DateTimeConverter}, ConverterParameter='HH:mm'}"
-                   ContentStringFormat="Last Entry: {0}" Foreground="{DynamicResource ForegroundA}" HorizontalContentAlignment="Right" />
+                   ContentStringFormat="{x:Static language:SpeedTime.quicktimetracker_last_entry}" Foreground="{DynamicResource ForegroundA}" HorizontalContentAlignment="Right" />
         </Grid>
     </Grid>
 </potato:DSWindow>

@@ -27,10 +27,35 @@ namespace DSaladin.SpeedTime.Dialogs
         public RelayCommand DenyCommand { get; set; }
         public RelayCommand DownloadCommand { get; set; }
 
-        public UpdateApp()
+        private string version;
+        public string Version
+        {
+            get { return version; }
+            set
+            {
+                version = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private string releaseDate;
+        public string ReleaseDate
+        {
+            get { return releaseDate; }
+            set
+            {
+                releaseDate = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public UpdateApp(string version, DateTime releaseDate)
         {
             InitializeComponent();
             DataContext = this;
+
+            Version = version;
+            ReleaseDate = releaseDate.ToString(SpeedTime.Language.SpeedTime.updateapp_release_date_format, SpeedTime.Language.SpeedTime.Culture);
 
             DenyCommand = new((_) => Close(false));
             DownloadCommand = new((_) => Close(true));

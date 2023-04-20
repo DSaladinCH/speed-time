@@ -10,10 +10,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -25,6 +27,8 @@ namespace DSaladin.SpeedTime
     /// </summary>
     public partial class App : Application
     {
+        record AppVersion(string Version, DateTime ReleaseDate);
+
         internal const string ProductId = "61dd9fcc-ba93-406f-89b9-99763fd2077c";
 
         internal static readonly TimeTrackerContext dbContext = new();
@@ -36,9 +40,17 @@ namespace DSaladin.SpeedTime
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
             await dbContext.Database.EnsureCreatedAsync();
             await dbContext.Database.MigrateAsync();
             await DataService.LoadSettings();
+
+            if (string.IsNullOrEmpty(SettingsModel.Instance.UiLanguage))
+                Language.SpeedTime.Culture = Thread.CurrentThread.CurrentCulture;
+            else
+                Language.SpeedTime.Culture = new CultureInfo(SettingsModel.Instance.UiLanguage);
+
+            Thread.CurrentThread.CurrentUICulture = Language.SpeedTime.Culture;
 
             TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
             if (lastTrackedTime is not null && !lastTrackedTime.IsTimeStopped)
@@ -149,13 +161,14 @@ namespace DSaladin.SpeedTime
             if (!responseMessage.IsSuccessStatusCode)
                 return;
 
-            List<object>? versions = await System.Text.Json.JsonSerializer.DeserializeAsync<List<object>>(responseMessage.Content.ReadAsStream());
+            
+            List<AppVersion>? versions = await System.Text.Json.JsonSerializer.DeserializeAsync<List<AppVersion>>(responseMessage.Content.ReadAsStream());
             if (versions is null || versions.Count == 0)
                 return;
 
             bool result = await Current.Dispatcher.Invoke(async () =>
             {
-                return await (Current.MainWindow as DSWindow)!.ShowDialog<bool>(new UpdateApp());
+                return await (Current.MainWindow as DSWindow)!.ShowDialog<bool>(new UpdateApp(versions.Last().Version, versions.Last().ReleaseDate));
             });
 
             if (result == false)

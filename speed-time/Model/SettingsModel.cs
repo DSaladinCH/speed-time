@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DSaladin.SpeedTime.Model
@@ -45,6 +47,18 @@ namespace DSaladin.SpeedTime.Model
                 NotifyPropertyChanged();
             }
         }
+
+        private string uiLanguage = "";
+        public string UiLanguage
+        {
+            get { return uiLanguage; }
+            set
+            {
+                uiLanguage = value;
+                NotifyPropertyChanged();
+            }
+        }
+
 
         public static void Load(SettingsModel settings)
         {

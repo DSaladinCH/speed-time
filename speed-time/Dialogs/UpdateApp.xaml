@@ -4,6 +4,7 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:potato="https://dsaladin.dev/products/fancypotato/wpf/xaml"
+                        xmlns:language="clr-namespace:DSaladin.SpeedTime.Language"
                         xmlns:local="clr-namespace:DSaladin.SpeedTime.Dialogs"
                         d:DataContext="{d:DesignInstance local:UpdateApp}"
                         mc:Ignorable="d"
@@ -14,14 +15,16 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="60" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Content="Update available!" Style="{DynamicResource Title2Label}" HorizontalAlignment="Center" />
+        <Label Grid.Row="0" Content="{x:Static language:SpeedTime.updateapp_title}" Style="{DynamicResource Title2Label}" HorizontalAlignment="Center" />
         <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Label Content="You know you want the latest version 😏" Style="{DynamicResource Title5Label}" HorizontalContentAlignment="Center" />
-            <Label Content="Come on, just click the button!" Style="{DynamicResource Title5Label}" HorizontalContentAlignment="Center" />
+            <Label Content="{Binding Version}" ContentStringFormat="{x:Static language:SpeedTime.updateapp_version_text}" d:Content="0.6.0.0"
+                   Style="{DynamicResource Title5Label}" HorizontalContentAlignment="Center" />
+            <Label Content="{Binding ReleaseDate}" ContentStringFormat="{x:Static language:SpeedTime.updateapp_version_release_date}" d:Content="Monday, xx. Month xxxx"
+                   Style="{DynamicResource Title5Label}" HorizontalContentAlignment="Center" />
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Nah" Style="{DynamicResource AccentButton}" Margin="15,0,15,15" Width="100" Command="{Binding DenyCommand}" />
-            <Button Content="Download" Style="{DynamicResource AccentButton}" Margin="15,0,15,15" Width="100" Command="{Binding DownloadCommand}" />
+            <Button Content="{x:Static language:SpeedTime.updateapp_cancel}" Style="{DynamicResource AccentButton}" Margin="15,0,10,15" Width="130" Command="{Binding DenyCommand}" />
+            <Button Content="{x:Static language:SpeedTime.updateapp_download}" Style="{DynamicResource AccentButton}" Margin="10,0,15,15" Width="130" Command="{Binding DownloadCommand}" />
         </StackPanel>
     </Grid>
 </potato:DSDialogControl>
