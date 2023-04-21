@@ -80,6 +80,9 @@
       <LastGenOutput>SpeedTime.de-CH.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Language\SpeedTime.es-ES.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Language\SpeedTime.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SpeedTime.Designer.cs</LastGenOutput>
