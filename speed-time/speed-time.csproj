@@ -53,6 +53,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Language\SpeedTime - Copy.de-CH.Designer.cs">
+      <DependentUpon>SpeedTime.de-CH.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="Language\SpeedTime.de-CH.Designer.cs">
       <DependentUpon>SpeedTime.de-CH.resx</DependentUpon>
       <DesignTime>True</DesignTime>

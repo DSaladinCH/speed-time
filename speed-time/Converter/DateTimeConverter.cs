@@ -18,15 +18,11 @@ namespace DSaladin.SpeedTime.Converter
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Debug.WriteLine("Normal: " + Thread.CurrentThread.CurrentCulture.Name);
-            Debug.WriteLine("UI: " + Thread.CurrentThread.CurrentUICulture.Name);
-            Debug.WriteLine("Resource: " + Language.SpeedTime.Culture?.Name);
-
             if (parameter is not string)
                 return value;
 
             SourceValue = (DateTime)value;
-            return ((DateTime)value).ToString((string)parameter);
+            return ((DateTime)value).ToString((string)parameter, Language.SpeedTime.Culture);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -45,13 +45,13 @@ namespace DSaladin.SpeedTime.Dialogs
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(SettingsModel.Instance.UiLanguage))
+            if (string.IsNullOrEmpty(SettingsModel.Instance.SelectedUiLanguage))
             {
                 Close(false);
                 return;
             }
 
-            Close(SpeedTime.Language.SpeedTime.Culture.Name != SettingsModel.Instance.UiLanguage);
+            Close(SpeedTime.Language.SpeedTime.Culture.Name != SettingsModel.Instance.SelectedUiLanguage);
         }
     }
 }

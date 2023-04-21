@@ -44,11 +44,12 @@ namespace DSaladin.SpeedTime
             await dbContext.Database.MigrateAsync();
             await DataService.LoadSettings();
 
-            if (string.IsNullOrEmpty(SettingsModel.Instance.UiLanguage))
+            if (string.IsNullOrEmpty(SettingsModel.Instance.SelectedUiLanguage))
                 Language.SpeedTime.Culture = new CultureInfo(Thread.CurrentThread.CurrentCulture.Name);
             else
-                Language.SpeedTime.Culture = new CultureInfo(SettingsModel.Instance.UiLanguage);
+                Language.SpeedTime.Culture = new CultureInfo(SettingsModel.Instance.SelectedUiLanguage);
 
+            Thread.CurrentThread.CurrentCulture = Language.SpeedTime.Culture;
             Thread.CurrentThread.CurrentUICulture = Language.SpeedTime.Culture;
 
             TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
