@@ -19,6 +19,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Markup;
 
 namespace DSaladin.SpeedTime
 {
@@ -39,17 +40,16 @@ namespace DSaladin.SpeedTime
 
         protected override async void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
-
             await dbContext.Database.EnsureCreatedAsync();
             await dbContext.Database.MigrateAsync();
             await DataService.LoadSettings();
 
-            if (string.IsNullOrEmpty(SettingsModel.Instance.UiLanguage))
-                Language.SpeedTime.Culture = Thread.CurrentThread.CurrentCulture;
+            if (string.IsNullOrEmpty(SettingsModel.Instance.SelectedUiLanguage))
+                Language.SpeedTime.Culture = new CultureInfo(Thread.CurrentThread.CurrentCulture.Name);
             else
-                Language.SpeedTime.Culture = new CultureInfo(SettingsModel.Instance.UiLanguage);
+                Language.SpeedTime.Culture = new CultureInfo(SettingsModel.Instance.SelectedUiLanguage);
 
+            Thread.CurrentThread.CurrentCulture = Language.SpeedTime.Culture;
             Thread.CurrentThread.CurrentUICulture = Language.SpeedTime.Culture;
 
             TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
@@ -67,6 +67,11 @@ namespace DSaladin.SpeedTime
             hotKeyManager.KeyPressed += HotKeyManagerPressed;
 
             SystemEvents.SessionSwitch += new SessionSwitchEventHandler(SystemEvents_SessionSwitch);
+
+            base.OnStartup(e);
+
+            MainWindow mainWindow = new();
+            mainWindow.Show();
         }
 
         private async void HotKeyManagerPressed(object? sender, KeyPressedEventArgs e)
@@ -161,7 +166,7 @@ namespace DSaladin.SpeedTime
             if (!responseMessage.IsSuccessStatusCode)
                 return;
 
-            
+
             List<AppVersion>? versions = await System.Text.Json.JsonSerializer.DeserializeAsync<List<AppVersion>>(responseMessage.Content.ReadAsStream());
             if (versions is null || versions.Count == 0)
                 return;

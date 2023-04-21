@@ -59,11 +59,12 @@
             <Grid Margin="0,10,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="150" />
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Column="0" Content="{x:Static language:SpeedTime.settings_ui_language}" FontWeight="Bold" />
-                <potato:DSTextBox Grid.Column="1" Height="30" HorizontalContentAlignment="Right" Text="{Binding Source={x:Static models:SettingsModel.Instance}, Path=UiLanguage}" />
+                <ComboBox Grid.Column="1" Height="30" ItemsSource="{Binding Source={x:Static models:SettingsModel.AvailableLanguages}}" DisplayMemberPath="Name"
+                          SelectedValuePath="Id" SelectedValue="{Binding Source={x:Static models:SettingsModel.Instance}, Path=SelectedUiLanguage}" />
             </Grid>
         </StackPanel>
         <StackPanel Grid.Row="2" HorizontalAlignment="Center">
