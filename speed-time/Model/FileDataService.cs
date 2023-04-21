@@ -27,6 +27,7 @@ namespace DSaladin.SpeedTime.Model
             {
                 FileStream stream = File.OpenRead(filePath);
                 settings = await JsonSerializer.DeserializeAsync<SettingsModel>(stream);
+                stream.Close();
             }
             catch { }
 
@@ -44,6 +45,7 @@ namespace DSaladin.SpeedTime.Model
             Directory.CreateDirectory(appFolderPath);
 
             File.WriteAllText(Path.Combine(appFolderPath, FILENAME), Encoding.UTF8.GetString(stream.ToArray()));
+            stream.Close();
         }
     }
 }
