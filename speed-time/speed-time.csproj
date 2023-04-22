@@ -44,8 +44,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSaladin.FancyPotato" Version="0.4.7" />
-    <PackageReference Include="DSaladin.FontAwesome.WPF" Version="6.2.1" />
+    <PackageReference Include="DSaladin.FancyPotato" Version="0.4.10" />
+    <PackageReference Include="DSaladin.FontAwesome.WPF" Version="6.3.0" />
     <PackageReference Include="GlobalHotKey" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
