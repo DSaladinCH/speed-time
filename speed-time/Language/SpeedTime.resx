@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="automatic-pause" xml:space="preserve">
+    <value>Automatic pause detection</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -135,6 +138,9 @@
   <data name="settings.auto-break" xml:space="preserve">
     <value>Auto add break on lock</value>
   </data>
+  <data name="settings.task-linking" xml:space="preserve">
+    <value>Task Links</value>
+  </data>
   <data name="settings.title" xml:space="preserve">
     <value>Settings</value>
   </data>
@@ -143,6 +149,18 @@
   </data>
   <data name="settings.weekly-hour" xml:space="preserve">
     <value>Weekly Work Hours</value>
+  </data>
+  <data name="tasklinkeditor.check-placeholder" xml:space="preserve">
+    <value>Task Prefix</value>
+  </data>
+  <data name="tasklinkeditor.link-placeholder" xml:space="preserve">
+    <value>Task Link ({0} for ID Placeholder)</value>
+  </data>
+  <data name="tasklinkeditor.title" xml:space="preserve">
+    <value>Task Link</value>
+  </data>
+  <data name="tasklinking.title" xml:space="preserve">
+    <value>Task Links</value>
   </data>
   <data name="timeeditor.break" xml:space="preserve">
     <value>Break</value>

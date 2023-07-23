@@ -53,5 +53,10 @@ namespace DSaladin.SpeedTime.Dialogs
 
             Close(SpeedTime.Language.SpeedTime.Culture.Name != SettingsModel.Instance.SelectedUiLanguage);
         }
+
+        private async void TaskLinking_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsModel.Instance.TaskLinks = await ShowDialog<List<TaskLink>>(new TaskLinking(SettingsModel.Instance.TaskLinks)) ?? new();
+        }
     }
 }

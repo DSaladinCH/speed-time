@@ -18,6 +18,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -95,12 +96,15 @@ namespace DSaladin.SpeedTime.ViewModel
             }
         }
 
+        public bool IsTrackTimeEditorOpen { get; set; }
+
         public RelayCommand ChangeCurrentDateTimeCommand { get; set; }
         public RelayCommand CurrentDateTimeDoubleClickCommand { get; set; }
         public RelayCommand AddTrackingCommand { get; set; }
         public RelayCommand StopCurrentTrackingCommand { get; set; }
         public RelayCommand TrackTimeDoubleClickCommand { get; set; }
         public RelayCommand TrackTimeDeleteCommand { get; set; }
+        public RelayCommand TrackTimeLinkCommand { get; set; }
         public RelayCommand OpenUserSettingsCommand { get; set; }
 
         public MainWindowViewModel()
@@ -123,7 +127,13 @@ namespace DSaladin.SpeedTime.ViewModel
 
             AddTrackingCommand = new(async (_) =>
             {
+                if (IsTrackTimeEditorOpen)
+                    return;
+
+                IsTrackTimeEditorOpen = true;
                 TrackTime? newTime = await ShowDialog<TrackTime>(new TrackTimeEditor());
+                IsTrackTimeEditorOpen = false;
+
                 if (newTime is not null)
                 {
                     await App.dbContext.TrackedTimes.AddAsync(newTime);
@@ -147,7 +157,13 @@ namespace DSaladin.SpeedTime.ViewModel
 
             TrackTimeDoubleClickCommand = new(async (sender) =>
             {
+                if (IsTrackTimeEditorOpen)
+                    return;
+
+                IsTrackTimeEditorOpen = true;
                 await ShowDialog(new TrackTimeEditor((TrackTime)sender));
+                IsTrackTimeEditorOpen = false;
+
                 await App.dbContext.SaveChangesAsync();
                 UpdateView();
             });
@@ -157,6 +173,15 @@ namespace DSaladin.SpeedTime.ViewModel
                 App.dbContext.TrackedTimes.Remove((TrackTime)sender);
                 await App.dbContext.SaveChangesAsync();
                 UpdateView();
+            });
+
+            TrackTimeLinkCommand = new(sender =>
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = TaskLink.ContainsAny(((TrackTime)sender).Title, SettingsModel.Instance.TaskLinks)!.GetLink(((TrackTime)sender).Title),
+                    UseShellExecute = true
+                });
             });
 
             OpenUserSettingsCommand = new(async (_) =>

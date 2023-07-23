@@ -38,6 +38,9 @@ namespace DSaladin.SpeedTime
         private readonly HotKeyManager hotKeyManager = new();
         private HotKey? openQuickTimeTracker;
 
+        private TrackTime? trackTimeBeforePause;
+        private TrackTime? trackTimePause;
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             await dbContext.Database.EnsureCreatedAsync();
@@ -101,31 +104,32 @@ namespace DSaladin.SpeedTime
 
             if (e.Reason == SessionSwitchReason.SessionLock)
             {
-                TrackTime? lastWorkTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
+                trackTimeBeforePause = await dbContext.TrackedTimes.OrderBy(t => t.Id).LastOrDefaultAsync(t => t.TrackingStopped == default);
 
-                if (lastWorkTime is null)
-                    return;
+                if (trackTimeBeforePause is not null)
+                {
+                    if (trackTimeBeforePause.IsAFK || trackTimeBeforePause.IsBreak)
+                        return;
 
-                if (lastWorkTime.IsAFK)
-                    return;
+                    trackTimeBeforePause.StopTime();
+                    dbContext.TrackedTimes.Update(trackTimeBeforePause);
+                }
 
-                lastWorkTime.StopTime();
-                dbContext.TrackedTimes.Update(lastWorkTime);
-                await dbContext.TrackedTimes.AddAsync(new(DateTime.Now, "Automatic pause detection", true));
+                trackTimePause = new(DateTime.Now, Language.SpeedTime.automatic_pause, true);
+                await dbContext.TrackedTimes.AddAsync(trackTimePause);
                 await dbContext.SaveChangesAsync();
             }
             else if (e.Reason == SessionSwitchReason.SessionUnlock)
             {
-                // TODO: Add settings to check if this option is enabled
-                TrackTime? lastWorkTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).Reverse().Skip(1).Take(1).FirstOrDefaultAsync();
-                TrackTime? breakTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
-
-                if (lastWorkTime is null || breakTime is null || !breakTime.IsBreak)
+                if (trackTimePause is null || !trackTimePause.IsBreak)
                     return;
 
-                breakTime.StopTime();
-                dbContext.TrackedTimes.Update(breakTime);
-                await dbContext.TrackedTimes.AddAsync(new(DateTime.Now, lastWorkTime.Title, lastWorkTime.IsBreak));
+                trackTimePause.StopTime();
+                dbContext.TrackedTimes.Update(trackTimePause);
+
+                if (trackTimeBeforePause is not null)
+                    await dbContext.TrackedTimes.AddAsync(new(DateTime.Now, trackTimeBeforePause.Title, trackTimeBeforePause.IsBreak));
+
                 await dbContext.SaveChangesAsync();
             }
         }
