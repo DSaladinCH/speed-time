@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DSaladin.SpeedTime.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -74,6 +75,9 @@ namespace DSaladin.SpeedTime
 
         [NotMapped]
         public bool IsAFK { get; set; } = false;
+
+        [NotMapped]
+        public bool IsMatchingTaskLink { get => TaskLink.ContainsAny(Title, SettingsModel.Instance.TaskLinks) is not null; }
 
         public TrackTime(DateTime trackingStarted, string title, bool isBreak)
         {

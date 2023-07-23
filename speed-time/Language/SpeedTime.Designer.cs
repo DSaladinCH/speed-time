@@ -61,6 +61,15 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Automatic pause detection.
+        /// </summary>
+        public static string automatic_pause {
+            get {
+                return ResourceManager.GetString("automatic-pause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
@@ -115,6 +124,15 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Task Links.
+        /// </summary>
+        public static string settings_task_linking {
+            get {
+                return ResourceManager.GetString("settings.task-linking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string settings_title {
@@ -138,6 +156,42 @@ namespace DSaladin.SpeedTime.Language {
         public static string settings_weekly_hour {
             get {
                 return ResourceManager.GetString("settings.weekly-hour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task Prefix.
+        /// </summary>
+        public static string tasklinkeditor_check_placeholder {
+            get {
+                return ResourceManager.GetString("tasklinkeditor.check-placeholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task Link ({0} for ID Placeholder).
+        /// </summary>
+        public static string tasklinkeditor_link_placeholder {
+            get {
+                return ResourceManager.GetString("tasklinkeditor.link-placeholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task Link.
+        /// </summary>
+        public static string tasklinkeditor_title {
+            get {
+                return ResourceManager.GetString("tasklinkeditor.title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task Links.
+        /// </summary>
+        public static string tasklinking_title {
+            get {
+                return ResourceManager.GetString("tasklinking.title", resourceCulture);
             }
         }
         

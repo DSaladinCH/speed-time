@@ -68,12 +68,39 @@ namespace DSaladin.SpeedTime.Model
             }
         }
 
+        private List<TaskLink> taskLinks = new();
+        public List<TaskLink> TaskLinks
+        {
+            get { return taskLinks; }
+            set
+            {
+                taskLinks = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(TaskLinkCollection));
+            }
+        }
+
+        public ObservableCollection<TaskLink> TaskLinkCollection
+        {
+            get { return new(taskLinks); }
+        }
+
         public static void Load(SettingsModel settings)
         {
             Instance = settings;
 
             if (!AvailableLanguages.Exists(l => l.Id == Instance.SelectedUiLanguage))
                 Instance.SelectedUiLanguage = AvailableLanguages[0].Id;
+
+            Instance.TaskLinkCollection.CollectionChanged += (s, e) =>
+            {
+                if (e.NewItems is not null)
+                    Instance.TaskLinks.AddRange(e.NewItems.Cast<TaskLink>());
+
+                if (e.OldItems is not null)
+                    foreach (TaskLink taskLink in e.OldItems.Cast<TaskLink>())
+                        Instance.TaskLinks.Remove(taskLink);
+            };
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
