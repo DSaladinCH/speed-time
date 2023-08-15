@@ -10,6 +10,7 @@
                  xmlns:fa="https://dsaladin.dev/products/fontawesome/wpf/xaml"
                  xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
                  xmlns:local="clr-namespace:DSaladin.SpeedTime"
+                 xmlns:model="clr-namespace:DSaladin.SpeedTime.Model"
                  mc:Ignorable="d"
                  d:DataContext="{d:DesignInstance viewmodel:MainWindowViewModel}"
                  Background="{DynamicResource BackgroundDefault}"
@@ -76,7 +77,7 @@
         </Grid>
         <ListView x:Name="lst_times" Grid.Row="2" Margin="10,5,10,0" ItemsSource="{Binding TrackedTimesViewSource.View}" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemTemplate>
-                <DataTemplate DataType="{x:Type local:TrackTime}">
+                <DataTemplate DataType="{x:Type model:TrackTime}">
                     <Grid x:Name="grdTime" Margin="5,0,5,0" HorizontalAlignment="Stretch" Background="Transparent">
                         <Grid.InputBindings>
                             <MouseBinding Gesture="LeftDoubleClick"

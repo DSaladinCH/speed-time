@@ -144,8 +144,14 @@
   <data name="settings.title" xml:space="preserve">
     <value>Ajustes</value>
   </data>
+  <data name="settings.ui-accent" xml:space="preserve">
+    <value>Acento</value>
+  </data>
   <data name="settings.ui-language" xml:space="preserve">
     <value>Idioma de la interfaz</value>
+  </data>
+  <data name="settings.ui-theme" xml:space="preserve">
+    <value>Tema</value>
   </data>
   <data name="settings.weekly-hour" xml:space="preserve">
     <value>Horas de trabajo semanales</value>

@@ -1,4 +1,5 @@
 ﻿using DSaladin.FancyPotato.DSWindows;
+using DSaladin.SpeedTime.Model;
 using DSaladin.SpeedTime.ViewModel;
 using System;
 using System.Collections.Generic;

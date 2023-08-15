@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DSaladin.SpeedTime
+namespace DSaladin.SpeedTime.Model
 {
     [DebuggerDisplay("{TrackingStarted.ToString(\"dd.MM.yyyy\")} | {TrackingTime} | IsBreak: {IsBreak}")]
     public class TrackTime : INotifyPropertyChanged
@@ -78,6 +78,8 @@ namespace DSaladin.SpeedTime
 
         [NotMapped]
         public bool IsMatchingTaskLink { get => TaskLink.ContainsAny(Title, SettingsModel.Instance.TaskLinks) is not null; }
+
+        public virtual List<TrackAttribute> Attributes { get; set; }
 
         public TrackTime(DateTime trackingStarted, string title, bool isBreak)
         {

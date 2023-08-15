@@ -14,6 +14,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Data;
 using System.Diagnostics;
 using DSaladin.FancyPotato;
+using DSaladin.SpeedTime.Model;
 
 namespace DSaladin.SpeedTime.ViewModel
 {

@@ -142,11 +142,29 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accent.
+        /// </summary>
+        public static string settings_ui_accent {
+            get {
+                return ResourceManager.GetString("settings.ui-accent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to UI Language.
         /// </summary>
         public static string settings_ui_language {
             get {
                 return ResourceManager.GetString("settings.ui-language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Theme.
+        /// </summary>
+        public static string settings_ui_theme {
+            get {
+                return ResourceManager.GetString("settings.ui-theme", resourceCulture);
             }
         }
         
