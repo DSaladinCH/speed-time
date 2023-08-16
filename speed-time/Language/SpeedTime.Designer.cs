@@ -79,6 +79,15 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        public static string open {
+            get {
+                return ResourceManager.GetString("open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to AFK.
         /// </summary>
         public static string quicktimetracker_afk {
@@ -124,6 +133,24 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Behavior.
+        /// </summary>
+        public static string settings_behavior_title {
+            get {
+                return ResourceManager.GetString("settings.behavior.title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Integrations.
+        /// </summary>
+        public static string settings_integrations_title {
+            get {
+                return ResourceManager.GetString("settings.integrations.title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Task Links.
         /// </summary>
         public static string settings_task_linking {
@@ -142,11 +169,38 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accent.
+        /// </summary>
+        public static string settings_ui_accent {
+            get {
+                return ResourceManager.GetString("settings.ui-accent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to UI Language.
         /// </summary>
         public static string settings_ui_language {
             get {
                 return ResourceManager.GetString("settings.ui-language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Theme.
+        /// </summary>
+        public static string settings_ui_theme {
+            get {
+                return ResourceManager.GetString("settings.ui-theme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UI.
+        /// </summary>
+        public static string settings_ui_title {
+            get {
+                return ResourceManager.GetString("settings.ui.title", resourceCulture);
             }
         }
         

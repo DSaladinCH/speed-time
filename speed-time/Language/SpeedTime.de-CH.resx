@@ -123,6 +123,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
+  <data name="open" xml:space="preserve">
+    <value>Öffnen</value>
+  </data>
   <data name="quicktimetracker.afk" xml:space="preserve">
     <value>AFK</value>
   </data>
@@ -138,14 +141,29 @@
   <data name="settings.auto-break" xml:space="preserve">
     <value>Auto Pause beim Sperren</value>
   </data>
+  <data name="settings.behavior.title" xml:space="preserve">
+    <value>Verhalten</value>
+  </data>
+  <data name="settings.integrations.title" xml:space="preserve">
+    <value>Integrationen</value>
+  </data>
   <data name="settings.task-linking" xml:space="preserve">
     <value>Task Verbindungen</value>
   </data>
   <data name="settings.title" xml:space="preserve">
     <value>Einstellungen</value>
   </data>
+  <data name="settings.ui-accent" xml:space="preserve">
+    <value>Akzent</value>
+  </data>
   <data name="settings.ui-language" xml:space="preserve">
     <value>UI Sprache</value>
+  </data>
+  <data name="settings.ui-theme" xml:space="preserve">
+    <value>Thema</value>
+  </data>
+  <data name="settings.ui.title" xml:space="preserve">
+    <value>GUI</value>
   </data>
   <data name="settings.weekly-hour" xml:space="preserve">
     <value>Wöchentliche Arbeitsstunden</value>

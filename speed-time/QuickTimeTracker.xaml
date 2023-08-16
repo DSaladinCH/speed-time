@@ -10,6 +10,7 @@
                  xmlns:potato="https://dsaladin.dev/products/fancypotato/wpf/xaml"
                  xmlns:language="clr-namespace:DSaladin.SpeedTime.Language"
                  xmlns:local="clr-namespace:DSaladin.SpeedTime"
+                 xmlns:model="clr-namespace:DSaladin.SpeedTime.Model"
                  mc:Ignorable="d"
                  d:DataContext="{d:DesignInstance viewmodel:QuickTimeTrackerViewModel}"
                  WindowType="NoBar"
@@ -19,13 +20,13 @@
     <potato:DSWindow.Resources>
         <converter:DateTimeConverter x:Key="DateTimeConverter" />
 
-        <DataTemplate x:Key="ItemTemplate" DataType="{x:Type local:TrackTime}">
+        <DataTemplate x:Key="ItemTemplate" DataType="{x:Type model:TrackTime}">
             <Grid>
                 <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Padding="5,0,5,0" TextTrimming="CharacterEllipsis" />
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="SelectedTemplate" DataType="{x:Type local:TrackTime}">
+        <DataTemplate x:Key="SelectedTemplate" DataType="{x:Type model:TrackTime}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

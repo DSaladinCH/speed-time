@@ -1,5 +1,6 @@
 ﻿using DSaladin.FancyPotato;
 using DSaladin.FancyPotato.CustomControls;
+using DSaladin.SpeedTime.Converter;
 using DSaladin.SpeedTime.Model;
 using System;
 using System.Collections.Generic;
@@ -35,10 +36,25 @@ namespace DSaladin.SpeedTime.Dialogs
             }
         }
 
+        public RelayCommand TaskLinkingCommand { get; set; }
+
         public UserSettings()
         {
             InitializeComponent();
             DataContext = this;
+
+            #region ListBox Grouping
+            lsbOptions.Items.IsLiveGrouping = true;
+
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lsbOptions.ItemsSource);
+            PropertyGroupDescription groupDescription = new("Category", new SettingCategoryConverter());
+            view.GroupDescriptions.Add(groupDescription);
+            #endregion
+
+            #region Commands
+            TaskLinkingCommand = new(async a =>
+                SettingsModel.Instance.TaskLinks = await ShowDialog<List<TaskLink>>(new TaskLinking(SettingsModel.Instance.TaskLinks)) ?? new());
+            #endregion
 
             CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
         }

@@ -1,5 +1,6 @@
 ﻿using DSaladin.FancyPotato;
 using DSaladin.FancyPotato.CustomControls;
+using DSaladin.SpeedTime.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;

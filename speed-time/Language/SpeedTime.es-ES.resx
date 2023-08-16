@@ -123,6 +123,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
   </data>
+  <data name="open" xml:space="preserve">
+    <value>Abrir</value>
+  </data>
   <data name="quicktimetracker.afk" xml:space="preserve">
     <value>AFK</value>
   </data>
@@ -138,14 +141,29 @@
   <data name="settings.auto-break" xml:space="preserve">
     <value>Pausa automática al bloquear</value>
   </data>
+  <data name="settings.behavior.title" xml:space="preserve">
+    <value>Comportamiento</value>
+  </data>
+  <data name="settings.integrations.title" xml:space="preserve">
+    <value>Integraciones</value>
+  </data>
   <data name="settings.task-linking" xml:space="preserve">
     <value>Conexión de tareas</value>
   </data>
   <data name="settings.title" xml:space="preserve">
     <value>Ajustes</value>
   </data>
+  <data name="settings.ui-accent" xml:space="preserve">
+    <value>Acento</value>
+  </data>
   <data name="settings.ui-language" xml:space="preserve">
     <value>Idioma de la interfaz</value>
+  </data>
+  <data name="settings.ui-theme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="settings.ui.title" xml:space="preserve">
+    <value>Interfaz de usuario</value>
   </data>
   <data name="settings.weekly-hour" xml:space="preserve">
     <value>Horas de trabajo semanales</value>
