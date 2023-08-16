@@ -9,8 +9,63 @@
                         xmlns:local="clr-namespace:DSaladin.SpeedTime.Dialogs"
                         xmlns:converter="clr-namespace:DSaladin.SpeedTime.Converter"
                         xmlns:models="clr-namespace:DSaladin.SpeedTime.Model"
+                        xmlns:settings="clr-namespace:DSaladin.SpeedTime.Model.Settings"
+                        d:DataContext="{d:DesignInstance local:UserSettings}"
                         mc:Ignorable="d" 
                         d:DesignHeight="300" d:DesignWidth="400" MaxHeight="400">
+    <potato:DSDialogControl.Resources>
+        <converter:ListToGenericListConverter x:Key="ListToGenericListConverter"/>
+
+        <Style TargetType="{x:Type settings:DropDownSetting}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type settings:DropDownSetting}">
+                        <ComboBox Grid.Column="1" Height="30" ItemsSource="{Binding List, Converter={StaticResource ListToGenericListConverter}}"
+                                  DisplayMemberPath="{Binding DisplayMemberPath}" SelectedValuePath="{Binding SelectedValuePath}"  SelectedValue="{Binding Value}"
+                                  IsReadOnly="True" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type settings:ActionSetting}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type settings:ActionSetting}">
+                        <Button Grid.Column="1" Height="30" Content="{Binding ActionText}" Padding="0" Command="{Binding ActionCommand}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type settings:CheckBoxSetting}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type settings:CheckBoxSetting}">
+                        <CheckBox Grid.Column="1" HorizontalAlignment="Right" Content="" IsChecked="{Binding Value}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type settings:NumberTextBoxSetting}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type settings:NumberTextBoxSetting}">
+                        <potato:DSTextBox Grid.Column="1" Height="30" HorizontalContentAlignment="Right">
+                            <potato:DSTextBox.Text>
+                                <Binding Path="Value" ConverterParameter="N2">
+                                    <Binding.Converter>
+                                        <converter:DoubleConverter />
+                                    </Binding.Converter>
+                                </Binding>
+                            </potato:DSTextBox.Text>
+                        </potato:DSTextBox>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </potato:DSDialogControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
@@ -29,75 +84,62 @@
             <Label Grid.Column="1" Content="{x:Static language:SpeedTime.settings_title}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" />
         </Grid>
 
-        <ScrollViewer Grid.Row="1" Margin="15,10,10,0">
-            <StackPanel>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="80" />
-                    </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1" Margin="15,0,15,10">
+            <ListBox x:Name="lsbOptions" Background="{x:Null}" BorderBrush="{x:Null}" VirtualizingPanel.IsVirtualizing="False"
+                     VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Foreground="{DynamicResource ForegroundDefault}">
+                <ListBox.Resources>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource DefaultListBoxItem}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListBox.Resources>
+                <ListBox.ItemTemplate>
+                    <HierarchicalDataTemplate>
+                        <Border Height="50" Background="{DynamicResource BackgroundG}" Margin="0,0,10,0" BorderThickness="1" BorderBrush="{DynamicResource BackgroundH}"
+                                CornerRadius="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*" MaxWidth="200" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding OptionName}" ToolTip="{Binding ToolTip}" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource ForegroundDefault}"
+                                           VerticalAlignment="Center" Margin="10,0,10,0" HorizontalAlignment="Stretch"/>
+                                <ContentControl Grid.Column="1" DataContext="{Binding}" Content="{Binding}" Margin="10,0,10,0" />
+                            </Grid>
+                        </Border>
+                    </HierarchicalDataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding Name}" Foreground="{DynamicResource ForegroundDefault}" FontSize="14" FontWeight="Bold" Margin="5,15,10,-5" />
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListBox.GroupStyle>
+                <ListBox.ItemsSource>
+                    <x:Array Type="{x:Type settings:BaseSetting}">
+                        <settings:DropDownSetting Category="UI" OptionName="{x:Static language:SpeedTime.settings_ui_language}" DisplayMemberPath="Name" SelectedValuePath="Id"
+                                                  List="{Binding Source={x:Static models:SettingsModel.AvailableLanguages}}"
+                                                  Value="{Binding Source={x:Static models:SettingsModel.Instance}, Path=SelectedUiLanguage}" />
+                        <settings:DropDownSetting Category="UI" OptionName="{x:Static language:SpeedTime.settings_ui_theme}" DisplayMemberPath="ThemeName"
+                                                  List="{Binding Source={x:Static potato:Themes.List}}"
+                                                  Value="{Binding Source={x:Static potato:ColorManagement.Instance}, Path=CurrTheme}" />
+                        <settings:DropDownSetting Category="UI" OptionName="{x:Static language:SpeedTime.settings_ui_accent}" DisplayMemberPath="AccentName"
+                                                  List="{Binding Source={x:Static potato:Accents.List}}"
+                                                  Value="{Binding Source={x:Static potato:ColorManagement.Instance}, Path=CurrAccent}" />
+                        <settings:CheckBoxSetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_auto_break}"
+                                                  Value="{Binding Source={x:Static models:SettingsModel.Instance}, Path=AutoAddBreak}"/>
+                        <settings:NumberTextBoxSetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_weekly_hour}"
+                                                       Value="{Binding Source={x:Static models:SettingsModel.Instance}, Path=WeeklyWorkHours}"/>
+                        <settings:ActionSetting Category="Integrations" OptionName="{x:Static language:SpeedTime.settings_task_linking}"
+                                                ActionText="{x:Static language:SpeedTime.open}"
+                                                ActionCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:UserSettings}}, Path=TaskLinkingCommand}" />
+                    </x:Array>
+                </ListBox.ItemsSource>
+            </ListBox>
+        </Grid>
 
-                    <Label Grid.Column="0" Content="{x:Static language:SpeedTime.settings_auto_break}" FontWeight="Bold" />
-                    <CheckBox Grid.Column="1" HorizontalAlignment="Right" Content="" IsChecked="{Binding Source={x:Static models:SettingsModel.Instance}, Path=AutoAddBreak}" />
-                </Grid>
-                <Grid Margin="0,10,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="60" />
-                    </Grid.ColumnDefinitions>
-
-                    <Label Grid.Column="0" Content="{x:Static language:SpeedTime.settings_weekly_hour}" FontWeight="Bold" />
-                    <potato:DSTextBox Grid.Column="1" Height="30" HorizontalContentAlignment="Right">
-                        <potato:DSTextBox.Text>
-                            <Binding Source="{x:Static models:SettingsModel.Instance}" Path="WeeklyWorkHours" ConverterParameter="N2">
-                                <Binding.Converter>
-                                    <converter:DoubleConverter />
-                                </Binding.Converter>
-                            </Binding>
-                        </potato:DSTextBox.Text>
-                    </potato:DSTextBox>
-                </Grid>
-                <Grid Margin="0,10,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="150" />
-                    </Grid.ColumnDefinitions>
-
-                    <Label Grid.Column="0" Content="{x:Static language:SpeedTime.settings_ui_language}" FontWeight="Bold" />
-                    <ComboBox Grid.Column="1" Height="30" ItemsSource="{Binding Source={x:Static models:SettingsModel.AvailableLanguages}}" DisplayMemberPath="Name"
-                          SelectedValuePath="Id" SelectedValue="{Binding Source={x:Static models:SettingsModel.Instance}, Path=SelectedUiLanguage}" />
-                </Grid>
-                <Grid Margin="0,10,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="150" />
-                    </Grid.ColumnDefinitions>
-
-                    <Label Grid.Column="0" Content="{x:Static language:SpeedTime.settings_task_linking}" FontWeight="Bold" />
-                    <Button Grid.Column="1" Height="30" Content="Task Linking" Padding="0" Click="TaskLinking_Click" />
-                </Grid>
-                <Grid Margin="0,10,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="150" />
-                    </Grid.ColumnDefinitions>
-
-                    <Label Grid.Column="0" Content="{x:Static language:SpeedTime.settings_ui_theme}" FontWeight="Bold" />
-                    <ComboBox Grid.Column="1" Height="30" ItemsSource="{Binding Source={x:Static potato:Themes.List}}" DisplayMemberPath="ThemeName"
-                          SelectedItem="{Binding Source={x:Static potato:ColorManagement.Instance}, Path=CurrTheme}" />
-                </Grid>
-                <Grid Margin="0,10,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="150" />
-                    </Grid.ColumnDefinitions>
-
-                    <Label Grid.Column="0" Content="{x:Static language:SpeedTime.settings_ui_accent}" FontWeight="Bold" />
-                    <ComboBox Grid.Column="1" Height="30" ItemsSource="{Binding Source={x:Static potato:Accents.List}}" DisplayMemberPath="AccentName"
-                          SelectedItem="{Binding Source={x:Static potato:ColorManagement.Instance}, Path=CurrAccent}" />
-                </Grid>
-            </StackPanel>
-        </ScrollViewer>
         <StackPanel Grid.Row="2" HorizontalAlignment="Center">
             <Line X1="0" X2="230" Y1="0" Y2="0" Stroke="{DynamicResource BackgroundA}" StrokeThickness="1" />
             <Label Content="{Binding CurrentVersion}" ContentStringFormat="Speed Time • Version {0}" Padding="0,10,0,0" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" />
