@@ -12,6 +12,7 @@ namespace DSaladin.SpeedTime
     {
         public DbSet<TrackTime> TrackedTimes { get; set; }
         public DbSet<TrackAttribute> TrackAttributes { get; set; }
+        public DbSet<UserCredential> UserCredentials { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
