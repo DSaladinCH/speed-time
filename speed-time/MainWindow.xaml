@@ -69,6 +69,8 @@
                 <Button fa:Content.Icon="SolidAnglesRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="7" />
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,3,10,3">
+                <potato:DSButton Grid.Column="2" fa:Content.Icon="BrandsAtlassian" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0" Style="{DynamicResource TransparentAccentButton}"
+                        Command="{Binding UpdateJiraCommand}" Width="30" />
                 <potato:DSButton Grid.Column="2" fa:Content.Icon="SolidPlus" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0" Style="{DynamicResource TransparentAccentButton}"
                         Command="{Binding AddTrackingCommand}" Width="30" />
                 <potato:DSButton Grid.Column="2" fa:Content.Icon="SolidStop" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0" Style="{DynamicResource TransparentAccentButton}"
