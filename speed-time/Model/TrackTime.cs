@@ -118,11 +118,15 @@ namespace DSaladin.SpeedTime.Model
 
         public void SetAttribute(string key, string value)
         {
-            Attributes.Add(new TrackAttribute()
-            {
-                Name = key,
-                Value = value
-            });
+            TrackAttribute? trackAttribute = Attributes.FirstOrDefault(ta => ta.Name == key);
+            if (trackAttribute is null)
+                Attributes.Add(new TrackAttribute()
+                {
+                    Name = key,
+                    Value = value
+                });
+            else
+                trackAttribute.Value = value;
 
             App.dbContext.Update(this);
             App.dbContext.SaveChanges();
@@ -140,6 +144,11 @@ namespace DSaladin.SpeedTime.Model
         public bool ContainsAttribute(string key)
         {
             return GetAttribute(key) is not null;
+        }
+
+        public void RemoveAttributes(params string[] keys)
+        {
+            Attributes.RemoveAll(ta => keys.Contains(ta.Name));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

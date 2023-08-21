@@ -1,4 +1,5 @@
-﻿using DSaladin.SpeedTime.Model;
+﻿using DSaladin.FontAwesome.WPF;
+using DSaladin.SpeedTime.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -29,12 +30,14 @@ namespace DSaladin.SpeedTime.Integrations
 
         internal static async Task UploadWorklogsAsync(List<TrackTime> trackTimes)
         {
-            await UpdateWorklogs(trackTimes.Where(t => t.ContainsAttribute(WorklogAttribute)).ToList());
-            await CreateWorklogsAsync(trackTimes.Where(t => !t.ContainsAttribute(WorklogAttribute)).ToList());
+            await UpdateWorklogsAsync(trackTimes);
         }
 
-        private static async Task CreateWorklogsAsync(List<TrackTime> trackTimes)
+        private static async Task UpdateWorklogsAsync(List<TrackTime> trackTimes)
         {
+            if (trackTimes.Count == 0)
+                return;
+
             UserCredential? userCredential = await App.dbContext.UserCredentials.FirstOrDefaultAsync(uc => uc.ServiceType == ServiceType.Jira);
             if (userCredential is null)
                 return;
@@ -51,16 +54,50 @@ namespace DSaladin.SpeedTime.Integrations
 
                 foreach (TrackTime trackTime in trackTimes)
                 {
-                    string? issueKey = GetIssueKey(trackTime);
-                    if (issueKey is null)
+                    bool shouldCreate = false;
+                    bool shouldDelete = false;
+
+                    string? savedKey = trackTime.GetAttribute(IssueKeyAttribute);
+                    string? currentIssueKey = GetIssueKey(trackTime);
+
+                    if (savedKey is null && currentIssueKey is null)
                         continue;
 
-                    trackTime.SetAttribute(IssueKeyAttribute, issueKey);
+                    if (savedKey is null && currentIssueKey is not null)
+                        shouldCreate = true;
 
-                    HttpRequestMessage httpRequestMessage = new(HttpMethod.Post, $"/rest/api/3/issue/{issueKey}/worklog")
+                    if (savedKey is not null && currentIssueKey is null)
+                        shouldDelete = true;
+
+                    if (savedKey is not null && currentIssueKey is not null)
+                        if (savedKey != currentIssueKey)
+                        {
+                            shouldCreate = true;
+                            shouldDelete = true;
+                        }
+
+                    if (shouldDelete)
+                        // TODO: Show error
+                        if (!await DeleteWorklogAsync(trackTime))
+                            continue;
+
+                    HttpRequestMessage? httpRequestMessage = null;
+                    if (!shouldCreate && !shouldDelete)
                     {
-                        Content = await GetContentAsync(trackTime)
-                    };
+                        string? worklogId = trackTime.GetAttribute(WorklogAttribute);
+                        if (worklogId is null)
+                            continue;
+
+                        httpRequestMessage = new(HttpMethod.Put, $"/rest/api/3/issue/{currentIssueKey}/worklog/{worklogId}");
+                    }
+                    else if (shouldCreate)
+                        httpRequestMessage = new(HttpMethod.Post, $"/rest/api/3/issue/{currentIssueKey}/worklog");
+
+                    // No request should be sent
+                    if (httpRequestMessage is null)
+                        continue;
+
+                    httpRequestMessage.Content = await GetContentAsync(trackTime);
 
                     HttpResponseMessage httpResponseMessage = await client.SendAsync(httpRequestMessage);
                     using JsonDocument? response = JsonDocument.Parse(await httpResponseMessage.Content.ReadAsStreamAsync());
@@ -71,6 +108,8 @@ namespace DSaladin.SpeedTime.Integrations
                     // TODO: Show error
                     if (!httpResponseMessage.IsSuccessStatusCode)
                         continue;
+
+                    trackTime.SetAttribute(IssueKeyAttribute, currentIssueKey!);
 
                     if (response.RootElement.TryGetProperty("id", out JsonElement id))
                         trackTime.SetAttribute(WorklogAttribute, id.GetString()!);
@@ -94,14 +133,14 @@ namespace DSaladin.SpeedTime.Integrations
             }
         }
 
-        private static async Task UpdateWorklogs(List<TrackTime> trackTimes)
+        internal static async Task<bool> DeleteWorklogAsync(TrackTime trackTime)
         {
-            if (trackTimes.Count == 0)
-                return;
+            if (!trackTime.ContainsAttribute(WorklogAttribute))
+                return true;
 
             UserCredential? userCredential = await App.dbContext.UserCredentials.FirstOrDefaultAsync(uc => uc.ServiceType == ServiceType.Jira);
             if (userCredential is null)
-                return;
+                return false;
 
             byte[] decryptedBasicAuthentication = new byte[1];
             string? basicAuthentication = null;
@@ -113,71 +152,23 @@ namespace DSaladin.SpeedTime.Integrations
                 client.BaseAddress = new Uri(userCredential.ServiceUri);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", basicAuthentication);
 
-                foreach (TrackTime trackTime in trackTimes)
-                {
-                    // TODO: Check if changed? Or should the check before that?
-                    string? issueKey = trackTime.GetAttribute(IssueKeyAttribute);
-                    if (issueKey is null)
-                        continue;
-
-                    string? worklogId = trackTime.GetAttribute(WorklogAttribute);
-                    if (worklogId is null)
-                        continue;
-
-                    HttpRequestMessage httpRequestMessage = new(HttpMethod.Put, $"/rest/api/3/issue/{issueKey}/worklog/{worklogId}")
-                    {
-                        Content = await GetContentAsync(trackTime)
-                    };
-
-                    HttpResponseMessage httpResponseMessage = await client.SendAsync(httpRequestMessage);
-                    string response = await httpResponseMessage.Content.ReadAsStringAsync();
-                }
-            }
-            finally
-            {
-                // Zero out the char array
-                Array.Clear(decryptedBasicAuthentication);
-
-                // If you also want to attempt to zero out the string's underlying memory (though with limitations due to string immutability):
-                if (basicAuthentication != null)
-                {
-                    GCHandle handle = GCHandle.Alloc(basicAuthentication, GCHandleType.Pinned);
-                    for (int i = 0; i < basicAuthentication.Length; i++)
-                    {
-                        Marshal.WriteByte(handle.AddrOfPinnedObject() + i * 2, 0);
-                    }
-                    handle.Free();
-                }
-            }
-        }
-
-        internal static async Task DeleteWorklogAsync(TrackTime trackTime)
-        {
-            UserCredential? userCredential = await App.dbContext.UserCredentials.FirstOrDefaultAsync(uc => uc.ServiceType == ServiceType.Jira);
-            if (userCredential is null)
-                return;
-
-            byte[] decryptedBasicAuthentication = new byte[1];
-            string? basicAuthentication = null;
-            try
-            {
-                using var client = new HttpClient();
-                decryptedBasicAuthentication = ProtectedData.Unprotect(userCredential.Credential, null, DataProtectionScope.CurrentUser);
-                basicAuthentication = Encoding.UTF8.GetString(decryptedBasicAuthentication);
-                client.BaseAddress = new Uri(userCredential.ServiceUri);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", basicAuthentication);
-
-                string? issueKey = GetIssueKey(trackTime);
+                string? issueKey = trackTime.GetAttribute(IssueKeyAttribute);
                 if (issueKey is null)
-                    return;
+                    return true;
 
                 string? worklogId = trackTime.GetAttribute(WorklogAttribute);
                 if (worklogId is null)
-                    return;
+                    return true;
 
                 HttpRequestMessage httpRequestMessage = new(HttpMethod.Delete, $"/rest/api/3/issue/{issueKey}/worklog/{worklogId}");
                 HttpResponseMessage httpResponseMessage = await client.SendAsync(httpRequestMessage);
                 string response = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                // If the remove was successful, remove the attributes
+                if (httpResponseMessage.IsSuccessStatusCode)
+                    trackTime.RemoveAttributes(IssueKeyAttribute, WorklogAttribute);
+
+                return httpResponseMessage.IsSuccessStatusCode;
             }
             finally
             {
