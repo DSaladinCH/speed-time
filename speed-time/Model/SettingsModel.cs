@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DSaladin.SpeedTime.Integrations;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -85,6 +86,8 @@ namespace DSaladin.SpeedTime.Model
             get { return new(taskLinks); }
         }
 
+        public bool JiraIsEnabled { get => App.dbContext.UserCredentials.Any(uc => uc.ServiceType == ServiceType.Jira); }
+
         public static void Load(SettingsModel settings)
         {
             Instance = settings;
@@ -104,7 +107,7 @@ namespace DSaladin.SpeedTime.Model
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        private void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
+        internal void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

@@ -236,6 +236,7 @@ namespace DSaladin.SpeedTime.Integrations
             }
 
             await App.dbContext.SaveChangesAsync();
+            SettingsModel.Instance.NotifyPropertyChanged(nameof(SettingsModel.Instance.JiraIsEnabled));
         }
     }
 }
