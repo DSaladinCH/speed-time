@@ -1,6 +1,7 @@
 ﻿using DSaladin.FancyPotato;
 using DSaladin.FancyPotato.CustomControls;
 using DSaladin.SpeedTime.Converter;
+using DSaladin.SpeedTime.Integrations;
 using DSaladin.SpeedTime.Model;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,7 @@ namespace DSaladin.SpeedTime.Dialogs
         }
 
         public RelayCommand TaskLinkingCommand { get; set; }
+        public RelayCommand JiraCommand { get; set; }
 
         public UserSettings()
         {
@@ -54,6 +56,8 @@ namespace DSaladin.SpeedTime.Dialogs
             #region Commands
             TaskLinkingCommand = new(async a =>
                 SettingsModel.Instance.TaskLinks = await ShowDialog<List<TaskLink>>(new TaskLinking(SettingsModel.Instance.TaskLinks)) ?? new());
+
+            JiraCommand = new(async a => await ShowDialog(new JiraSettings()));
             #endregion
 
             CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version!.ToString();

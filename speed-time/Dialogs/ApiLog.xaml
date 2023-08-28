@@ -1,0 +1,84 @@
+﻿<potato:DSDialogControl x:Class="DSaladin.SpeedTime.Dialogs.ApiLog"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                        xmlns:potato="https://dsaladin.dev/products/fancypotato/wpf/xaml"
+                        xmlns:fa="https://dsaladin.dev/products/fontawesome/wpf/xaml"
+                        xmlns:local="clr-namespace:DSaladin.SpeedTime.Dialogs"
+                        xmlns:model="clr-namespace:DSaladin.SpeedTime.Model"
+                        xmlns:language="clr-namespace:DSaladin.SpeedTime.Language"
+                        mc:Ignorable="d"
+                        d:DataContext="{d:DesignInstance local:ApiLog}"
+                        d:DesignHeight="300" d:DesignWidth="400" MaxHeight="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="60" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" fa:Content.Icon="SolidArrowLeft" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentButton}"
+                    Click="Close_Click" />
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <Label Content="Api Log" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Padding="0,0,0,5" />
+                <Label Content="Response Messages" FontSize="12" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{DynamicResource ForegroundA}"
+                       Padding="0,0,0,5" />
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <ListBox ItemsSource="{Binding Logs}" Background="{x:Null}" BorderBrush="{x:Null}" VirtualizingPanel.IsVirtualizing="False"
+                     VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.Resources>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource DefaultListBoxItem}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListBox.Resources>
+                <ListBox.ItemTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type model:ApiLogEntry}">
+                        <Border Background="{DynamicResource BackgroundG}" Margin="0,0,10,0" BorderThickness="1" BorderBrush="{DynamicResource BackgroundH}"
+                                CornerRadius="5" Padding="5,5,5,5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Grid.Column="0" Content="{Binding Context, StringFormat='Context: {0}'}" Foreground="{DynamicResource ForegroundA}" Padding="5,5,5,0" />
+                                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Label Content="Success: " Foreground="{DynamicResource ForegroundA}" Padding="5,5,5,0" />
+                                    <Label Padding="5,5,5,0">
+                                        <Label.Style>
+                                            <Style TargetType="{x:Type Label}" BasedOn="{StaticResource DefaultLabel}">
+                                                <Setter Property="fa:Content.Icon" Value="SolidXmark"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource ErrorDark}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSuccess}" Value="True">
+                                                        <Setter Property="fa:Content.Icon" Value="SolidCheck"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource OKDark}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+                                </StackPanel>
+                                <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Foreground="{DynamicResource ForegroundDefault}" Text="{Binding ResponseMessage}"
+                                           TextWrapping="Wrap" Padding="5,5,5,5" />
+                            </Grid>
+                        </Border>
+                    </HierarchicalDataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Grid>
+</potato:DSDialogControl>

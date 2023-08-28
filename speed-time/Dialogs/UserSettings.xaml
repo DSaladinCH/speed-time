@@ -135,6 +135,9 @@
                         <settings:ActionSetting Category="Integrations" OptionName="{x:Static language:SpeedTime.settings_task_linking}"
                                                 ActionText="{x:Static language:SpeedTime.open}"
                                                 ActionCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:UserSettings}}, Path=TaskLinkingCommand}" />
+                        <settings:ActionSetting Category="Integrations" OptionName="Jira"
+                                                ActionText="{x:Static language:SpeedTime.open}"
+                                                ActionCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:UserSettings}}, Path=JiraCommand}" />
                     </x:Array>
                 </ListBox.ItemsSource>
             </ListBox>

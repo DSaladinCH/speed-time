@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DSaladin.SpeedTime.Integrations;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -6,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -85,6 +87,20 @@ namespace DSaladin.SpeedTime.Model
             get { return new(taskLinks); }
         }
 
+        private bool jiraZeroOnDelete;
+        public bool JiraZeroOnDelete
+        {
+            get { return jiraZeroOnDelete; }
+            set
+            {
+                jiraZeroOnDelete = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        [JsonIgnore]
+        public bool JiraIsEnabled { get => App.dbContext.UserCredentials.Any(uc => uc.ServiceType == ServiceType.Jira); }
+
         public static void Load(SettingsModel settings)
         {
             Instance = settings;
@@ -104,7 +120,7 @@ namespace DSaladin.SpeedTime.Model
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        private void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
+        internal void NotifyPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

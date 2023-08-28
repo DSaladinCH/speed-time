@@ -1,6 +1,8 @@
 ﻿using DSaladin.FancyPotato;
+using DSaladin.FancyPotato.DSUserControls;
 using DSaladin.FancyPotato.DSWindows;
 using DSaladin.SpeedTime.Dialogs;
+using DSaladin.SpeedTime.Integrations;
 using DSaladin.SpeedTime.Model;
 using GlobalHotKey;
 using Microsoft.EntityFrameworkCore;
@@ -100,6 +102,7 @@ namespace DSaladin.SpeedTime.ViewModel
 
         public RelayCommand ChangeCurrentDateTimeCommand { get; set; }
         public RelayCommand CurrentDateTimeDoubleClickCommand { get; set; }
+        public RelayCommand UpdateJiraCommand { get; set; }
         public RelayCommand AddTrackingCommand { get; set; }
         public RelayCommand StopCurrentTrackingCommand { get; set; }
         public RelayCommand TrackTimeDoubleClickCommand { get; set; }
@@ -123,6 +126,12 @@ namespace DSaladin.SpeedTime.ViewModel
             {
                 CurrentDateTime = DateTime.Today;
                 UpdateView();
+            });
+
+            UpdateJiraCommand = new(async (_) =>
+            {
+                // TODO: Check if Jira Enabled
+                await JiraService.UploadWorklogsAsync(TrackedTimesViewSource.View.Cast<TrackTime>().ToList());
             });
 
             AddTrackingCommand = new(async (_) =>
@@ -170,7 +179,16 @@ namespace DSaladin.SpeedTime.ViewModel
 
             TrackTimeDeleteCommand = new(async (sender) =>
             {
-                App.dbContext.TrackedTimes.Remove((TrackTime)sender);
+                TrackTime trackTime = (TrackTime)sender;
+                // TODO: Check if Jira Enabled
+                if (SettingsModel.Instance.JiraIsEnabled)
+                {
+                    ApiLogEntry? logEntry = await JiraService.DeleteWorklogAsync(trackTime);
+                    if (logEntry is not null)
+                        await ShowDialog(new ApiLog(new() { logEntry }));
+                }
+
+                App.dbContext.TrackedTimes.Remove(trackTime);
                 await App.dbContext.SaveChangesAsync();
                 UpdateView();
             });
@@ -205,7 +223,7 @@ namespace DSaladin.SpeedTime.ViewModel
         public override void WindowLoaded(object sender, RoutedEventArgs eventArgs)
         {
             // load the entities into EF Core
-            App.dbContext.TrackedTimes.Load();
+            App.dbContext.TrackedTimes.Include(t => t.Attributes).Load();
 
             // bind to the source
             TrackedTimesViewSource = new();
@@ -260,7 +278,7 @@ namespace DSaladin.SpeedTime.ViewModel
         }
 
         public static DateRange GetWeekRange(DateTime date)
-        {            
+        {
             DayOfWeek firstDayOfWeek = DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek;
 
             int diff = (date.DayOfWeek - firstDayOfWeek + 7) % 7;

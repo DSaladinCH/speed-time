@@ -79,7 +79,7 @@ namespace DSaladin.SpeedTime.Model
         [NotMapped]
         public bool IsMatchingTaskLink { get => TaskLink.ContainsAny(Title, SettingsModel.Instance.TaskLinks) is not null; }
 
-        public virtual List<TrackAttribute> Attributes { get; set; }
+        public virtual List<TrackAttribute> Attributes { get; set; } = new();
 
         public TrackTime(DateTime trackingStarted, string title, bool isBreak)
         {
@@ -114,6 +114,41 @@ namespace DSaladin.SpeedTime.Model
         public static TrackTime Empty()
         {
             return new(DateTime.Today, "", false);
+        }
+
+        public void SetAttribute(string key, string value)
+        {
+            TrackAttribute? trackAttribute = Attributes.FirstOrDefault(ta => ta.Name == key);
+            if (trackAttribute is null)
+                Attributes.Add(new TrackAttribute()
+                {
+                    Name = key,
+                    Value = value
+                });
+            else
+                trackAttribute.Value = value;
+
+            App.dbContext.Update(this);
+            App.dbContext.SaveChanges();
+        }
+
+        public string? GetAttribute(string key)
+        {
+            TrackAttribute? trackAttribute = Attributes.FirstOrDefault(ta => ta.Name == key);
+            if (trackAttribute is null)
+                return null;
+
+            return trackAttribute.Value;
+        }
+
+        public bool ContainsAttribute(string key)
+        {
+            return GetAttribute(key) is not null;
+        }
+
+        public void RemoveAttributes(params string[] keys)
+        {
+            Attributes.RemoveAll(ta => keys.Contains(ta.Name));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
