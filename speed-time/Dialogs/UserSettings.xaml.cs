@@ -57,7 +57,7 @@ namespace DSaladin.SpeedTime.Dialogs
             TaskLinkingCommand = new(async a =>
                 SettingsModel.Instance.TaskLinks = await ShowDialog<List<TaskLink>>(new TaskLinking(SettingsModel.Instance.TaskLinks)) ?? new());
 
-            JiraCommand = new(async a => await JiraService.GetNewJiraTokenAsync());
+            JiraCommand = new(async a => await ShowDialog(new JiraSettings()));
             #endregion
 
             CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version!.ToString();

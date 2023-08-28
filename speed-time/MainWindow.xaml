@@ -18,6 +18,7 @@
                  Title="Speed Time" Height="650" Width="500" MinWidth="500" MinHeight="400">
     <potato:DSWindow.Resources>
         <converter:DateTimeConverter x:Key="DateTimeConverter" />
+        <potato:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </potato:DSWindow.Resources>
     <behaviors:Interaction.Triggers>
         <behaviors:KeyTrigger Modifiers="Ctrl" Key="A" FiredOn="KeyDown">
@@ -70,8 +71,9 @@
                 <Button fa:Content.Icon="SolidAnglesRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="7" />
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,3,10,3">
-                <potato:DSButton Grid.Column="2" fa:Content.Icon="BrandsAtlassian" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0" Style="{DynamicResource TransparentAccentButton}"
-                        Command="{Binding UpdateJiraCommand}" Width="30" IsEnabled="{Binding Source={x:Static model:SettingsModel.Instance}, Path=JiraIsEnabled}" />
+                <potato:DSButton Grid.Column="2" fa:Content.Icon="BrandsAtlassian" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0"
+                                 Style="{DynamicResource TransparentAccentButton}" Command="{Binding UpdateJiraCommand}" Width="30"
+                                 Visibility="{Binding Source={x:Static model:SettingsModel.Instance}, Path=JiraIsEnabled, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <potato:DSButton Grid.Column="2" fa:Content.Icon="SolidPlus" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0" Style="{DynamicResource TransparentAccentButton}"
                         Command="{Binding AddTrackingCommand}" Width="30" />
                 <potato:DSButton Grid.Column="2" fa:Content.Icon="SolidStop" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0" Style="{DynamicResource TransparentAccentButton}"

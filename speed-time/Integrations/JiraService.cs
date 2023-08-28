@@ -1,4 +1,6 @@
-﻿using DSaladin.FontAwesome.WPF;
+﻿using DSaladin.FancyPotato.DSWindows;
+using DSaladin.FontAwesome.WPF;
+using DSaladin.SpeedTime.Dialogs;
 using DSaladin.SpeedTime.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -30,17 +32,20 @@ namespace DSaladin.SpeedTime.Integrations
 
         internal static async Task UploadWorklogsAsync(List<TrackTime> trackTimes)
         {
-            await UpdateWorklogsAsync(trackTimes);
+            List<ApiLogEntry> logs = await UpdateWorklogsAsync(trackTimes);
+            await ((DSWindow)App.Current.MainWindow).ShowDialog(new ApiLog(logs));
         }
 
-        private static async Task UpdateWorklogsAsync(List<TrackTime> trackTimes)
+        private static async Task<List<ApiLogEntry>> UpdateWorklogsAsync(List<TrackTime> trackTimes)
         {
+            List<ApiLogEntry> logs = new();
+
             if (trackTimes.Count == 0)
-                return;
+                return logs;
 
             UserCredential? userCredential = await App.dbContext.UserCredentials.FirstOrDefaultAsync(uc => uc.ServiceType == ServiceType.Jira);
             if (userCredential is null)
-                return;
+                return logs;
 
             byte[] decryptedBasicAuthentication = new byte[1];
             string? basicAuthentication = null;
@@ -77,9 +82,17 @@ namespace DSaladin.SpeedTime.Integrations
                         }
 
                     if (shouldDelete)
-                        // TODO: Show error
-                        if (!await DeleteWorklogAsync(trackTime))
-                            continue;
+                    {
+                        ApiLogEntry? logEntry = await DeleteWorklogAsync(trackTime);
+
+                        if (logEntry is not null)
+                        {
+                            logs.Add(logEntry);
+
+                            if (!logEntry.IsSuccess)
+                                continue;
+                        }
+                    }
 
                     HttpRequestMessage? httpRequestMessage = null;
                     if (!shouldCreate && !shouldDelete)
@@ -100,13 +113,19 @@ namespace DSaladin.SpeedTime.Integrations
                     httpRequestMessage.Content = await GetContentAsync(trackTime);
 
                     HttpResponseMessage httpResponseMessage = await client.SendAsync(httpRequestMessage);
+
+                    string message = await GetErrorMessages(httpResponseMessage);
+                    if (httpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        message = "Issue or Worklog not found";
+
+                    logs.Add(new(currentIssueKey!, message, (int)httpResponseMessage.StatusCode));
+
+                    if (!httpResponseMessage.IsSuccessStatusCode)
+                        continue;
+
                     using JsonDocument? response = JsonDocument.Parse(await httpResponseMessage.Content.ReadAsStreamAsync());
 
                     if (response is null)
-                        continue;
-
-                    // TODO: Show error
-                    if (!httpResponseMessage.IsSuccessStatusCode)
                         continue;
 
                     trackTime.SetAttribute(IssueKeyAttribute, currentIssueKey!);
@@ -114,6 +133,8 @@ namespace DSaladin.SpeedTime.Integrations
                     if (response.RootElement.TryGetProperty("id", out JsonElement id))
                         trackTime.SetAttribute(WorklogAttribute, id.GetString()!);
                 }
+
+                return logs;
             }
             finally
             {
@@ -133,14 +154,14 @@ namespace DSaladin.SpeedTime.Integrations
             }
         }
 
-        internal static async Task<bool> DeleteWorklogAsync(TrackTime trackTime)
+        internal static async Task<ApiLogEntry?> DeleteWorklogAsync(TrackTime trackTime)
         {
             if (!trackTime.ContainsAttribute(WorklogAttribute))
-                return true;
+                return null;
 
             UserCredential? userCredential = await App.dbContext.UserCredentials.FirstOrDefaultAsync(uc => uc.ServiceType == ServiceType.Jira);
             if (userCredential is null)
-                return false;
+                return null;
 
             byte[] decryptedBasicAuthentication = new byte[1];
             string? basicAuthentication = null;
@@ -154,13 +175,23 @@ namespace DSaladin.SpeedTime.Integrations
 
                 string? issueKey = trackTime.GetAttribute(IssueKeyAttribute);
                 if (issueKey is null)
-                    return true;
+                    return null;
 
                 string? worklogId = trackTime.GetAttribute(WorklogAttribute);
                 if (worklogId is null)
-                    return true;
+                    return null;
 
-                HttpRequestMessage httpRequestMessage = new(HttpMethod.Delete, $"/rest/api/3/issue/{issueKey}/worklog/{worklogId}");
+                HttpRequestMessage? httpRequestMessage = null;
+
+                if (SettingsModel.Instance.JiraZeroOnDelete)
+                {
+                    httpRequestMessage = new(HttpMethod.Put, $"/rest/api/3/issue/{issueKey}/worklog/{worklogId}");
+                    trackTime.StopTime(trackTime.TrackingStarted);
+                    httpRequestMessage.Content = await GetContentAsync(trackTime);
+                }
+                else
+                    httpRequestMessage = new(HttpMethod.Delete, $"/rest/api/3/issue/{issueKey}/worklog/{worklogId}");
+
                 HttpResponseMessage httpResponseMessage = await client.SendAsync(httpRequestMessage);
                 string response = await httpResponseMessage.Content.ReadAsStringAsync();
 
@@ -168,7 +199,10 @@ namespace DSaladin.SpeedTime.Integrations
                 if (httpResponseMessage.IsSuccessStatusCode)
                     trackTime.RemoveAttributes(IssueKeyAttribute, WorklogAttribute);
 
-                return httpResponseMessage.IsSuccessStatusCode;
+                if (httpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    return new(issueKey, "Issue or Worklog not found", (int)httpResponseMessage.StatusCode);
+
+                return new(issueKey, await GetErrorMessages(httpResponseMessage), (int)httpResponseMessage.StatusCode);
             }
             finally
             {
@@ -208,6 +242,25 @@ namespace DSaladin.SpeedTime.Integrations
 
             using var reader = new StreamReader(memoryStream, Encoding.UTF8);
             return new StringContent(await reader.ReadToEndAsync(), Encoding.UTF8, "application/json");
+        }
+
+        private static async Task<string> GetErrorMessages(HttpResponseMessage responseMessage)
+        {
+            if (responseMessage.IsSuccessStatusCode)
+                return "";
+
+            using JsonDocument? response = JsonDocument.Parse(await responseMessage.Content.ReadAsStreamAsync());
+            if (!response.RootElement.TryGetProperty("errorMessages", out JsonElement errorMessagesParent))
+                return "";
+
+            List<JsonElement?> errorMessages = errorMessagesParent.EnumerateArray()
+                .Cast<JsonElement?>()
+                .ToList();
+
+            if (errorMessages.Count <= 0)
+                return "";
+
+            return errorMessages.First()!.Value.ToString();
         }
 
         internal static async Task GetNewJiraTokenAsync()

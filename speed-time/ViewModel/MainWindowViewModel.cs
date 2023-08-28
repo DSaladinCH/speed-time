@@ -1,4 +1,5 @@
 ﻿using DSaladin.FancyPotato;
+using DSaladin.FancyPotato.DSUserControls;
 using DSaladin.FancyPotato.DSWindows;
 using DSaladin.SpeedTime.Dialogs;
 using DSaladin.SpeedTime.Integrations;
@@ -180,7 +181,12 @@ namespace DSaladin.SpeedTime.ViewModel
             {
                 TrackTime trackTime = (TrackTime)sender;
                 // TODO: Check if Jira Enabled
-                await JiraService.DeleteWorklogAsync(trackTime);
+                if (SettingsModel.Instance.JiraIsEnabled)
+                {
+                    ApiLogEntry? logEntry = await JiraService.DeleteWorklogAsync(trackTime);
+                    if (logEntry is not null)
+                        await ShowDialog(new ApiLog(new() { logEntry }));
+                }
 
                 App.dbContext.TrackedTimes.Remove(trackTime);
                 await App.dbContext.SaveChangesAsync();
@@ -272,7 +278,7 @@ namespace DSaladin.SpeedTime.ViewModel
         }
 
         public static DateRange GetWeekRange(DateTime date)
-        {            
+        {
             DayOfWeek firstDayOfWeek = DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek;
 
             int diff = (date.DayOfWeek - firstDayOfWeek + 7) % 7;

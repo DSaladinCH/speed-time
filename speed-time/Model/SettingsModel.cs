@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -86,6 +87,18 @@ namespace DSaladin.SpeedTime.Model
             get { return new(taskLinks); }
         }
 
+        private bool jiraZeroOnDelete;
+        public bool JiraZeroOnDelete
+        {
+            get { return jiraZeroOnDelete; }
+            set
+            {
+                jiraZeroOnDelete = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        [JsonIgnore]
         public bool JiraIsEnabled { get => App.dbContext.UserCredentials.Any(uc => uc.ServiceType == ServiceType.Jira); }
 
         public static void Load(SettingsModel settings)
