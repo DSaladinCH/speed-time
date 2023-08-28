@@ -2,6 +2,7 @@
 using DSaladin.SpeedTime.Integrations;
 using DSaladin.SpeedTime.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,7 @@ namespace DSaladin.SpeedTime.Dialogs
                 // TODO: Async
                 SaveAndClear().Wait();
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(JiraApiToken));
             }
         }
 
@@ -77,7 +79,10 @@ namespace DSaladin.SpeedTime.Dialogs
 
         private async Task SaveAndClear()
         {
-            UserCredential? userCredential = await App.dbContext.UserCredentials.FirstOrDefaultAsync(uc => uc.ServiceType == ServiceType.Jira);
+            if (string.IsNullOrEmpty(JiraBaseUrl))
+                return;
+
+            UserCredential? userCredential = await App.dbContext.UserCredentials.AsNoTracking().FirstOrDefaultAsync(uc => uc.ServiceType == ServiceType.Jira);
 
             byte[] jiraToken = new byte[1];
             if (userCredential is not null)
@@ -90,6 +95,12 @@ namespace DSaladin.SpeedTime.Dialogs
 
                 jiraToken = ProtectedData.Protect(base64, null, DataProtectionScope.CurrentUser);
             }
+
+            EntityEntry<UserCredential>? trackedEntity = App.dbContext.ChangeTracker.Entries<UserCredential>()
+                                    .FirstOrDefault(e => e.Entity.ServiceType == ServiceType.Jira);
+
+            if (trackedEntity is not null)
+                trackedEntity.State = EntityState.Detached;
 
             if (userCredential is null)
             {
@@ -124,6 +135,7 @@ namespace DSaladin.SpeedTime.Dialogs
             {
                 App.dbContext.Remove(userCredential);
                 await App.dbContext.SaveChangesAsync();
+                SettingsModel.Instance.NotifyPropertyChanged(nameof(SettingsModel.Instance.JiraIsEnabled));
             }
 
             Close();
