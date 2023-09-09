@@ -186,8 +186,7 @@ namespace DSaladin.SpeedTime.Integrations
                 if (SettingsModel.Instance.JiraZeroOnDelete)
                 {
                     httpRequestMessage = new(HttpMethod.Put, $"/rest/api/3/issue/{issueKey}/worklog/{worklogId}");
-                    trackTime.StopTime(trackTime.TrackingStarted);
-                    httpRequestMessage.Content = await GetContentAsync(trackTime);
+                    httpRequestMessage.Content = await GetContentAsync(trackTime, true);
                 }
                 else
                     httpRequestMessage = new(HttpMethod.Delete, $"/rest/api/3/issue/{issueKey}/worklog/{worklogId}");
@@ -231,13 +230,13 @@ namespace DSaladin.SpeedTime.Integrations
             return match.Groups[1].Value;
         }
 
-        private static async Task<StringContent> GetContentAsync(TrackTime trackTime)
+        private static async Task<StringContent> GetContentAsync(TrackTime trackTime, bool zeroDuration = false)
         {
             JsonSerializerOptions jsonSerializerOptions = new();
             jsonSerializerOptions.Converters.Add(new JiraDateTimeConverter());
 
             using var memoryStream = new MemoryStream();
-            await JsonSerializer.SerializeAsync(memoryStream, new Worklog(trackTime), jsonSerializerOptions);
+            await JsonSerializer.SerializeAsync(memoryStream, new Worklog(trackTime, zeroDuration), jsonSerializerOptions);
             memoryStream.Position = 0;
 
             using var reader = new StreamReader(memoryStream, Encoding.UTF8);
