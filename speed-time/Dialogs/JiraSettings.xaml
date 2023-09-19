@@ -23,14 +23,14 @@
                 <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" fa:Content.Icon="SolidArrowLeft" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentButton}"
+            <potato:DSButton Grid.Column="0" fa:Content.Icon="SolidArrowLeft" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentButton}"
                     Click="Close_Click" />
             
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                 <Label Content="Jira Settings" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Padding="0,0,0,5" />
             </StackPanel>
 
-            <potato:DSButton Grid.Column="2" fa:Content.Icon="SolidTrash" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentAccentErrorButton}"
+            <potato:DSButton Grid.Column="2" fa:Content.Icon="SolidTrash" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentErrorButton}"
                     Click="DeleteClose_Click" />
         </Grid>
 

@@ -1,4 +1,5 @@
-﻿using DSaladin.SpeedTime.Model;
+﻿using DSaladin.SpeedTime.Integrations;
+using DSaladin.SpeedTime.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -77,7 +78,7 @@ namespace DSaladin.SpeedTime.Model
         public bool IsAFK { get; set; } = false;
 
         [NotMapped]
-        public bool IsMatchingTaskLink { get => TaskLink.ContainsAny(Title, SettingsModel.Instance.TaskLinks) is not null; }
+        public bool IsJiraTicket { get => JiraService.GetIssueKey(Title) is not null; }
 
         public virtual List<TrackAttribute> Attributes { get; set; } = new();
 

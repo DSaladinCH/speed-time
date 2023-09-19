@@ -25,10 +25,30 @@ namespace DSaladin.SpeedTime.Integrations
     internal partial class JiraService
     {
         [GeneratedRegex("(?:^| )([A-z]+-[0-9]+)")]
-        private static partial Regex JiraIssueKeyRegex();
+        internal static partial Regex JiraIssueKeyRegex();
 
         private const string IssueKeyAttribute = "JIRAISSUEKEY";
         private const string WorklogAttribute = "JIRAWORKLOGID";
+
+        internal static string? GetIssueKey(string text)
+        {
+            Match match = JiraIssueKeyRegex().Match(text);
+            if (!match.Success)
+                return null;
+
+            return match.Groups[1].Value;
+        }
+
+        private static string? GetIssueKey(TrackTime trackTime) => GetIssueKey(trackTime.Title);
+
+        internal static async Task<string> GetIssueUriAsync(string issueKey)
+        {
+            UserCredential? userCredential = await App.dbContext.UserCredentials.FirstOrDefaultAsync(uc => uc.ServiceType == ServiceType.Jira);
+            if (userCredential is null)
+                return "";
+
+            return new Uri(new Uri(userCredential.ServiceUri), $"browse/{issueKey}").AbsoluteUri;
+        }
 
         internal static async Task UploadWorklogsAsync(List<TrackTime> trackTimes)
         {
@@ -184,10 +204,10 @@ namespace DSaladin.SpeedTime.Integrations
                 HttpRequestMessage? httpRequestMessage = null;
 
                 if (SettingsModel.Instance.JiraZeroOnDelete)
-                {
-                    httpRequestMessage = new(HttpMethod.Put, $"/rest/api/3/issue/{issueKey}/worklog/{worklogId}");
-                    httpRequestMessage.Content = await GetContentAsync(trackTime, true);
-                }
+                    httpRequestMessage = new(HttpMethod.Put, $"/rest/api/3/issue/{issueKey}/worklog/{worklogId}")
+                    {
+                        Content = await GetContentAsync(trackTime, true)
+                    };
                 else
                     httpRequestMessage = new(HttpMethod.Delete, $"/rest/api/3/issue/{issueKey}/worklog/{worklogId}");
 
@@ -219,15 +239,6 @@ namespace DSaladin.SpeedTime.Integrations
                     handle.Free();
                 }
             }
-        }
-
-        private static string? GetIssueKey(TrackTime trackTime)
-        {
-            Match match = JiraIssueKeyRegex().Match(trackTime.Title);
-            if (!match.Success)
-                return null;
-
-            return match.Groups[1].Value;
         }
 
         private static async Task<StringContent> GetContentAsync(TrackTime trackTime, bool zeroDuration = false)

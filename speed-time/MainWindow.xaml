@@ -54,8 +54,8 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <Button fa:Content.Icon="SolidAnglesLeft" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="-7" />
-                <Button fa:Content.Icon="SolidAngleLeft" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="-1" />
+                <potato:DSButton fa:Content.Icon="SolidAnglesLeft" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="-7" />
+                <potato:DSButton fa:Content.Icon="SolidAngleLeft" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="-1" />
                 <Label Content="{Binding CurrentDateTime, Converter={StaticResource DateTimeConverter}, ConverterParameter={x:Static language:SpeedTime.times_current_date_format}}" d:Content="01. Jan 2023"
                        Width="100" HorizontalContentAlignment="Center">
                     <Label.InputBindings>
@@ -67,13 +67,14 @@
                         </ContextMenu>
                     </Label.ContextMenu>
                 </Label>
-                <Button fa:Content.Icon="SolidAngleRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="1" />
-                <Button fa:Content.Icon="SolidAnglesRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="7" />
+                <potato:DSButton fa:Content.Icon="SolidAngleRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="1" />
+                <potato:DSButton fa:Content.Icon="SolidAnglesRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="7" />
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,3,10,3">
                 <potato:DSButton Grid.Column="2" fa:Content.Icon="BrandsAtlassian" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0"
                                  Style="{DynamicResource TransparentAccentButton}" Command="{Binding UpdateJiraCommand}" Width="30"
-                                 Visibility="{Binding Source={x:Static model:SettingsModel.Instance}, Path=JiraIsEnabled, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                 Visibility="{Binding Source={x:Static model:SettingsModel.Instance}, Path=JiraIsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
+                                 IsLoading="{Binding IsJiraLoading}" />
                 <potato:DSButton Grid.Column="2" fa:Content.Icon="SolidPlus" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0" Style="{DynamicResource TransparentAccentButton}"
                         Command="{Binding AddTrackingCommand}" Width="30" />
                 <potato:DSButton Grid.Column="2" fa:Content.Icon="SolidStop" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0" Style="{DynamicResource TransparentAccentButton}"
@@ -125,11 +126,11 @@
                         <Label Grid.Column="2" Content="{Binding TrackingTime}" />
                         <Label Grid.Column="3" Content="{Binding Hours}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
                         <potato:DSButton Grid.Column="4" fa:Content.Icon="SolidGlobe" Padding="5,0,5,0" Style="{DynamicResource TransparentAccentButton}" Visibility="Collapsed" x:Name="btnBrowser"
-                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type potato:DSWindow}}, Path=DataContext.TrackTimeLinkCommand}"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type potato:DSWindow}}, Path=DataContext.OpenJiraIssueCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" />
-                        <potato:DSButton Grid.Column="5" fa:Content.Icon="SolidTrash" Padding="5,0,5,0" Style="{DynamicResource TransparentAccentErrorButton}" Visibility="Collapsed" x:Name="btnDelete"
+                        <potato:DSButton Grid.Column="5" fa:Content.Icon="SolidTrash" Padding="5,0,5,0" Style="{DynamicResource TransparentAccentButton}" Visibility="Collapsed" x:Name="btnDelete"
                                 Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type potato:DSWindow}}, Path=DataContext.TrackTimeDeleteCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" />
+                                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" MouseOverForegroundColor="{DynamicResource ErrorNormal}" />
                     </Grid>
                     <DataTemplate.Triggers>
                         <Trigger SourceName="grdTime" Property="IsMouseOver" Value="True">
@@ -138,7 +139,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding ElementName=grdTime, Path=IsMouseOver}" Value="True" />
-                                <Condition Binding="{Binding IsMatchingTaskLink}" Value="True" />
+                                <Condition Binding="{Binding IsJiraTicket}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.Setters>
                                 <Setter TargetName="btnBrowser" Property="Visibility" Value="Visible"/>
@@ -154,8 +155,8 @@
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
-                <Button Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidGear" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" />
-                <Button Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidChartArea" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" Visibility="Collapsed" />
+                <potato:DSButton Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidGear" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" />
+                <potato:DSButton Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidChartArea" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" Visibility="Collapsed" />
             </StackPanel>
             <StackPanel Grid.Column="1" Margin="10,10,10,0">
                 <Separator Background="{DynamicResource BackgroundC}" Width="225" HorizontalAlignment="Right" />

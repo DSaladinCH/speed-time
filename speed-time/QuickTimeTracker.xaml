@@ -33,7 +33,7 @@
                     <ColumnDefinition Width="45" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding Title}" VerticalAlignment="Center" Padding="5,0,5,0" TextTrimming="CharacterEllipsis" />
-                <Button Grid.Column="1" Content="⭾" FontSize="16" Padding="0,0,0,0" Margin="0,0,2,0" />
+                <potato:DSButton Grid.Column="1" Content="⭾" FontSize="16" Padding="0,0,0,0" Margin="0,0,2,0" />
             </Grid>
         </DataTemplate>
 

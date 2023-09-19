@@ -23,8 +23,10 @@
                    Style="{DynamicResource Title5Label}" HorizontalContentAlignment="Center" />
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="{x:Static language:SpeedTime.updateapp_cancel}" Style="{DynamicResource AccentButton}" Margin="15,0,10,15" Width="130" Command="{Binding DenyCommand}" />
-            <Button Content="{x:Static language:SpeedTime.updateapp_download}" Style="{DynamicResource AccentButton}" Margin="10,0,15,15" Width="130" Command="{Binding DownloadCommand}" />
+            <potato:DSButton Content="{x:Static language:SpeedTime.updateapp_cancel}" Style="{DynamicResource AccentErrorButton}" Margin="15,0,10,15"
+                             Width="130" Command="{Binding DenyCommand}" />
+            <potato:DSButton Content="{x:Static language:SpeedTime.updateapp_download}" Style="{DynamicResource AccentOkButton}" Margin="10,0,15,15"
+                             Width="130" Command="{Binding DownloadCommand}" />
         </StackPanel>
     </Grid>
 </potato:DSDialogControl>
