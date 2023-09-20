@@ -128,9 +128,9 @@
                         <potato:DSButton Grid.Column="4" fa:Content.Icon="SolidGlobe" Padding="5,0,5,0" Style="{DynamicResource TransparentAccentButton}" Visibility="Collapsed" x:Name="btnBrowser"
                                 Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type potato:DSWindow}}, Path=DataContext.OpenJiraIssueCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" />
-                        <potato:DSButton Grid.Column="5" fa:Content.Icon="SolidTrash" Padding="5,0,5,0" Style="{DynamicResource TransparentAccentButton}" Visibility="Collapsed" x:Name="btnDelete"
+                        <potato:DSButton Grid.Column="5" fa:Content.Icon="SolidTrash" Padding="5,0,5,0" Style="{DynamicResource TransparentAccentErrorButton}" Visibility="Collapsed" x:Name="btnDelete"
                                 Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type potato:DSWindow}}, Path=DataContext.TrackTimeDeleteCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" MouseOverForegroundColor="{DynamicResource ErrorNormal}" />
+                                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" />
                     </Grid>
                     <DataTemplate.Triggers>
                         <Trigger SourceName="grdTime" Property="IsMouseOver" Value="True">
