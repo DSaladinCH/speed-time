@@ -22,7 +22,7 @@ namespace DSaladin.SpeedTime.Dialogs
     /// </summary>
     public partial class ApiLog : DSDialogControl
     {
-        private List<Model.ApiLogEntry> logs;
+        private List<Model.ApiLogEntry> logs = new();
         public List<Model.ApiLogEntry> Logs
         {
             get { return logs; }
@@ -38,7 +38,13 @@ namespace DSaladin.SpeedTime.Dialogs
             InitializeComponent();
             DataContext = this;
 
-            Logs = logs;
+            foreach (Model.ApiLogEntry log in logs)
+            {
+                if (!log.IsSuccess)
+                    Logs.Add(log);
+                else if (!Logs.Exists(l => l.Context == log.Context && l.IsSuccess == log.IsSuccess))
+                    Logs.Add(log);
+            }
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)

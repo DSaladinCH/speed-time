@@ -32,7 +32,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type settings:ActionSetting}">
-                        <Button Grid.Column="1" Height="30" Content="{Binding ActionText}" Padding="0" Command="{Binding ActionCommand}" />
+                        <potato:DSButton Grid.Column="1" Height="30" Content="{Binding ActionText}" Padding="0" Command="{Binding ActionCommand}" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -79,12 +79,12 @@
                 <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" fa:Content.Icon="SolidArrowLeft" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentButton}"
+            <potato:DSButton Grid.Column="0" fa:Content.Icon="SolidArrowLeft" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentButton}"
                     Click="Close_Click" />
             <Label Grid.Column="1" Content="{x:Static language:SpeedTime.settings_title}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" />
         </Grid>
 
-        <Grid Grid.Row="1" Margin="15,0,15,10">
+        <Grid Grid.Row="1" Margin="10,0,10,10">
             <ListBox x:Name="lsbOptions" Background="{x:Null}" BorderBrush="{x:Null}" VirtualizingPanel.IsVirtualizing="False"
                      VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Foreground="{DynamicResource ForegroundDefault}">
                 <ListBox.Resources>
@@ -130,11 +130,12 @@
                                                   Value="{Binding Source={x:Static potato:ColorManagement.Instance}, Path=CurrAccent}" />
                         <settings:CheckBoxSetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_auto_break}"
                                                   Value="{Binding Source={x:Static models:SettingsModel.Instance}, Path=AutoAddBreak}"/>
-                        <settings:NumberTextBoxSetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_weekly_hour}"
-                                                       Value="{Binding Source={x:Static models:SettingsModel.Instance}, Path=WeeklyWorkHours}"/>
-                        <settings:ActionSetting Category="Integrations" OptionName="{x:Static language:SpeedTime.settings_task_linking}"
+                        <settings:ActionSetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_workdays}"
                                                 ActionText="{x:Static language:SpeedTime.open}"
-                                                ActionCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:UserSettings}}, Path=TaskLinkingCommand}" />
+                                                ActionCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:UserSettings}}, Path=WorkdaysCommand}" />
+                        <!--<settings:ActionSetting Category="Integrations" OptionName="{x:Static language:SpeedTime.settings_task_linking}"
+                                                ActionText="{x:Static language:SpeedTime.open}"
+                                                ActionCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:UserSettings}}, Path=TaskLinkingCommand}" />-->
                         <settings:ActionSetting Category="Integrations" OptionName="Jira"
                                                 ActionText="{x:Static language:SpeedTime.open}"
                                                 ActionCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:UserSettings}}, Path=JiraCommand}" />

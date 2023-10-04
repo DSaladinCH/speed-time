@@ -11,6 +11,9 @@
                         mc:Ignorable="d"
                         d:DataContext="{d:DesignInstance local:ApiLog}"
                         d:DesignHeight="300" d:DesignWidth="400" MaxHeight="400">
+    <potato:DSDialogControl.Resources>
+        <potato:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </potato:DSDialogControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
@@ -24,7 +27,7 @@
                 <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" fa:Content.Icon="SolidArrowLeft" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentButton}"
+            <potato:DSButton Grid.Column="0" fa:Content.Icon="SolidArrowLeft" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentButton}"
                     Click="Close_Click" />
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                 <Label Content="Api Log" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Padding="0,0,0,5" />
@@ -51,13 +54,14 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="20" />
+                                    <RowDefinition Height="25" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
-                                <Label Grid.Row="0" Grid.Column="0" Content="{Binding Context, StringFormat='Context: {0}'}" Foreground="{DynamicResource ForegroundA}" Padding="5,5,5,0" />
+                                <Label Grid.Row="0" Grid.Column="0" Content="{Binding Context, StringFormat='Context: {0}'}" Foreground="{DynamicResource ForegroundA}" Padding="5,5,5,5"
+                                       VerticalContentAlignment="Center"/>
                                 <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Label Content="Success: " Foreground="{DynamicResource ForegroundA}" Padding="5,5,5,0" />
-                                    <Label Padding="5,5,5,0">
+                                    <Label Content="Success: " Foreground="{DynamicResource ForegroundA}" Padding="5,5,5,5" />
+                                    <Label Padding="5,5,5,5">
                                         <Label.Style>
                                             <Style TargetType="{x:Type Label}" BasedOn="{StaticResource DefaultLabel}">
                                                 <Setter Property="fa:Content.Icon" Value="SolidXmark"/>
@@ -73,7 +77,7 @@
                                     </Label>
                                 </StackPanel>
                                 <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Foreground="{DynamicResource ForegroundDefault}" Text="{Binding ResponseMessage}"
-                                           TextWrapping="Wrap" Padding="5,5,5,5" />
+                                           TextWrapping="Wrap" Padding="5,5,5,5" Visibility="{Binding HasResponseMessage, Converter={StaticResource BoolToVisibilityConverter}}" />
                             </Grid>
                         </Border>
                     </HierarchicalDataTemplate>

@@ -19,12 +19,17 @@ namespace DSaladin.SpeedTime.Integrations
         [JsonPropertyName("timeSpentSeconds")]
         public int TimeSpentSeconds { get; set; }
 
-        public Worklog(TrackTime trackTime)
+        public Worklog(TrackTime trackTime, bool zeroDuration = false)
         {
             Comment = new Comment(trackTime.Title.Trim());
-            Started = trackTime.TrackingStarted.ToString("yyyy-MM-dd'T'HH:mm:ss.fffzzz");
-            Started = Started.Remove(Started.LastIndexOf(':'), 1);
-            TimeSpentSeconds = Convert.ToInt32((trackTime.TrackingStopped - trackTime.TrackingStarted).TotalSeconds);
+            TimeSpentSeconds = 0;
+
+            if (!zeroDuration)
+            {
+                Started = trackTime.TrackingStarted.ToString("yyyy-MM-dd'T'HH:mm:ss.fffzzz");
+                Started = Started.Remove(Started.LastIndexOf(':'), 1);
+                TimeSpentSeconds = Convert.ToInt32((trackTime.TrackingStopped - trackTime.TrackingStarted).TotalSeconds);
+            }
         }
     }
 

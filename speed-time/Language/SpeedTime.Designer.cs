@@ -214,6 +214,15 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Workdays.
+        /// </summary>
+        public static string settings_workdays {
+            get {
+                return ResourceManager.GetString("settings.workdays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Task Prefix.
         /// </summary>
         public static string tasklinkeditor_check_placeholder {
@@ -363,6 +372,24 @@ namespace DSaladin.SpeedTime.Language {
         public static string updateapp_version_text {
             get {
                 return ResourceManager.GetString("updateapp.version-text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workdays.
+        /// </summary>
+        public static string workdays_title {
+            get {
+                return ResourceManager.GetString("workdays.title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total Hours.
+        /// </summary>
+        public static string workdays_total_hours {
+            get {
+                return ResourceManager.GetString("workdays.total-hours", resourceCulture);
             }
         }
     }

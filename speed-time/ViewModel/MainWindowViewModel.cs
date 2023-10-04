@@ -1,4 +1,5 @@
 ﻿using DSaladin.FancyPotato;
+using DSaladin.FancyPotato.CustomControls;
 using DSaladin.FancyPotato.DSUserControls;
 using DSaladin.FancyPotato.DSWindows;
 using DSaladin.SpeedTime.Dialogs;
@@ -22,6 +23,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Security.Policy;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -50,7 +52,14 @@ namespace DSaladin.SpeedTime.ViewModel
         public CollectionViewSource TrackedTimesViewSource { get; private set; } = new();
 
         public TrackTime? CurrentTime { get => GetCurrentTrackTime(); }
-        public double TotalHours { get => TrackedTimes.Where(tt => tt.TrackingStarted.Date == CurrentDateTime.Date && !tt.IsBreak).Sum(tt => tt.Hours); }
+        public string TotalHours
+        {
+            get
+            {
+                double hours = TrackedTimes.Where(tt => tt.TrackingStarted.Date == CurrentDateTime.Date && !tt.IsBreak).Sum(tt => tt.Hours);
+                return string.Format("{0:00.00}h / {1:00.00}h", hours, SettingsModel.Instance.Workdays.GetWorkHours(currentDateTime));
+            }
+        }
 
         private DateRange weekRange = new();
         public string TotalWeekHoursDisplay
@@ -58,7 +67,7 @@ namespace DSaladin.SpeedTime.ViewModel
             get
             {
                 return string.Format("{0:00.00}h / {1:00.00}h", TrackedTimes.Where(tt => tt.TrackingStarted.Date >= weekRange.Start && tt.TrackingStarted <= weekRange.End && !tt.IsBreak).Sum(tt => tt.Hours),
-                    SettingsModel.Instance.WeeklyWorkHours);
+                    SettingsModel.Instance.Workdays.GetWeekWorkHours(weekRange.Start, weekRange.End));
             }
         }
 
@@ -100,6 +109,17 @@ namespace DSaladin.SpeedTime.ViewModel
 
         public bool IsTrackTimeEditorOpen { get; set; }
 
+        private bool isJiraLoading;
+        public bool IsJiraLoading
+        {
+            get { return isJiraLoading; }
+            set
+            {
+                isJiraLoading = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public RelayCommand ChangeCurrentDateTimeCommand { get; set; }
         public RelayCommand CurrentDateTimeDoubleClickCommand { get; set; }
         public RelayCommand UpdateJiraCommand { get; set; }
@@ -107,7 +127,7 @@ namespace DSaladin.SpeedTime.ViewModel
         public RelayCommand StopCurrentTrackingCommand { get; set; }
         public RelayCommand TrackTimeDoubleClickCommand { get; set; }
         public RelayCommand TrackTimeDeleteCommand { get; set; }
-        public RelayCommand TrackTimeLinkCommand { get; set; }
+        public RelayCommand OpenJiraIssueCommand { get; set; }
         public RelayCommand OpenUserSettingsCommand { get; set; }
 
         public MainWindowViewModel()
@@ -128,10 +148,12 @@ namespace DSaladin.SpeedTime.ViewModel
                 UpdateView();
             });
 
-            UpdateJiraCommand = new(async (_) =>
+            UpdateJiraCommand = new(async (sender) =>
             {
                 // TODO: Check if Jira Enabled
+                IsJiraLoading = true;
                 await JiraService.UploadWorklogsAsync(TrackedTimesViewSource.View.Cast<TrackTime>().ToList());
+                IsJiraLoading = false;
             });
 
             AddTrackingCommand = new(async (_) =>
@@ -193,11 +215,16 @@ namespace DSaladin.SpeedTime.ViewModel
                 UpdateView();
             });
 
-            TrackTimeLinkCommand = new(sender =>
+            OpenJiraIssueCommand = new(async (sender) =>
             {
+                string? jiraIssueKey = JiraService.GetIssueKey(((TrackTime)sender).Title);
+
+                if (jiraIssueKey is null)
+                    return;
+
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = TaskLink.ContainsAny(((TrackTime)sender).Title, SettingsModel.Instance.TaskLinks)!.GetLink(((TrackTime)sender).Title),
+                    FileName = await JiraService.GetIssueUriAsync(jiraIssueKey),
                     UseShellExecute = true
                 });
             });

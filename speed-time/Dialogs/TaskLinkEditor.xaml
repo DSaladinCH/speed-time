@@ -32,7 +32,7 @@
                 <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" fa:Content.Icon="SolidArrowLeft" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentButton}"
+            <potato:DSButton Grid.Column="0" fa:Content.Icon="SolidArrowLeft" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Style="{DynamicResource TransparentButton}"
                     Click="Close_Click" />
             <Label Grid.Column="1" Content="{x:Static language:SpeedTime.tasklinkeditor_title}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" />
         </Grid>
@@ -55,7 +55,7 @@
                 <CheckBox Grid.Column="0" Content="0-9" IsChecked="{Binding ContainsNumbers}" />
                 <CheckBox Grid.Column="1" Content="A-Z" IsChecked="{Binding ContainsLetters}" />
             </Grid>
-            <Button Grid.Row="3" Content="{x:Static language:SpeedTime.Cancel}" Style="{DynamicResource AccentButton}" Width="100" Margin="0,10,0,0"
+            <potato:DSButton Grid.Row="3" Content="{x:Static language:SpeedTime.Cancel}" Style="{DynamicResource AccentErrorButton}" Width="100" Margin="0,10,0,0"
                     HorizontalAlignment="Left" Command="{Binding CancelAndCloseCommand}" />
         </Grid>
     </Grid>
