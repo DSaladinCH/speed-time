@@ -159,17 +159,17 @@
                 <potato:DSButton Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidChartArea" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" Visibility="Collapsed" />
             </StackPanel>
             <StackPanel Grid.Column="1" Margin="10,10,10,0">
-                <Separator Background="{DynamicResource BackgroundC}" Width="225" HorizontalAlignment="Right" />
+                <Separator Background="{DynamicResource BackgroundC}" Width="265" HorizontalAlignment="Right" />
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="105" />
                         <ColumnDefinition Width="60" />
-                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="100" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="1" Content="{Binding TotalWeekHoursDisplay}" Foreground="{DynamicResource ForegroundA}" />
                     <Label Grid.Column="2" Content="{x:Static language:SpeedTime.times_totals_title}" HorizontalContentAlignment="Right" />
-                    <Label Grid.Column="3" Content="{Binding TotalHours, TargetNullValue=''}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
+                    <Label Grid.Column="3" Content="{Binding TotalHours, TargetNullValue=''}" HorizontalContentAlignment="Right" />
                 </Grid>
             </StackPanel>
         </Grid>

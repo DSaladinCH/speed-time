@@ -39,6 +39,7 @@ namespace DSaladin.SpeedTime.Dialogs
 
         public RelayCommand TaskLinkingCommand { get; set; }
         public RelayCommand JiraCommand { get; set; }
+        public RelayCommand WorkdaysCommand { get; set; }
 
         public UserSettings()
         {
@@ -58,6 +59,7 @@ namespace DSaladin.SpeedTime.Dialogs
                 SettingsModel.Instance.TaskLinks = await ShowDialog<List<TaskLink>>(new TaskLinking(SettingsModel.Instance.TaskLinks)) ?? new());
 
             JiraCommand = new(async a => await ShowDialog(new JiraSettings()));
+            WorkdaysCommand = new(async a => await ShowDialog(new Workdays()));
             #endregion
 
             CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version!.ToString();

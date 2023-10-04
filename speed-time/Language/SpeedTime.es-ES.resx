@@ -168,6 +168,9 @@
   <data name="settings.weekly-hour" xml:space="preserve">
     <value>Horas de trabajo semanales</value>
   </data>
+  <data name="settings.workdays" xml:space="preserve">
+    <value>Días laborables</value>
+  </data>
   <data name="tasklinkeditor.check-placeholder" xml:space="preserve">
     <value>Prefijo de la tarea</value>
   </data>
@@ -218,5 +221,11 @@
   </data>
   <data name="updateapp.version-text" xml:space="preserve">
     <value>La versión {0} está disponible para su descarga.</value>
+  </data>
+  <data name="workdays.title" xml:space="preserve">
+    <value>Días laborables</value>
+  </data>
+  <data name="workdays.total-hours" xml:space="preserve">
+    <value>Horas totales</value>
   </data>
 </root>

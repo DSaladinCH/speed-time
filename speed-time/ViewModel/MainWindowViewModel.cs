@@ -52,7 +52,14 @@ namespace DSaladin.SpeedTime.ViewModel
         public CollectionViewSource TrackedTimesViewSource { get; private set; } = new();
 
         public TrackTime? CurrentTime { get => GetCurrentTrackTime(); }
-        public double TotalHours { get => TrackedTimes.Where(tt => tt.TrackingStarted.Date == CurrentDateTime.Date && !tt.IsBreak).Sum(tt => tt.Hours); }
+        public string TotalHours
+        {
+            get
+            {
+                double hours = TrackedTimes.Where(tt => tt.TrackingStarted.Date == CurrentDateTime.Date && !tt.IsBreak).Sum(tt => tt.Hours);
+                return string.Format("{0:00.00}h / {1:00.00}h", hours, SettingsModel.Instance.Workdays.GetWorkHours(currentDateTime));
+            }
+        }
 
         private DateRange weekRange = new();
         public string TotalWeekHoursDisplay
@@ -60,7 +67,7 @@ namespace DSaladin.SpeedTime.ViewModel
             get
             {
                 return string.Format("{0:00.00}h / {1:00.00}h", TrackedTimes.Where(tt => tt.TrackingStarted.Date >= weekRange.Start && tt.TrackingStarted <= weekRange.End && !tt.IsBreak).Sum(tt => tt.Hours),
-                    SettingsModel.Instance.WeeklyWorkHours);
+                    SettingsModel.Instance.Workdays.GetWeekWorkHours(weekRange.Start, weekRange.End));
             }
         }
 

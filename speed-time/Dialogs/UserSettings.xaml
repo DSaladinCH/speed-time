@@ -130,8 +130,9 @@
                                                   Value="{Binding Source={x:Static potato:ColorManagement.Instance}, Path=CurrAccent}" />
                         <settings:CheckBoxSetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_auto_break}"
                                                   Value="{Binding Source={x:Static models:SettingsModel.Instance}, Path=AutoAddBreak}"/>
-                        <settings:NumberTextBoxSetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_weekly_hour}"
-                                                       Value="{Binding Source={x:Static models:SettingsModel.Instance}, Path=WeeklyWorkHours}"/>
+                        <settings:ActionSetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_workdays}"
+                                                ActionText="{x:Static language:SpeedTime.open}"
+                                                ActionCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:UserSettings}}, Path=WorkdaysCommand}" />
                         <!--<settings:ActionSetting Category="Integrations" OptionName="{x:Static language:SpeedTime.settings_task_linking}"
                                                 ActionText="{x:Static language:SpeedTime.open}"
                                                 ActionCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:UserSettings}}, Path=TaskLinkingCommand}" />-->

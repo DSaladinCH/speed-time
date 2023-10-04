@@ -1,4 +1,5 @@
 ﻿using DSaladin.SpeedTime.Integrations;
+using DSaladin.SpeedTime.Model.Settings;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,16 +42,7 @@ namespace DSaladin.SpeedTime.Model
             }
         }
 
-        private double weeklyWorkHours;
-        public double WeeklyWorkHours
-        {
-            get { return weeklyWorkHours; }
-            set
-            {
-                weeklyWorkHours = value;
-                NotifyPropertyChanged();
-            }
-        }
+        public Workdays Workdays { get; set; } = new();
 
         public static List<UiLanguage> AvailableLanguages { get; } = new()
         {
