@@ -171,6 +171,27 @@
   <data name="settings.workdays" xml:space="preserve">
     <value>Arbeitstage</value>
   </data>
+  <data name="statistics.grouping.month-daily" xml:space="preserve">
+    <value>Monat - Täglich</value>
+  </data>
+  <data name="statistics.grouping.month-weekly" xml:space="preserve">
+    <value>Monat - Wöchentlich</value>
+  </data>
+  <data name="statistics.grouping.week-daily" xml:space="preserve">
+    <value>Woche - Täglich</value>
+  </data>
+  <data name="statistics.legends.actual" xml:space="preserve">
+    <value>Ist</value>
+  </data>
+  <data name="statistics.legends.target" xml:space="preserve">
+    <value>Soll</value>
+  </data>
+  <data name="statistics.title" xml:space="preserve">
+    <value>Statistiken</value>
+  </data>
+  <data name="statistics.week-placeholder" xml:space="preserve">
+    <value>Woche {0}</value>
+  </data>
   <data name="tasklinkeditor.check-placeholder" xml:space="preserve">
     <value>Task Präfix</value>
   </data>

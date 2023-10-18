@@ -61,11 +61,6 @@
                     <Label.InputBindings>
                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding CurrentDateTimeDoubleClickCommand}" />
                     </Label.InputBindings>
-                    <Label.ContextMenu>
-                        <ContextMenu>
-                            <potato:DSMenuItem Header="{x:Static language:SpeedTime.times_date_is_free_day}" IsCheckable="{Binding IsCurrentDateTimeFreeDayChangeable}" IsChecked="{Binding IsCurrentDateTimeFreeDay}" />
-                        </ContextMenu>
-                    </Label.ContextMenu>
                 </Label>
                 <potato:DSButton fa:Content.Icon="SolidAngleRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="1" />
                 <potato:DSButton fa:Content.Icon="SolidAnglesRight" Style="{DynamicResource TransparentButton}" Width="35" Padding="0,0,0,0" Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="7" />
@@ -156,7 +151,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
                 <potato:DSButton Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidGear" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" />
-                <potato:DSButton Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidChartArea" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" Visibility="Collapsed" />
+                <potato:DSButton Style="{DynamicResource TransparentButton}" fa:Content.Icon="SolidChartArea" FontSize="20" Padding="0,0,0,0" Width="40" Command="{Binding OpenTimeStatisticsCommand}" />
             </StackPanel>
             <StackPanel Grid.Column="1" Margin="10,10,10,0">
                 <Separator Background="{DynamicResource BackgroundC}" Width="265" HorizontalAlignment="Right" />

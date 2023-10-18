@@ -223,6 +223,69 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Month - Daily.
+        /// </summary>
+        public static string statistics_grouping_month_daily {
+            get {
+                return ResourceManager.GetString("statistics.grouping.month-daily", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Month - Weekly.
+        /// </summary>
+        public static string statistics_grouping_month_weekly {
+            get {
+                return ResourceManager.GetString("statistics.grouping.month-weekly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Week - Daily.
+        /// </summary>
+        public static string statistics_grouping_week_daily {
+            get {
+                return ResourceManager.GetString("statistics.grouping.week-daily", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Actual.
+        /// </summary>
+        public static string statistics_legends_actual {
+            get {
+                return ResourceManager.GetString("statistics.legends.actual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target.
+        /// </summary>
+        public static string statistics_legends_target {
+            get {
+                return ResourceManager.GetString("statistics.legends.target", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Statistics.
+        /// </summary>
+        public static string statistics_title {
+            get {
+                return ResourceManager.GetString("statistics.title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Week {0}.
+        /// </summary>
+        public static string statistics_week_placeholder {
+            get {
+                return ResourceManager.GetString("statistics.week-placeholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Task Prefix.
         /// </summary>
         public static string tasklinkeditor_check_placeholder {

@@ -50,7 +50,7 @@ namespace DSaladin.SpeedTime.Dialogs
             lsbOptions.Items.IsLiveGrouping = true;
 
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lsbOptions.ItemsSource);
-            PropertyGroupDescription groupDescription = new("Category", new SettingCategoryConverter());
+            PropertyGroupDescription groupDescription = new("Category", new TranslatedEnumConverter());
             view.GroupDescriptions.Add(groupDescription);
             #endregion
 

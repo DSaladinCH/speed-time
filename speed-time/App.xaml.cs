@@ -3,6 +3,8 @@ using DSaladin.FontAwesome.WPF;
 using DSaladin.SpeedTime.Dialogs;
 using DSaladin.SpeedTime.Model;
 using GlobalHotKey;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using System;
@@ -72,6 +74,11 @@ namespace DSaladin.SpeedTime
             SystemEvents.SessionSwitch += new SessionSwitchEventHandler(SystemEvents_SessionSwitch);
 
             base.OnStartup(e);
+
+            LiveCharts.Configure(config =>
+            {
+                config.AddDarkTheme();
+            });
 
             MainWindow mainWindow = new();
             mainWindow.Show();
@@ -165,11 +172,16 @@ namespace DSaladin.SpeedTime
             if (File.Exists(exeFile))
                 File.Delete(exeFile);
 
-            HttpRequestMessage requestMessage = new(HttpMethod.Get, $"https://api.dsaladin.dev/v1/product/{ProductId}/versions?fromVersion={Assembly.GetExecutingAssembly().GetName().Version!}");
-            HttpResponseMessage responseMessage = await new HttpClient().SendAsync(requestMessage);
-            if (!responseMessage.IsSuccessStatusCode)
-                return;
+            HttpRequestMessage requestMessage = new(HttpMethod.Get, $"https://apii.dsaladin.dev/v1/product/{ProductId}/versions?fromVersion={Assembly.GetExecutingAssembly().GetName().Version!}");
 
+            HttpResponseMessage responseMessage;
+            try
+            {
+                responseMessage = await new HttpClient().SendAsync(requestMessage);
+                if (!responseMessage.IsSuccessStatusCode)
+                    return;
+            }
+            catch { return; }
 
             List<AppVersion>? versions = await System.Text.Json.JsonSerializer.DeserializeAsync<List<AppVersion>>(responseMessage.Content.ReadAsStream());
             if (versions is null || versions.Count == 0)

@@ -53,7 +53,7 @@ namespace DSaladin.SpeedTime.Model.Settings
             return 0;
         }
 
-        internal double GetWeekWorkHours(DateTime startDate, DateTime endDate)
+        internal double GetWorkHoursForRange(DateTime startDate, DateTime endDate)
         {
             // Ignore start and end date atm
             return GetWorkHours(DayOfWeek.Monday)
