@@ -67,7 +67,7 @@ namespace DSaladin.SpeedTime.ViewModel
             get
             {
                 return string.Format("{0:00.00}h / {1:00.00}h", TrackedTimes.Where(tt => tt.TrackingStarted.Date >= weekRange.Start && tt.TrackingStarted <= weekRange.End && !tt.IsBreak).Sum(tt => tt.Hours),
-                    SettingsModel.Instance.Workdays.GetWeekWorkHours(weekRange.Start, weekRange.End));
+                    SettingsModel.Instance.Workdays.GetWorkHoursForRange(weekRange.Start, weekRange.End));
             }
         }
 
@@ -83,29 +83,6 @@ namespace DSaladin.SpeedTime.ViewModel
         }
 
         public bool IsCurrentlyTracking { get => CurrentTime != null; }
-
-        public bool IsCurrentDateTimeFreeDayChangeable { get; private set; }
-        public bool IsCurrentDateTimeFreeDay
-        {
-            get
-            {
-                if (CurrentDateTime.DayOfWeek == DayOfWeek.Saturday || CurrentDateTime.Date.DayOfWeek == DayOfWeek.Sunday)
-                {
-                    IsCurrentDateTimeFreeDayChangeable = false;
-                    return true;
-                }
-
-                IsCurrentDateTimeFreeDayChangeable = true;
-                return SettingsModel.Instance.SpecialWorkHours.Any(sph => sph.Item1 == CurrentDateTime && sph.Item2 == 0);
-            }
-            set
-            {
-                if (value)
-                    SettingsModel.Instance.SpecialWorkHours.Add(new(CurrentDateTime, 0));
-                else
-                    SettingsModel.Instance.SpecialWorkHours.Remove(new(CurrentDateTime, 0));
-            }
-        }
 
         public bool IsTrackTimeEditorOpen { get; set; }
 
@@ -129,6 +106,7 @@ namespace DSaladin.SpeedTime.ViewModel
         public RelayCommand TrackTimeDeleteCommand { get; set; }
         public RelayCommand OpenJiraIssueCommand { get; set; }
         public RelayCommand OpenUserSettingsCommand { get; set; }
+        public RelayCommand OpenTimeStatisticsCommand { get; set; }
 
         public MainWindowViewModel()
         {
@@ -202,12 +180,26 @@ namespace DSaladin.SpeedTime.ViewModel
             TrackTimeDeleteCommand = new(async (sender) =>
             {
                 TrackTime trackTime = (TrackTime)sender;
-                // TODO: Check if Jira Enabled
+
                 if (SettingsModel.Instance.JiraIsEnabled)
                 {
                     ApiLogEntry? logEntry = await JiraService.DeleteWorklogAsync(trackTime);
-                    if (logEntry is not null)
-                        await ShowDialog(new ApiLog(new() { logEntry }));
+
+                    if (logEntry is not null && !logEntry.IsSuccess)
+                    {
+                        ShowSnackbar("Jira deletion failed", "Delete Anyway", async () =>
+                        {
+                            App.dbContext.TrackedTimes.Remove(trackTime);
+                            await App.dbContext.SaveChangesAsync();
+                            UpdateView();
+
+                            ShowSnackbar("Delete worklog manually");
+                        });
+
+                        return;
+                    }
+
+                    ShowSnackbar("Jira worklog deleted");
                 }
 
                 App.dbContext.TrackedTimes.Remove(trackTime);
@@ -239,6 +231,11 @@ namespace DSaladin.SpeedTime.ViewModel
                     Process.Start(Environment.ProcessPath!);
                     Application.Current.Shutdown();
                 }
+            });
+
+            OpenTimeStatisticsCommand = new(async (_) =>
+            {
+                await ShowDialog<TimeStatistics>(new TimeStatistics(weekRange.Start, weekRange.End));
             });
             #endregion
 

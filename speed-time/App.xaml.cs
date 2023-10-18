@@ -3,6 +3,8 @@ using DSaladin.FontAwesome.WPF;
 using DSaladin.SpeedTime.Dialogs;
 using DSaladin.SpeedTime.Model;
 using GlobalHotKey;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using System;
@@ -72,6 +74,11 @@ namespace DSaladin.SpeedTime
             SystemEvents.SessionSwitch += new SessionSwitchEventHandler(SystemEvents_SessionSwitch);
 
             base.OnStartup(e);
+
+            LiveCharts.Configure(config =>
+            {
+                config.AddDarkTheme();
+            });
 
             MainWindow mainWindow = new();
             mainWindow.Show();

@@ -25,8 +25,6 @@ namespace DSaladin.SpeedTime.Model
             private set { instance = value; }
         }
 
-        public ObservableCollection<Tuple<DateTime, double>> SpecialWorkHours { get; set; } = new();
-
         private bool autoAddBreak;
         public bool? AutoAddBreak
         {
