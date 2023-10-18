@@ -172,11 +172,16 @@ namespace DSaladin.SpeedTime
             if (File.Exists(exeFile))
                 File.Delete(exeFile);
 
-            HttpRequestMessage requestMessage = new(HttpMethod.Get, $"https://api.dsaladin.dev/v1/product/{ProductId}/versions?fromVersion={Assembly.GetExecutingAssembly().GetName().Version!}");
-            HttpResponseMessage responseMessage = await new HttpClient().SendAsync(requestMessage);
-            if (!responseMessage.IsSuccessStatusCode)
-                return;
+            HttpRequestMessage requestMessage = new(HttpMethod.Get, $"https://apii.dsaladin.dev/v1/product/{ProductId}/versions?fromVersion={Assembly.GetExecutingAssembly().GetName().Version!}");
 
+            HttpResponseMessage responseMessage;
+            try
+            {
+                responseMessage = await new HttpClient().SendAsync(requestMessage);
+                if (!responseMessage.IsSuccessStatusCode)
+                    return;
+            }
+            catch { return; }
 
             List<AppVersion>? versions = await System.Text.Json.JsonSerializer.DeserializeAsync<List<AppVersion>>(responseMessage.Content.ReadAsStream());
             if (versions is null || versions.Count == 0)
