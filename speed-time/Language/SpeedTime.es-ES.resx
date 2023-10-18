@@ -171,6 +171,27 @@
   <data name="settings.workdays" xml:space="preserve">
     <value>Días laborables</value>
   </data>
+  <data name="statistics.grouping.month-daily" xml:space="preserve">
+    <value>Mes - Diario</value>
+  </data>
+  <data name="statistics.grouping.month-weekly" xml:space="preserve">
+    <value>Mes - Semanal</value>
+  </data>
+  <data name="statistics.grouping.week-daily" xml:space="preserve">
+    <value>Semana - Diario</value>
+  </data>
+  <data name="statistics.legends.actual" xml:space="preserve">
+    <value>Real</value>
+  </data>
+  <data name="statistics.legends.target" xml:space="preserve">
+    <value>Objetivo</value>
+  </data>
+  <data name="statistics.title" xml:space="preserve">
+    <value>Estadísticas</value>
+  </data>
+  <data name="statistics.week-placeholder" xml:space="preserve">
+    <value>Semana {0}</value>
+  </data>
   <data name="tasklinkeditor.check-placeholder" xml:space="preserve">
     <value>Prefijo de la tarea</value>
   </data>

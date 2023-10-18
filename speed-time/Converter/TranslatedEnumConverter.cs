@@ -15,11 +15,11 @@ using System.Windows.Data;
 
 namespace DSaladin.SpeedTime.Converter
 {
-    internal class SettingCategoryConverter : IValueConverter
+    internal class TranslatedEnumConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return GetEnumDescription((SettingCategory)value);
+            return GetEnumDescription((Enum)value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
