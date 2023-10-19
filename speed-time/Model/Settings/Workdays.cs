@@ -55,14 +55,12 @@ namespace DSaladin.SpeedTime.Model.Settings
 
         internal double GetWorkHoursForRange(DateTime startDate, DateTime endDate)
         {
-            // Ignore start and end date atm
-            return GetWorkHours(DayOfWeek.Monday)
-                + GetWorkHours(DayOfWeek.Tuesday)
-                + GetWorkHours(DayOfWeek.Wednesday)
-                + GetWorkHours(DayOfWeek.Thursday)
-                + GetWorkHours(DayOfWeek.Friday)
-                + GetWorkHours(DayOfWeek.Saturday)
-                + GetWorkHours(DayOfWeek.Sunday);
+            double workHours = 0;
+
+            for(DateTime current = startDate; current <= endDate; current = current.AddDays(1))
+                workHours += GetWorkHours(current);
+
+            return workHours;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

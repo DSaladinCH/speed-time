@@ -55,7 +55,11 @@
             <potato:DSButton Grid.Column="0" fa:Content.Icon="SolidChevronLeft" Style="{DynamicResource TransparentAccentButton}" Padding="0,0,0,0"
                              Command="{Binding RangeBackCommand}" />
             <Label Grid.Column="1" Content="{Binding RangeDisplay}" Style="{DynamicResource Title4Label}" HorizontalAlignment="Stretch"
-                   HorizontalContentAlignment="Center" Padding="0,0,0,0" />
+                   HorizontalContentAlignment="Center" Padding="0,0,0,0">
+                <Label.InputBindings>
+                    <MouseBinding Gesture="LeftDoubleClick" Command="{Binding RangeDoubleClickCommand}" />
+                </Label.InputBindings>
+            </Label>
             <potato:DSButton Grid.Column="2"  fa:Content.Icon="SolidChevronRight" Style="{DynamicResource TransparentAccentButton}" Padding="0,0,0,0"
                              Command="{Binding RangeNextCommand}" />
         </Grid>

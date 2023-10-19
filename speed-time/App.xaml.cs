@@ -45,7 +45,6 @@ namespace DSaladin.SpeedTime
 
         protected override async void OnStartup(StartupEventArgs e)
         {
-            await dbContext.Database.EnsureCreatedAsync();
             await dbContext.Database.MigrateAsync();
             await DataService.LoadSettings();
 
@@ -206,7 +205,7 @@ namespace DSaladin.SpeedTime
 
             Current.Dispatcher.Invoke(() =>
             {
-                Process.Start(exeFile);
+                Process.Start(exeFile, "/silent");
                 Current.Shutdown(0);
             });
         }

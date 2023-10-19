@@ -199,7 +199,8 @@ namespace DSaladin.SpeedTime.ViewModel
                         return;
                     }
 
-                    ShowSnackbar("Jira worklog deleted");
+                    if (logEntry is not null)
+                        ShowSnackbar("Jira worklog deleted");
                 }
 
                 App.dbContext.TrackedTimes.Remove(trackTime);

@@ -86,6 +86,8 @@ namespace DSaladin.SpeedTime.Dialogs
         public RelayCommand GroupingBackCommand { get; set; }
         public RelayCommand GroupingNextCommand { get; set; }
 
+        public RelayCommand RangeDoubleClickCommand { get; set; }
+
         public TimeStatistics(DateTime start, DateTime end)
         {
             InitializeComponent();
@@ -148,6 +150,24 @@ namespace DSaladin.SpeedTime.Dialogs
             {
                 RangeGrouping = (StatisticsGrouping)(((int)RangeGrouping + 1) % Enum.GetValues(typeof(StatisticsGrouping)).Length);
                 UpdateDatesAfterGrouping();
+                await LoadData();
+            });
+
+            RangeDoubleClickCommand = new(async (_) =>
+            {
+                switch (RangeGrouping)
+                {
+                    case StatisticsGrouping.WeekDaily:
+                        StartDate = initialStartDate;
+                        EndDate = initialEndDate;
+                        break;
+                    case StatisticsGrouping.MonthDaily:
+                    case StatisticsGrouping.MonthWeekly:
+                        StartDate = new(initialStartDate.Year, initialStartDate.Month, 1);
+                        EndDate = StartDate.AddMonths(1).AddDays(-1);
+                        break;
+                }
+
                 await LoadData();
             });
 
