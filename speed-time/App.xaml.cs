@@ -171,7 +171,7 @@ namespace DSaladin.SpeedTime
             if (File.Exists(exeFile))
                 File.Delete(exeFile);
 
-            HttpRequestMessage requestMessage = new(HttpMethod.Get, $"https://apii.dsaladin.dev/v1/product/{ProductId}/versions?fromVersion={Assembly.GetExecutingAssembly().GetName().Version!}");
+            HttpRequestMessage requestMessage = new(HttpMethod.Get, $"https://api.dsaladin.dev/v1/product/{ProductId}/versions?fromVersion={Assembly.GetExecutingAssembly().GetName().Version!}");
 
             HttpResponseMessage responseMessage;
             try
