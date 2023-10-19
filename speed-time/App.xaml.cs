@@ -205,7 +205,7 @@ namespace DSaladin.SpeedTime
 
             Current.Dispatcher.Invoke(() =>
             {
-                Process.Start(exeFile);
+                Process.Start(exeFile, "/silent");
                 Current.Shutdown(0);
             });
         }
