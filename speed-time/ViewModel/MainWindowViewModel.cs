@@ -242,6 +242,7 @@ namespace DSaladin.SpeedTime.ViewModel
 
             new Task(async () => await UpdateCurrentTime()).Start();
             new Task(async () => await App.CheckForUpdate()).Start();
+
             UpdateView();
         }
 

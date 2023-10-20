@@ -231,9 +231,6 @@
   <data name="updateapp.download" xml:space="preserve">
     <value>Descarga</value>
   </data>
-  <data name="updateapp.release-date-format" xml:space="preserve">
-    <value>dddd, dd 'de' MMMM 'de' yyyy</value>
-  </data>
   <data name="updateapp.title" xml:space="preserve">
     <value>Actualización disponible!</value>
   </data>
@@ -241,7 +238,7 @@
     <value>Lanzada el: {0}.</value>
   </data>
   <data name="updateapp.version-text" xml:space="preserve">
-    <value>La versión {0} está disponible para su descarga.</value>
+    <value>Versión {0}</value>
   </data>
   <data name="workdays.title" xml:space="preserve">
     <value>Días laborables</value>

@@ -8,24 +8,31 @@
                         xmlns:local="clr-namespace:DSaladin.SpeedTime.Dialogs"
                         d:DataContext="{d:DesignInstance local:UpdateApp}"
                         mc:Ignorable="d"
-                        d:DesignHeight="250" d:DesignWidth="350" MaxHeight="250" MaxWidth="350">
+                        d:DesignHeight="210" d:DesignWidth="350" MaxHeight="210" MaxWidth="350">
+    <potato:DSDialogControl.Resources>
+        <LinearGradientBrush x:Key="ShimmerBrush" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#40E0D0" Offset="0.0" x:Name="StartGradient"/>
+            <GradientStop Color="#B085F5" Offset="0.5" x:Name="MiddleGradient"/>
+            <GradientStop Color="#FF69B4" Offset="1.0" x:Name="EndGradient"/>
+        </LinearGradientBrush>
+    </potato:DSDialogControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="60" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="90" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Content="{x:Static language:SpeedTime.updateapp_title}" Style="{DynamicResource Title2Label}" HorizontalAlignment="Center" />
-        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Label Content="{Binding Version}" ContentStringFormat="{x:Static language:SpeedTime.updateapp_version_text}" d:Content="0.6.0.0"
-                   Style="{DynamicResource Title5Label}" HorizontalContentAlignment="Center" />
-            <Label Content="{Binding ReleaseDate}" ContentStringFormat="{x:Static language:SpeedTime.updateapp_version_release_date}" d:Content="Monday, xx. Month xxxx"
-                   Style="{DynamicResource Title5Label}" HorizontalContentAlignment="Center" />
-        </StackPanel>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <potato:DSButton Content="{x:Static language:SpeedTime.updateapp_cancel}" Style="{DynamicResource AccentErrorButton}" Margin="15,0,10,15"
+        <Label Grid.Row="0" Content="{x:Static language:SpeedTime.updateapp_title}" Style="{DynamicResource Title2Label}" HorizontalAlignment="Center"
+               Padding="0,0,0,0" Foreground="{StaticResource ShimmerBrush}" />
+        <Label Grid.Row="1" Content="{Binding Version}" ContentStringFormat="Version {0}" Style="{DynamicResource Title5Label}" HorizontalAlignment="Center"
+               Padding="0,0,0,0" />
+        <Label Grid.Row="2" Content="{Binding ReleaseDate}" ContentStringFormat="{x:Static language:SpeedTime.updateapp_version_release_date}" d:Content="Monday, xx. Month xxxx"
+               Style="{DynamicResource Title5Label}" HorizontalContentAlignment="Center" />
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
+            <potato:DSButton Content="{x:Static language:SpeedTime.updateapp_cancel}" Style="{DynamicResource AccentErrorButton}" Margin="15,30,10,15"
                              Width="130" Command="{Binding DenyCommand}" />
-            <potato:DSButton Content="{x:Static language:SpeedTime.updateapp_download}" Style="{DynamicResource AccentOkButton}" Margin="10,0,15,15"
+            <potato:DSButton Content="{x:Static language:SpeedTime.updateapp_download}" Style="{DynamicResource AccentOkButton}" Margin="10,30,15,15"
                              Width="130" Command="{Binding DownloadCommand}" />
         </StackPanel>
     </Grid>

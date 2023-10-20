@@ -30,7 +30,7 @@ namespace DSaladin.SpeedTime
     /// </summary>
     public partial class App : Application
     {
-        record AppVersion(string Version, DateTime ReleaseDate);
+        record AppVersion(Version Version, DateTime ReleaseDate);
 
         internal const string ProductId = "61dd9fcc-ba93-406f-89b9-99763fd2077c";
 
@@ -191,7 +191,7 @@ namespace DSaladin.SpeedTime
                 return await (Current.MainWindow as DSWindow)!.ShowDialog<bool>(new UpdateApp(versions.Last().Version, versions.Last().ReleaseDate));
             });
 
-            if (result == false)
+            if (!result)
                 return;
 
             HttpResponseMessage exeResponseMessage = await new HttpClient().SendAsync(new(HttpMethod.Get, $"https://api.dsaladin.dev/v1/product/{ProductId}/latest"));
