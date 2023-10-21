@@ -5,6 +5,7 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:system="clr-namespace:System;assembly=mscorlib"
                  xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+                 xmlns:localBehaviors="clr-namespace:DSaladin.SpeedTime.Behavior"
                  xmlns:viewmodel="clr-namespace:DSaladin.SpeedTime.ViewModel"
                  xmlns:converter="clr-namespace:DSaladin.SpeedTime.Converter"
                  xmlns:potato="https://dsaladin.dev/products/fancypotato/wpf/xaml"
@@ -66,9 +67,13 @@
             </potato:DSTextBox.InputBindings>
         </potato:DSTextBox>
 
-        <ListView Grid.Row="1" ItemsSource="{Binding TrackedTimesViewSource.View, Mode=OneWay, NotifyOnTargetUpdated=True}" ScrollViewer.CanContentScroll="False" Height="{Binding SuggestionsHeight}"
-                  TargetUpdated="ListView_TargetUpdated" SelectionChanged="ListView_SelectionChanged" IsSynchronizedWithCurrentItem="True" Margin="5,0,5,0"
-                  SelectedIndex="{Binding SuggestionSelectedIndex}" ItemContainerStyle="{DynamicResource ContainerStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListView Grid.Row="1" ItemsSource="{Binding TrackedTimesViewSource.View, Mode=OneWay, NotifyOnTargetUpdated=True}" ScrollViewer.CanContentScroll="False"
+                  Height="{Binding SuggestionsHeight}" IsSynchronizedWithCurrentItem="True" Margin="5,0,5,0" SelectedIndex="{Binding SuggestionSelectedIndex}"
+                  ItemContainerStyle="{DynamicResource ContainerStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <behaviors:Interaction.Behaviors>
+                <localBehaviors:SelectFirstItemOnTargetUpdated />
+                <localBehaviors:ScrollToSelectedIndex />
+            </behaviors:Interaction.Behaviors>
         </ListView>
 
         <Grid Grid.Row="2" Background="{DynamicResource BackgroundD}">

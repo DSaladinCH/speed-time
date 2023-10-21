@@ -47,24 +47,5 @@ namespace DSaladin.SpeedTime
             };
             return trackTime;
         }
-
-        private void ListView_TargetUpdated(object sender, DataTransferEventArgs e)
-        {
-            // TODO: Move to ViewModel
-            if (((ListView)sender).Items.Count == 0)
-                return;
-
-            ((ListView)sender).SelectedIndex = 0;
-            ((ListView)sender).ScrollIntoView(((ListView)sender).Items.GetItemAt(0));
-        }
-
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // TODO: Move to ViewModel
-            if (((ListView)sender).Items.Count == 0 || ((ListView)sender).SelectedIndex == -1)
-                return;
-
-            ((ListView)sender).ScrollIntoView(((ListView)sender).Items.GetItemAt(((ListView)sender).SelectedIndex));
-        }
     }
 }
