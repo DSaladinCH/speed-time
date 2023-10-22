@@ -32,7 +32,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type settings:ActionSetting}">
-                        <potato:DSButton Grid.Column="1" Height="30" Content="{Binding ActionText}" Padding="0" Command="{Binding ActionCommand}" />
+                        <potato:DSButton Grid.Column="1" Height="30" Content="{Binding ActionText}" Padding="0" Command="{Binding ActionCommand}"
+                                         Style="{DynamicResource AccentButton}" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -146,7 +147,8 @@
 
         <StackPanel Grid.Row="2" HorizontalAlignment="Center">
             <Line X1="0" X2="230" Y1="0" Y2="0" Stroke="{DynamicResource BackgroundA}" StrokeThickness="1" />
-            <Label Content="{Binding CurrentVersion}" ContentStringFormat="Speed Time • Version {0}" Padding="0,10,0,0" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" />
+            <Label Content="{Binding CurrentVersion}" ContentStringFormat="Speed Time • Version {0}" Padding="0,10,0,0" FontSize="11"
+                   FontWeight="Bold" HorizontalAlignment="Center" />
         </StackPanel>
     </Grid>
 </potato:DSDialogControl>

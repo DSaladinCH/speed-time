@@ -1,9 +1,11 @@
-﻿using DSaladin.FancyPotato.DSWindows;
+﻿using DSaladin.FancyPotato;
+using DSaladin.FancyPotato.DSWindows;
 using DSaladin.FontAwesome.WPF;
 using DSaladin.SpeedTime.Dialogs;
 using DSaladin.SpeedTime.Model;
 using GlobalHotKey;
 using LiveChartsCore;
+using LiveChartsCore.Drawing;
 using LiveChartsCore.SkiaSharpView;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
@@ -74,13 +76,55 @@ namespace DSaladin.SpeedTime
 
             base.OnStartup(e);
 
-            LiveCharts.Configure(config =>
-            {
-                config.AddDarkTheme();
-            });
+            //LiveCharts.Configure(config =>
+            //{
+            //    config.AddDarkTheme((d) =>
+            //    {
+            //        d.Colors[0] = ResourceToLvcColor("AccentA");
+            //        d.Colors[1] = ResourceToLvcColor("AccentD");
+            //        d.Colors[2] = ResourceToLvcColor("AccentG");
+            //    });
+            //});
+
+            ColorManagement.Instance.CurrThemeChanged += (s, e) => ApplyLiveChartsColors();
+            ColorManagement.Instance.CurrAccentChanged += (s, e) => ApplyLiveChartsColors();
+
+            ApplyLiveChartsColors();
 
             MainWindow mainWindow = new();
             mainWindow.Show();
+        }
+
+        private void ApplyLiveChartsColors()
+        {
+            if (ColorManagement.Instance.CurrTheme == FancyPotato.Schema.Themes.Dark)
+                LiveCharts.DefaultSettings.AddDarkTheme((theme) =>
+                {
+                    theme.Colors[0] = ResourceToLvcColor("AccentA");
+                    theme.Colors[1] = ResourceToLvcColor("AccentD");
+                    theme.Colors[2] = ResourceToLvcColor("AccentG");
+                });
+            else if (ColorManagement.Instance.CurrTheme == FancyPotato.Schema.Themes.Light)
+                LiveCharts.DefaultSettings.AddLightTheme((theme) =>
+                {
+                    theme.Colors[0] = ResourceToLvcColor("AccentA");
+                    theme.Colors[1] = ResourceToLvcColor("AccentD");
+                    theme.Colors[2] = ResourceToLvcColor("AccentG");
+                });
+        }
+
+        private LvcColor ResourceToLvcColor(string resourceName)
+        {
+            string hexColor = FindResource(resourceName).ToString()!;
+            if (string.IsNullOrEmpty(hexColor) || hexColor.Length != 9 || !hexColor.StartsWith("#"))
+                throw new ArgumentException("Invalid hex color format");
+
+            byte alpha = Convert.ToByte(hexColor.Substring(1, 2), 16);
+            byte red = Convert.ToByte(hexColor.Substring(3, 2), 16);
+            byte green = Convert.ToByte(hexColor.Substring(5, 2), 16);
+            byte blue = Convert.ToByte(hexColor.Substring(7, 2), 16);
+
+            return LvcColor.FromArgb(alpha, red, green, blue);
         }
 
         private async void HotKeyManagerPressed(object? sender, KeyPressedEventArgs e)

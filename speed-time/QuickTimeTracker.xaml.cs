@@ -28,8 +28,8 @@ namespace DSaladin.SpeedTime
     {
         public QuickTimeTracker(DSViewModel viewModel)
         {
-            InitializeComponent();
             DataContext = viewModel;
+            InitializeComponent();
         }
 
         internal static TrackTime? Open(TrackTime? lastTrackTime)
