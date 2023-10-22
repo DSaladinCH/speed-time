@@ -403,15 +403,6 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to dddd, dd. MMMM yyyy.
-        /// </summary>
-        public static string updateapp_release_date_format {
-            get {
-                return ResourceManager.GetString("updateapp.release-date-format", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Update Available!.
         /// </summary>
         public static string updateapp_title {
@@ -430,7 +421,7 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The version {0} is available to download..
+        ///   Looks up a localized string similar to Version {0}.
         /// </summary>
         public static string updateapp_version_text {
             get {

@@ -128,7 +128,9 @@ namespace DSaladin.SpeedTime.ViewModel
 
             UpdateJiraCommand = new(async (sender) =>
             {
-                // TODO: Check if Jira Enabled
+                if (!SettingsModel.Instance.JiraIsEnabled)
+                    return;
+
                 IsJiraLoading = true;
                 await JiraService.UploadWorklogsAsync(TrackedTimesViewSource.View.Cast<TrackTime>().ToList());
                 IsJiraLoading = false;
@@ -242,6 +244,7 @@ namespace DSaladin.SpeedTime.ViewModel
 
             new Task(async () => await UpdateCurrentTime()).Start();
             new Task(async () => await App.CheckForUpdate()).Start();
+
             UpdateView();
         }
 

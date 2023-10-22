@@ -104,7 +104,7 @@ namespace DSaladin.SpeedTime.Model
 
             stopTime ??= DateTime.Now.TimeOfDay;
 
-            TrackingStopped = TrackingStarted.Date.Add((TimeSpan)stopTime);
+            TrackingStopped = TrackingStarted.Date.Add(new TimeSpan(((TimeSpan)stopTime).Hours, ((TimeSpan)stopTime).Minutes, 0));
         }
 
         public void UpdateTrackingToNow()

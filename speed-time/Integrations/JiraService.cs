@@ -21,7 +21,6 @@ using Windows.Media.Protection.PlayReady;
 
 namespace DSaladin.SpeedTime.Integrations
 {
-    // TODO: Handle renaming TrackTime -> Check if Jira Key changed
     internal partial class JiraService
     {
         [GeneratedRegex("(?:^| )([A-z]+-[0-9]+)")]

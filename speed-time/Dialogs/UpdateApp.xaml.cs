@@ -49,13 +49,23 @@ namespace DSaladin.SpeedTime.Dialogs
             }
         }
 
-        public UpdateApp(string version, DateTime releaseDate)
+        public UpdateApp(Version version, DateTime releaseDate)
         {
             InitializeComponent();
             DataContext = this;
 
-            Version = version;
-            ReleaseDate = releaseDate.ToString(SpeedTime.Language.SpeedTime.updateapp_release_date_format, SpeedTime.Language.SpeedTime.Culture);
+            int[] components = { version.Major, version.Minor, version.Build, version.Revision };
+            int nonZeroIndex = components.Length - 1;
+
+            while (nonZeroIndex > 1 && components[nonZeroIndex] == 0)
+                nonZeroIndex--;
+
+            Version = string.Join('.', components.Take(nonZeroIndex + 1));
+
+            if (releaseDate.Year == DateTime.Now.Year)
+                ReleaseDate = releaseDate.ToString("M", SpeedTime.Language.SpeedTime.Culture);
+            else
+                ReleaseDate = releaseDate.ToString("D", SpeedTime.Language.SpeedTime.Culture);
 
             DenyCommand = new((_) => Close(false));
             DownloadCommand = new((_) => Close(true));

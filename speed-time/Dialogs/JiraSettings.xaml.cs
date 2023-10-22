@@ -26,42 +26,36 @@ namespace DSaladin.SpeedTime.Dialogs
     /// </summary>
     public partial class JiraSettings : DSDialogControl
     {
-        private string jiraEmail;
+        private string jiraEmail = "";
         public string JiraEmail
         {
             get { return jiraEmail; }
             set
             {
                 jiraEmail = value;
-                // TODO: Async
-                SaveAndClear().Wait();
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(JiraApiToken));
             }
         }
 
-        private string jiraBaseUrl;
+        private string jiraBaseUrl = "";
         public string JiraBaseUrl
         {
             get { return jiraBaseUrl; }
             set
             {
                 jiraBaseUrl = value;
-                // TODO: Async
-                SaveAndClear().Wait();
                 NotifyPropertyChanged();
             }
         }
 
-        private string jiraApiToken;
+        private string jiraApiToken = "";
         public string JiraApiToken
         {
             get { return jiraApiToken; }
             set
             {
                 jiraApiToken = value;
-                // TODO: Async
-                SaveAndClear().Wait();
                 NotifyPropertyChanged();
             }
         }
@@ -71,10 +65,24 @@ namespace DSaladin.SpeedTime.Dialogs
             InitializeComponent();
             DataContext = this;
 
-            // TODO: Async
-            UserCredential? userCredential = App.dbContext.UserCredentials.FirstOrDefault(uc => uc.ServiceType == ServiceType.Jira);
-            if (userCredential is not null)
-                jiraBaseUrl = userCredential.ServiceUri;
+            Loaded += async (s, e) =>
+            {
+                UserCredential? userCredential = await App.dbContext.UserCredentials.FirstOrDefaultAsync(uc => uc.ServiceType == ServiceType.Jira);
+                if (userCredential is not null)
+                {
+                    jiraBaseUrl = userCredential.ServiceUri;
+                    NotifyPropertyChanged(nameof(JiraBaseUrl));
+                }
+            };
+
+            PropertyChanged += async (s, e) =>
+            {
+                if (e.PropertyName == "")
+                    return;
+
+                await SaveAndClear();
+                NotifyPropertyChanged("");
+            };
         }
 
         private async Task SaveAndClear()
