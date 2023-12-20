@@ -40,7 +40,7 @@ namespace DSaladin.SpeedTime
         internal static readonly IDataService DataService = new FileDataService();
 
         private readonly HotKeyManager hotKeyManager = new();
-        private HotKey? openQuickTimeTracker;
+        private HotKey? currentQuickTimeHotKey;
 
         private TrackTime? trackTimeBeforePause;
         private TrackTime? trackTimePause;
@@ -69,30 +69,31 @@ namespace DSaladin.SpeedTime
                 }
             }
 
-            openQuickTimeTracker = hotKeyManager.Register(Key.T, ModifierKeys.Control | ModifierKeys.Alt);
-            hotKeyManager.KeyPressed += HotKeyManagerPressed;
-
             SystemEvents.SessionSwitch += new SessionSwitchEventHandler(SystemEvents_SessionSwitch);
+            RegisterQuickEntryHotKeyStartup();
 
             base.OnStartup(e);
+            LiveChartsStartup();
 
-            //LiveCharts.Configure(config =>
-            //{
-            //    config.AddDarkTheme((d) =>
-            //    {
-            //        d.Colors[0] = ResourceToLvcColor("AccentA");
-            //        d.Colors[1] = ResourceToLvcColor("AccentD");
-            //        d.Colors[2] = ResourceToLvcColor("AccentG");
-            //    });
-            //});
+            MainWindow mainWindow = new();
+            mainWindow.Show();
+        }
 
+        private void RegisterQuickEntryHotKeyStartup()
+        {
+            hotKeyManager.KeyPressed += HotKeyManagerPressed;
+            RegisteredHotKey? registeredHotKey = SettingsModel.Instance.GetRegisteredHotKey(RegisteredHotKey.HotKeyType.QuickEntry);
+
+            if (registeredHotKey is not null)
+                RegisterQuickTimeHotkey(registeredHotKey.GetGlobalHotKey());
+        }
+
+        private void LiveChartsStartup()
+        {
             ColorManagement.Instance.CurrThemeChanged += (s, e) => ApplyLiveChartsColors();
             ColorManagement.Instance.CurrAccentChanged += (s, e) => ApplyLiveChartsColors();
 
             ApplyLiveChartsColors();
-
-            MainWindow mainWindow = new();
-            mainWindow.Show();
         }
 
         private void ApplyLiveChartsColors()
@@ -127,9 +128,30 @@ namespace DSaladin.SpeedTime
             return LvcColor.FromArgb(alpha, red, green, blue);
         }
 
+        internal bool RegisterQuickTimeHotkey(HotKey newHotKey)
+        {
+            if (currentQuickTimeHotKey is not null)
+                hotKeyManager.Unregister(currentQuickTimeHotKey);
+
+            try
+            {
+                currentQuickTimeHotKey = newHotKey;
+                hotKeyManager.Register(currentQuickTimeHotKey);
+                SettingsModel.Instance.AddRegisteredHotKey(RegisteredHotKey.HotKeyType.QuickEntry, newHotKey.Key, newHotKey.Modifiers);
+                return true;
+            }
+            catch
+            {
+                Debug.WriteLine($"Could not register quick time hotkey {newHotKey.Modifiers} {newHotKey.Key}");
+                currentQuickTimeHotKey = null;
+                SettingsModel.Instance.AddRegisteredHotKey(RegisteredHotKey.HotKeyType.QuickEntry, Key.None, ModifierKeys.None);
+                return false;
+            }
+        }
+
         private async void HotKeyManagerPressed(object? sender, KeyPressedEventArgs e)
         {
-            if (e.HotKey.Equals(openQuickTimeTracker))
+            if (e.HotKey.Equals(currentQuickTimeHotKey))
             {
                 TrackTime? trackTime = QuickTimeTracker.Open(await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync());
                 if (trackTime is null)

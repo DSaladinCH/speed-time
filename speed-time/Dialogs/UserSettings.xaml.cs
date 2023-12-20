@@ -37,7 +37,6 @@ namespace DSaladin.SpeedTime.Dialogs
             }
         }
 
-        public RelayCommand TaskLinkingCommand { get; set; }
         public RelayCommand JiraCommand { get; set; }
         public RelayCommand WorkdaysCommand { get; set; }
 
@@ -55,9 +54,6 @@ namespace DSaladin.SpeedTime.Dialogs
             #endregion
 
             #region Commands
-            TaskLinkingCommand = new(async a =>
-                SettingsModel.Instance.TaskLinks = await ShowDialog<List<TaskLink>>(new TaskLinking(SettingsModel.Instance.TaskLinks)) ?? new());
-
             JiraCommand = new(async a => await ShowDialog(new JiraSettings()));
             WorkdaysCommand = new(async a => await ShowDialog(new Workdays()));
             #endregion
@@ -76,9 +72,9 @@ namespace DSaladin.SpeedTime.Dialogs
             Close(SpeedTime.Language.SpeedTime.Culture.Name != SettingsModel.Instance.SelectedUiLanguage);
         }
 
-        private async void TaskLinking_Click(object sender, RoutedEventArgs e)
+        private void QuickEntry_OnHotKeyChanged(object sender, HotKeyArgs e)
         {
-            SettingsModel.Instance.TaskLinks = await ShowDialog<List<TaskLink>>(new TaskLinking(SettingsModel.Instance.TaskLinks)) ?? new();
+            e.IsValid = ((App)Application.Current).RegisterQuickTimeHotkey(new(e.SelectedKey, e.SelectedModifierKeys));
         }
     }
 }

@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace DSaladin.SpeedTime.Model
 {
@@ -60,23 +61,6 @@ namespace DSaladin.SpeedTime.Model
             }
         }
 
-        private List<TaskLink> taskLinks = new();
-        public List<TaskLink> TaskLinks
-        {
-            get { return taskLinks; }
-            set
-            {
-                taskLinks = value;
-                NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(TaskLinkCollection));
-            }
-        }
-
-        public ObservableCollection<TaskLink> TaskLinkCollection
-        {
-            get { return new(taskLinks); }
-        }
-
         private bool jiraZeroOnDelete;
         public bool JiraZeroOnDelete
         {
@@ -84,6 +68,18 @@ namespace DSaladin.SpeedTime.Model
             set
             {
                 jiraZeroOnDelete = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private List<RegisteredHotKey>? registeredHotKeys;
+        [JsonInclude]
+        protected List<RegisteredHotKey>? RegisteredHotKeys
+        {
+            get { return registeredHotKeys; }
+            set
+            {
+                registeredHotKeys = value;
                 NotifyPropertyChanged();
             }
         }
@@ -98,15 +94,33 @@ namespace DSaladin.SpeedTime.Model
             if (!AvailableLanguages.Exists(l => l.Id == Instance.SelectedUiLanguage))
                 Instance.SelectedUiLanguage = AvailableLanguages[0].Id;
 
-            Instance.TaskLinkCollection.CollectionChanged += (s, e) =>
+            if (Instance.RegisteredHotKeys is null)
             {
-                if (e.NewItems is not null)
-                    Instance.TaskLinks.AddRange(e.NewItems.Cast<TaskLink>());
+                Instance.RegisteredHotKeys = [];
+                Instance.AddRegisteredHotKey(RegisteredHotKey.HotKeyType.QuickEntry, Key.T, ModifierKeys.Alt | ModifierKeys.Control);
+                Instance.AddRegisteredHotKey(RegisteredHotKey.HotKeyType.NewEntry, Key.A, ModifierKeys.Control);
+            }
+        }
 
-                if (e.OldItems is not null)
-                    foreach (TaskLink taskLink in e.OldItems.Cast<TaskLink>())
-                        Instance.TaskLinks.Remove(taskLink);
-            };
+        /// <summary>
+        /// Replaces the current hotkey for the given <see cref="RegisteredHotKey.HotKeyType"/>. This function does not check if the HotKey is available
+        /// </summary>
+        public void AddRegisteredHotKey(RegisteredHotKey.HotKeyType hotKeyType, Key key, ModifierKeys modifierKeys)
+        {
+            RegisteredHotKeys ??= [];
+            RegisteredHotKey? registeredHotKey = RegisteredHotKeys.FirstOrDefault(r => r.Type == hotKeyType);
+
+            if (registeredHotKey is not null)
+                RegisteredHotKeys.Remove(registeredHotKey);
+
+            registeredHotKey = new(hotKeyType, key, modifierKeys);
+            RegisteredHotKeys.Add(registeredHotKey);
+        }
+
+        public RegisteredHotKey? GetRegisteredHotKey(RegisteredHotKey.HotKeyType hotKeyType)
+        {
+            RegisteredHotKeys ??= [];
+            return RegisteredHotKeys.FirstOrDefault(r => r.Type == hotKeyType);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
