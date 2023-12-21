@@ -57,7 +57,7 @@ namespace DSaladin.SpeedTime.Dialogs
             int[] components = { version.Major, version.Minor, version.Build, version.Revision };
             int nonZeroIndex = components.Length - 1;
 
-            while (nonZeroIndex > 1 && components[nonZeroIndex] == 0)
+            while (nonZeroIndex > 1 && components[nonZeroIndex] <= 0)
                 nonZeroIndex--;
 
             Version = string.Join('.', components.Take(nonZeroIndex + 1));
