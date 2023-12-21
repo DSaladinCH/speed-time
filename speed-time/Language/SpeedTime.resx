@@ -123,6 +123,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="hotkey.press-key" xml:space="preserve">
+    <value>Press Key...</value>
+  </data>
   <data name="open" xml:space="preserve">
     <value>Open</value>
   </data>
@@ -138,11 +141,20 @@
   <data name="quicktimetracker.placeholder" xml:space="preserve">
     <value>The title of your work</value>
   </data>
+  <data name="quicktimetracker.title" xml:space="preserve">
+    <value>Quick Entry</value>
+  </data>
   <data name="settings.auto-break" xml:space="preserve">
     <value>Auto add break on lock</value>
   </data>
   <data name="settings.behavior.title" xml:space="preserve">
     <value>Behavior</value>
+  </data>
+  <data name="settings.hotkey-add-entry" xml:space="preserve">
+    <value>Add Entry Hotkey</value>
+  </data>
+  <data name="settings.hotkey-quick-entry" xml:space="preserve">
+    <value>Quick Entry Hotkey</value>
   </data>
   <data name="settings.integrations.title" xml:space="preserve">
     <value>Integrations</value>
@@ -191,18 +203,6 @@
   </data>
   <data name="statistics.week-placeholder" xml:space="preserve">
     <value>Week {0}</value>
-  </data>
-  <data name="tasklinkeditor.check-placeholder" xml:space="preserve">
-    <value>Task Prefix</value>
-  </data>
-  <data name="tasklinkeditor.link-placeholder" xml:space="preserve">
-    <value>Task Link ({0} for ID Placeholder)</value>
-  </data>
-  <data name="tasklinkeditor.title" xml:space="preserve">
-    <value>Task Link</value>
-  </data>
-  <data name="tasklinking.title" xml:space="preserve">
-    <value>Task Links</value>
   </data>
   <data name="timeeditor.break" xml:space="preserve">
     <value>Break</value>

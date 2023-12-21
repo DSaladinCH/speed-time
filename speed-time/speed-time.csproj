@@ -62,9 +62,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Dialogs\TaskLinkEditor.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Language\SpeedTime - Copy.de-CH.Designer.cs">
       <DependentUpon>SpeedTime.de-CH.resx</DependentUpon>
       <DesignTime>True</DesignTime>

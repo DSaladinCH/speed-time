@@ -21,7 +21,7 @@
         <potato:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </potato:DSWindow.Resources>
     <behaviors:Interaction.Triggers>
-        <behaviors:KeyTrigger Modifiers="Ctrl" Key="A" FiredOn="KeyDown">
+        <behaviors:KeyTrigger Modifiers="{Binding RegisteredHotKey.RegisteredModifierKeys}" Key="{Binding RegisteredHotKey.RegisteredKey}" FiredOn="KeyDown">
             <behaviors:InvokeCommandAction Command="{Binding AddTrackingCommand}" />            
         </behaviors:KeyTrigger>
     </behaviors:Interaction.Triggers>

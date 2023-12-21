@@ -145,7 +145,10 @@
                         <settings:ActionSetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_workdays}"
                                                 ActionText="{x:Static language:SpeedTime.open}"
                                                 ActionCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:UserSettings}}, Path=WorkdaysCommand}" />
-                        <settings:HotKeySetting Category="Behavior" OptionName="Quick Entry HotKey" OnHotKeyChanged="QuickEntry_OnHotKeyChanged" />
+                        <settings:HotKeySetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_hotkey_quick_entry}"
+                                                OnLoadHotKey="QuickEntry_OnLoadHotKey" OnHotKeyChanged="QuickEntry_OnHotKeyChanged" />
+                        <settings:HotKeySetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_hotkey_add_entry}"
+                                                OnLoadHotKey="AddEntry_OnLoadHotKey" OnHotKeyChanged="AddEntry_OnHotKeyChanged" />
                         <settings:ActionSetting Category="Integrations" OptionName="Jira"
                                                 ActionText="{x:Static language:SpeedTime.open}"
                                                 ActionCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:UserSettings}}, Path=JiraCommand}" />

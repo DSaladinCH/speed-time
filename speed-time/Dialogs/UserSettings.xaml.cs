@@ -58,7 +58,18 @@ namespace DSaladin.SpeedTime.Dialogs
             WorkdaysCommand = new(async a => await ShowDialog(new Workdays()));
             #endregion
 
-            CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
+            CurrentVersion = FormatVersion(Assembly.GetExecutingAssembly().GetName().Version!);
+        }
+
+        private string FormatVersion(Version version)
+        {
+            int[] components = { version.Major, version.Minor, version.Build, version.Revision };
+            int nonZeroIndex = components.Length - 1;
+
+            while (nonZeroIndex > 1 && components[nonZeroIndex] == 0)
+                nonZeroIndex--;
+
+            return string.Join('.', components.Take(nonZeroIndex + 1));
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)
@@ -72,9 +83,31 @@ namespace DSaladin.SpeedTime.Dialogs
             Close(SpeedTime.Language.SpeedTime.Culture.Name != SettingsModel.Instance.SelectedUiLanguage);
         }
 
+        private void QuickEntry_OnLoadHotKey(object sender, HotKeyArgs e)
+        {
+            RegisteredHotKey registeredHotKey = SettingsModel.Instance.GetRegisteredHotKey(RegisteredHotKey.HotKeyType.QuickEntry);
+            e.SelectedKey = registeredHotKey.RegisteredKey;
+            e.SelectedModifierKeys = registeredHotKey.RegisteredModifierKeys;
+            e.IsValid = true;
+        }
+
         private void QuickEntry_OnHotKeyChanged(object sender, HotKeyArgs e)
         {
             e.IsValid = ((App)Application.Current).RegisterQuickTimeHotkey(new(e.SelectedKey, e.SelectedModifierKeys));
+        }
+
+        private void AddEntry_OnLoadHotKey(object sender, HotKeyArgs e)
+        {
+            RegisteredHotKey registeredHotKey = SettingsModel.Instance.GetRegisteredHotKey(RegisteredHotKey.HotKeyType.NewEntry);
+            e.SelectedKey = registeredHotKey.RegisteredKey;
+            e.SelectedModifierKeys = registeredHotKey.RegisteredModifierKeys;
+            e.IsValid = true;
+        }
+
+        private void AddEntry_OnHotKeyChanged(object sender, HotKeyArgs e)
+        {
+            e.IsValid = !SettingsModel.Instance.IsHotKeyUsed(RegisteredHotKey.HotKeyType.NewEntry, e.SelectedKey, e.SelectedModifierKeys);
+            SettingsModel.Instance.AddRegisteredHotKey(RegisteredHotKey.HotKeyType.NewEntry, e.SelectedKey, e.SelectedModifierKeys);
         }
     }
 }

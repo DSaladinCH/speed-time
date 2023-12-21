@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace DSaladin.SpeedTime.Model
 {
-    internal class RegisteredHotKey
+    public class RegisteredHotKey
     {
         public HotKeyType Type { get; set; }
         public Key RegisteredKey { get; set; }
@@ -21,12 +21,12 @@ namespace DSaladin.SpeedTime.Model
             RegisteredModifierKeys = registeredModifierKeys;
         }
 
-        internal HotKey GetGlobalHotKey()
+        public HotKey GetGlobalHotKey()
         {
             return new(RegisteredKey, RegisteredModifierKeys);
         }
 
-        internal enum HotKeyType
+        public enum HotKeyType
         {
             QuickEntry,
             NewEntry

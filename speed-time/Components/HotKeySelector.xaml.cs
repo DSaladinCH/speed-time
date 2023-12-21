@@ -43,7 +43,7 @@ namespace DSaladin.SpeedTime.Components
 
         public bool IsSelectingHotkey { get; set; } = false;
 
-        public static readonly DependencyProperty SelectedKeyProperty = DependencyProperty.Register(nameof(SelectedKey), typeof(Key), typeof(HotKeySelector), new FrameworkPropertyMetadata(Key.NoName, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedKeyChanged));
+        public static readonly DependencyProperty SelectedKeyProperty = DependencyProperty.Register(nameof(SelectedKey), typeof(Key), typeof(HotKeySelector), new FrameworkPropertyMetadata(Key.None, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedKeyChanged));
         public static readonly DependencyProperty SelectedModifierKeysProperty = DependencyProperty.Register(nameof(SelectedModifierKeys), typeof(ModifierKeys), typeof(HotKeySelector), new FrameworkPropertyMetadata(ModifierKeys.None, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedModifierKeysChanged));
         public static readonly DependencyProperty SelectedKeysTextProperty = DependencyProperty.Register(nameof(SelectedKeysText), typeof(string), typeof(HotKeySelector), new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
@@ -67,12 +67,36 @@ namespace DSaladin.SpeedTime.Components
             remove { RemoveHandler(HotKeyChangedEvent, value); }
         }
 
-        private Key[] modifierKeys = new[] { Key.LeftShift, Key.RightShift, Key.LeftAlt, Key.RightAlt, Key.LeftCtrl, Key.RightCtrl, Key.LWin, Key.RWin, Key.System };
+        public static readonly RoutedEvent LoadHotKeyEvent = EventManager.RegisterRoutedEvent(
+            nameof(LoadHotKey), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(HotKeySelector));
+
+        public event RoutedEventHandler LoadHotKey
+        {
+            add { AddHandler(LoadHotKeyEvent, value); }
+            remove { RemoveHandler(LoadHotKeyEvent, value); }
+        }
+
+        private Key[] modifierKeys = [Key.LeftShift, Key.RightShift, Key.LeftAlt, Key.RightAlt, Key.LeftCtrl, Key.RightCtrl, Key.LWin, Key.RWin, Key.System];
 
         public HotKeySelector()
         {
             InitializeComponent();
             DataContext = this;
+
+            Loaded += HotKeySelector_Loaded;
+        }
+
+        private void HotKeySelector_Loaded(object sender, RoutedEventArgs e)
+        {
+            HotKeyArgs args = new(LoadHotKeyEvent, this, SelectedKey, SelectedModifierKeys);
+            RaiseEvent(args);
+
+            if (args.IsValid)
+            {
+                SetCurrentValue(SelectedKeyProperty, args.SelectedKey);
+                SetCurrentValue(SelectedModifierKeysProperty, args.SelectedModifierKeys);
+                ResetKeys(false);
+            }
         }
 
         private static void OnSelectedKeyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
@@ -101,7 +125,6 @@ namespace DSaladin.SpeedTime.Components
         protected override void OnLostFocus(RoutedEventArgs e)
         {
             base.OnLostFocus(e);
-            //ResetKeys();
         }
 
         private void HotKey_Click(object sender, RoutedEventArgs e)
@@ -109,9 +132,9 @@ namespace DSaladin.SpeedTime.Components
             IsSelectingHotkey = !IsSelectingHotkey;
 
             if (IsSelectingHotkey)
-                SetCurrentValue(SelectedKeysTextProperty, "Press Key...");
+                SetCurrentValue(SelectedKeysTextProperty, SpeedTime.Language.SpeedTime.hotkey_press_key);
             else
-                ResetKeys();
+                ResetKeys(false);
         }
 
         private void HotKey_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -125,7 +148,7 @@ namespace DSaladin.SpeedTime.Components
         {
             if (IsSelectingHotkey)
             {
-                Key currentKey = (e.Key == Key.System ? e.SystemKey : e.Key);
+                Key currentKey = e.Key == Key.System ? e.SystemKey : e.Key;
                 if (currentKey == Key.Escape)
                 {
                     ResetKeys();
@@ -141,11 +164,13 @@ namespace DSaladin.SpeedTime.Components
             }
         }
 
-        private void ResetKeys()
+        private void ResetKeys(bool raiseChangedEvent = true)
         {
             IsSelectingHotkey = false;
             SetCurrentValue(SelectedKeysTextProperty, GetKeyText(SelectedModifierKeys, SelectedKey));
-            RaiseKeyChangedEvent();
+
+            if (raiseChangedEvent)
+                RaiseKeyChangedEvent();
         }
 
         private void RaiseKeyChangedEvent()

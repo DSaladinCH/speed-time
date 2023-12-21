@@ -85,6 +85,7 @@ namespace DSaladin.SpeedTime.ViewModel
         public bool IsCurrentlyTracking { get => CurrentTime != null; }
 
         public bool IsTrackTimeEditorOpen { get; set; }
+        public bool IsUserSettingsOpen { get; set; }
 
         private bool isJiraLoading;
         public bool IsJiraLoading
@@ -93,6 +94,17 @@ namespace DSaladin.SpeedTime.ViewModel
             set
             {
                 isJiraLoading = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private RegisteredHotKey registeredHotKey;
+        public RegisteredHotKey RegisteredHotKey
+        {
+            get { return registeredHotKey; }
+            set
+            {
+                registeredHotKey = value;
                 NotifyPropertyChanged();
             }
         }
@@ -138,7 +150,7 @@ namespace DSaladin.SpeedTime.ViewModel
 
             AddTrackingCommand = new(async (_) =>
             {
-                if (IsTrackTimeEditorOpen)
+                if (IsTrackTimeEditorOpen || IsUserSettingsOpen)
                     return;
 
                 IsTrackTimeEditorOpen = true;
@@ -168,7 +180,7 @@ namespace DSaladin.SpeedTime.ViewModel
 
             TrackTimeDoubleClickCommand = new(async (sender) =>
             {
-                if (IsTrackTimeEditorOpen)
+                if (IsTrackTimeEditorOpen || IsUserSettingsOpen)
                     return;
 
                 IsTrackTimeEditorOpen = true;
@@ -226,8 +238,12 @@ namespace DSaladin.SpeedTime.ViewModel
 
             OpenUserSettingsCommand = new(async (_) =>
             {
+                IsUserSettingsOpen = true;
                 bool shouldRestart = await ShowDialog<bool>(new UserSettings());
                 await App.DataService.SaveSettings();
+                IsUserSettingsOpen = false;
+
+                RegisteredHotKey = SettingsModel.Instance.GetRegisteredHotKey(RegisteredHotKey.HotKeyType.NewEntry);
 
                 if (shouldRestart)
                 {
@@ -242,6 +258,7 @@ namespace DSaladin.SpeedTime.ViewModel
             });
             #endregion
 
+            RegisteredHotKey = SettingsModel.Instance.GetRegisteredHotKey(RegisteredHotKey.HotKeyType.NewEntry);
             new Task(async () => await UpdateCurrentTime()).Start();
             new Task(async () => await App.CheckForUpdate()).Start();
 
@@ -255,7 +272,7 @@ namespace DSaladin.SpeedTime.ViewModel
 
             // bind to the source
             TrackedTimesViewSource = new();
-            TrackedTimesViewSource.Source = App.dbContext.TrackedTimes.Local.ToObservableCollection();
+            TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty, App.dbContext.TrackedTimes.Local.ToObservableCollection());
             TrackedTimesViewSource.Filter += (s, e) => e.Accepted = (e.Item as TrackTime)!.TrackingStarted.Date == CurrentDateTime.Date;
             TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStarted", ListSortDirection.Descending));
             TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStopped", ListSortDirection.Descending));

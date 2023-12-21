@@ -107,6 +107,12 @@ namespace DSaladin.SpeedTime.Model
         /// </summary>
         public void AddRegisteredHotKey(RegisteredHotKey.HotKeyType hotKeyType, Key key, ModifierKeys modifierKeys)
         {
+            if (IsHotKeyUsed(hotKeyType, key, modifierKeys))
+            {
+                key = Key.None;
+                modifierKeys = ModifierKeys.None;
+            }
+
             RegisteredHotKeys ??= [];
             RegisteredHotKey? registeredHotKey = RegisteredHotKeys.FirstOrDefault(r => r.Type == hotKeyType);
 
@@ -117,10 +123,29 @@ namespace DSaladin.SpeedTime.Model
             RegisteredHotKeys.Add(registeredHotKey);
         }
 
-        public RegisteredHotKey? GetRegisteredHotKey(RegisteredHotKey.HotKeyType hotKeyType)
+        public RegisteredHotKey GetRegisteredHotKey(RegisteredHotKey.HotKeyType hotKeyType)
         {
             RegisteredHotKeys ??= [];
-            return RegisteredHotKeys.FirstOrDefault(r => r.Type == hotKeyType);
+            RegisteredHotKey? registeredHotKey = RegisteredHotKeys.FirstOrDefault(r => r.Type == hotKeyType);
+
+            if (registeredHotKey is not null)
+                return registeredHotKey;
+
+            return new(hotKeyType, Key.None, ModifierKeys.None);
+        }
+
+        public bool IsHotKeyUsed(RegisteredHotKey.HotKeyType checkForHotKeyType, Key key, ModifierKeys modifierKeys)
+        {
+            if (key == Key.None ||modifierKeys == ModifierKeys.None)
+                return false;
+
+            RegisteredHotKeys ??= [];
+            RegisteredHotKey? registeredHotKey = RegisteredHotKeys.FirstOrDefault(r => r.RegisteredKey == key && r.RegisteredModifierKeys == modifierKeys);
+
+            if (registeredHotKey is null)
+                return false;
+
+            return registeredHotKey.Type != checkForHotKeyType;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

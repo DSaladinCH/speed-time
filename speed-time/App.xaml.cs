@@ -82,10 +82,8 @@ namespace DSaladin.SpeedTime
         private void RegisterQuickEntryHotKeyStartup()
         {
             hotKeyManager.KeyPressed += HotKeyManagerPressed;
-            RegisteredHotKey? registeredHotKey = SettingsModel.Instance.GetRegisteredHotKey(RegisteredHotKey.HotKeyType.QuickEntry);
-
-            if (registeredHotKey is not null)
-                RegisterQuickTimeHotkey(registeredHotKey.GetGlobalHotKey());
+            RegisteredHotKey registeredHotKey = SettingsModel.Instance.GetRegisteredHotKey(RegisteredHotKey.HotKeyType.QuickEntry);
+            RegisterQuickTimeHotkey(registeredHotKey.GetGlobalHotKey());
         }
 
         private void LiveChartsStartup()
@@ -132,6 +130,12 @@ namespace DSaladin.SpeedTime
         {
             if (currentQuickTimeHotKey is not null)
                 hotKeyManager.Unregister(currentQuickTimeHotKey);
+
+            if (newHotKey.Key == Key.None || newHotKey.Modifiers == ModifierKeys.None)
+            {
+                SettingsModel.Instance.AddRegisteredHotKey(RegisteredHotKey.HotKeyType.QuickEntry, Key.None, ModifierKeys.None);
+                return true;
+            }
 
             try
             {
