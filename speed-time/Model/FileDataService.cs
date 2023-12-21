@@ -2,6 +2,7 @@
 using DSaladin.SpeedTime.Properties;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -29,7 +30,10 @@ namespace DSaladin.SpeedTime.Model
                 settings = await JsonSerializer.DeserializeAsync<SettingsModel>(stream);
                 stream.Close();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Exception while reading settings: " + ex.Message);
+            }
 
             settings ??= new();
             SettingsModel.Load(settings);

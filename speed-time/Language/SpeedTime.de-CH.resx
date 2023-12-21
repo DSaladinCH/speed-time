@@ -123,6 +123,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
+  <data name="hotkey.press-key" xml:space="preserve">
+    <value>Taste drücken...</value>
+  </data>
   <data name="open" xml:space="preserve">
     <value>Öffnen</value>
   </data>
@@ -138,11 +141,20 @@
   <data name="quicktimetracker.placeholder" xml:space="preserve">
     <value>Der Titel deiner Arbeit</value>
   </data>
+  <data name="quicktimetracker.title" xml:space="preserve">
+    <value>Schnelleingabe</value>
+  </data>
   <data name="settings.auto-break" xml:space="preserve">
     <value>Auto Pause beim Sperren</value>
   </data>
   <data name="settings.behavior.title" xml:space="preserve">
     <value>Verhalten</value>
+  </data>
+  <data name="settings.hotkey-add-entry" xml:space="preserve">
+    <value>Neuer Eintrag Hotkey</value>
+  </data>
+  <data name="settings.hotkey-quick-entry" xml:space="preserve">
+    <value>Schnelleingabe-Hotkey</value>
   </data>
   <data name="settings.integrations.title" xml:space="preserve">
     <value>Integrationen</value>
@@ -191,18 +203,6 @@
   </data>
   <data name="statistics.week-placeholder" xml:space="preserve">
     <value>Woche {0}</value>
-  </data>
-  <data name="tasklinkeditor.check-placeholder" xml:space="preserve">
-    <value>Task Präfix</value>
-  </data>
-  <data name="tasklinkeditor.link-placeholder" xml:space="preserve">
-    <value>Task Link ({0} für ID Platzhalter)</value>
-  </data>
-  <data name="tasklinkeditor.title" xml:space="preserve">
-    <value>Task Link</value>
-  </data>
-  <data name="tasklinking.title" xml:space="preserve">
-    <value>Task Verbindungen</value>
   </data>
   <data name="timeeditor.break" xml:space="preserve">
     <value>Pause</value>

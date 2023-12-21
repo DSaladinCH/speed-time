@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
@@ -19,7 +19,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <Version>0.12.1</Version>
+    <Version>0.13</Version>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -62,9 +62,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Dialogs\TaskLinkEditor.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Language\SpeedTime - Copy.de-CH.Designer.cs">
       <DependentUpon>SpeedTime.de-CH.resx</DependentUpon>
       <DesignTime>True</DesignTime>

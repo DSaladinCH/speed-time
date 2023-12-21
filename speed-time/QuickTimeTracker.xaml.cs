@@ -30,6 +30,8 @@ namespace DSaladin.SpeedTime
         {
             DataContext = viewModel;
             InitializeComponent();
+
+            Title = "Speed Time - " + SpeedTime.Language.SpeedTime.quicktimetracker_title;
         }
 
         internal static TrackTime? Open(TrackTime? lastTrackTime)

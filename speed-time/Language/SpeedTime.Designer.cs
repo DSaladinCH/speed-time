@@ -79,6 +79,15 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Press Key....
+        /// </summary>
+        public static string hotkey_press_key {
+            get {
+                return ResourceManager.GetString("hotkey.press-key", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
         public static string open {
@@ -124,6 +133,15 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Quick Entry.
+        /// </summary>
+        public static string quicktimetracker_title {
+            get {
+                return ResourceManager.GetString("quicktimetracker.title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto add break on lock.
         /// </summary>
         public static string settings_auto_break {
@@ -138,6 +156,24 @@ namespace DSaladin.SpeedTime.Language {
         public static string settings_behavior_title {
             get {
                 return ResourceManager.GetString("settings.behavior.title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Entry Hotkey.
+        /// </summary>
+        public static string settings_hotkey_add_entry {
+            get {
+                return ResourceManager.GetString("settings.hotkey-add-entry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quick Entry Hotkey.
+        /// </summary>
+        public static string settings_hotkey_quick_entry {
+            get {
+                return ResourceManager.GetString("settings.hotkey-quick-entry", resourceCulture);
             }
         }
         
@@ -282,42 +318,6 @@ namespace DSaladin.SpeedTime.Language {
         public static string statistics_week_placeholder {
             get {
                 return ResourceManager.GetString("statistics.week-placeholder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Task Prefix.
-        /// </summary>
-        public static string tasklinkeditor_check_placeholder {
-            get {
-                return ResourceManager.GetString("tasklinkeditor.check-placeholder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Task Link ({0} for ID Placeholder).
-        /// </summary>
-        public static string tasklinkeditor_link_placeholder {
-            get {
-                return ResourceManager.GetString("tasklinkeditor.link-placeholder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Task Link.
-        /// </summary>
-        public static string tasklinkeditor_title {
-            get {
-                return ResourceManager.GetString("tasklinkeditor.title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Task Links.
-        /// </summary>
-        public static string tasklinking_title {
-            get {
-                return ResourceManager.GetString("tasklinking.title", resourceCulture);
             }
         }
         

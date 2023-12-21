@@ -123,6 +123,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
   </data>
+  <data name="hotkey.press-key" xml:space="preserve">
+    <value>Presiona la Tecla...</value>
+  </data>
   <data name="open" xml:space="preserve">
     <value>Abrir</value>
   </data>
@@ -138,11 +141,20 @@
   <data name="quicktimetracker.placeholder" xml:space="preserve">
     <value>El título de su trabajo</value>
   </data>
+  <data name="quicktimetracker.title" xml:space="preserve">
+    <value>Entrada Rápida</value>
+  </data>
   <data name="settings.auto-break" xml:space="preserve">
     <value>Pausa automática al bloquear</value>
   </data>
   <data name="settings.behavior.title" xml:space="preserve">
     <value>Comportamiento</value>
+  </data>
+  <data name="settings.hotkey-add-entry" xml:space="preserve">
+    <value>Atajo para Nueva Entrada</value>
+  </data>
+  <data name="settings.hotkey-quick-entry" xml:space="preserve">
+    <value>Atajo para Entrada Rápida</value>
   </data>
   <data name="settings.integrations.title" xml:space="preserve">
     <value>Integraciones</value>
@@ -191,18 +203,6 @@
   </data>
   <data name="statistics.week-placeholder" xml:space="preserve">
     <value>Semana {0}</value>
-  </data>
-  <data name="tasklinkeditor.check-placeholder" xml:space="preserve">
-    <value>Prefijo de la tarea</value>
-  </data>
-  <data name="tasklinkeditor.link-placeholder" xml:space="preserve">
-    <value>Enlace de tarea ({0} para marcador de posición de ID)</value>
-  </data>
-  <data name="tasklinkeditor.title" xml:space="preserve">
-    <value>Enlace de tarea</value>
-  </data>
-  <data name="tasklinking.title" xml:space="preserve">
-    <value>Enlaces de tareas</value>
   </data>
   <data name="timeeditor.break" xml:space="preserve">
     <value>Pausa</value>
