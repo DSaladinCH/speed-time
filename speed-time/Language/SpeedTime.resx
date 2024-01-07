@@ -123,6 +123,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="gap-text" xml:space="preserve">
+    <value>Gap of {0}h</value>
+  </data>
   <data name="hotkey.press-key" xml:space="preserve">
     <value>Press Key...</value>
   </data>
@@ -158,6 +161,9 @@
   </data>
   <data name="settings.integrations.title" xml:space="preserve">
     <value>Integrations</value>
+  </data>
+  <data name="settings.show-gaps" xml:space="preserve">
+    <value>Show Gaps</value>
   </data>
   <data name="settings.task-linking" xml:space="preserve">
     <value>Task Links</value>

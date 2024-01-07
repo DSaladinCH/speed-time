@@ -41,6 +41,21 @@ namespace DSaladin.SpeedTime.Model
             }
         }
 
+        private bool showGapsBetweenTimes;
+        public bool? ShowGapsBetweenTimes
+        {
+            get { return showGapsBetweenTimes; }
+            set
+            {
+                if (value is null)
+                    showGapsBetweenTimes = false;
+                else
+                    showGapsBetweenTimes = value.Value;
+
+                NotifyPropertyChanged();
+            }
+        }
+
         public Workdays Workdays { get; set; } = new();
 
         public static List<UiLanguage> AvailableLanguages { get; } = new()

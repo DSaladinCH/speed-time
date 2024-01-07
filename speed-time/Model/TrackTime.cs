@@ -40,6 +40,9 @@ namespace DSaladin.SpeedTime.Model
         public bool IsTimeStopped { get => TrackingStopped != default; }
 
         [NotMapped]
+        public bool IsGapItem { get; set; }
+
+        [NotMapped]
         public double Hours
         {
             get

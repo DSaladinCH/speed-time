@@ -51,14 +51,11 @@ namespace DSaladin.SpeedTime.Converter
                 return SourceValue;
             }
 
-            if (parsedDate.Year == 1)
-                parsedDate = parsedDate.AddYears(currentDate.Year - 1);
-
-            if (parsedDate.Month == 1 && !formats[1].Equals(dateString) && !formats[2].Equals(dateString))
-                parsedDate = parsedDate.AddMonths(currentDate.Month - 1);
+            // Only day was provided
+            if (dateString.Length <= 2)
+                parsedDate = new(parsedDate.Year, currentDate.Month, parsedDate.Day);
 
             return parsedDate;
-
         }
     }
 }
