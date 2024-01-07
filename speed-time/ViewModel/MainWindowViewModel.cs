@@ -180,7 +180,7 @@ namespace DSaladin.SpeedTime.ViewModel
 
             TrackTimeDoubleClickCommand = new(async (sender) =>
             {
-                if (IsTrackTimeEditorOpen || IsUserSettingsOpen)
+                if (IsTrackTimeEditorOpen || IsUserSettingsOpen || sender is null || ((TrackTime)sender).IsGapItem)
                     return;
 
                 IsTrackTimeEditorOpen = true;
@@ -244,6 +244,7 @@ namespace DSaladin.SpeedTime.ViewModel
                 IsUserSettingsOpen = false;
 
                 RegisteredHotKey = SettingsModel.Instance.GetRegisteredHotKey(RegisteredHotKey.HotKeyType.NewEntry);
+                UpdateView();
 
                 if (shouldRestart)
                 {
@@ -272,7 +273,6 @@ namespace DSaladin.SpeedTime.ViewModel
 
             // bind to the source
             TrackedTimesViewSource = new();
-            TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty, App.dbContext.TrackedTimes.Local.ToObservableCollection());
             TrackedTimesViewSource.Filter += (s, e) => e.Accepted = (e.Item as TrackTime)!.TrackingStarted.Date == CurrentDateTime.Date;
             TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStarted", ListSortDirection.Descending));
             TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStopped", ListSortDirection.Descending));
@@ -286,7 +286,41 @@ namespace DSaladin.SpeedTime.ViewModel
         {
             weekRange = GetWeekRange(CurrentDateTime);
             NotifyPropertyChanged("");
-            TrackedTimesViewSource.View?.Refresh();
+            UpdateTrackedTimes();
+        }
+
+        private void UpdateTrackedTimes()
+        {
+            List<TrackTime> trackedTimes = [.. App.dbContext.TrackedTimes.Local.Where(tt => tt.TrackingStarted.Date == currentDateTime.Date).OrderBy(tt => tt.TrackingStarted)];
+            ObservableCollection<TrackTime>? displayItems = TrackedTimesViewSource.Source as ObservableCollection<TrackTime>;
+
+            if (displayItems is null)
+            {
+                displayItems = [];
+                TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty, displayItems);
+            }
+
+            displayItems.Clear();
+
+            for (int i = 0; i < trackedTimes.Count; i++)
+            {
+                displayItems.Add(trackedTimes[i]);
+
+                if (SettingsModel.Instance.ShowGapsBetweenTimes == false || i >= trackedTimes.Count - 1)
+                    continue;
+
+                TimeSpan gapTime = trackedTimes[i + 1].TrackingStarted - trackedTimes[i].TrackingStopped;
+                if (gapTime.TotalHours < 0)
+                    continue;
+
+                TrackTime gap = new(trackedTimes[i].TrackingStopped, string.Format(Language.SpeedTime.gap_text, gapTime.TotalHours.ToString("N2")), false)
+                {
+                    IsGapItem = true
+                };
+
+                gap.StopTime(trackedTimes[i + 1].TrackingStarted);
+                displayItems.Add(gap);
+            }
         }
 
         async Task UpdateCurrentTime()

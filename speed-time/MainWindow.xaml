@@ -19,6 +19,19 @@
     <potato:DSWindow.Resources>
         <converter:DateTimeConverter x:Key="DateTimeConverter" />
         <potato:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <Style x:Key="DefaultTimeLabel" TargetType="{x:Type Label}" BasedOn="{StaticResource DefaultLabel}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsBreak}" Value="True">
+                    <Setter Property="FontStyle" Value="Italic" />
+                    <Setter Property="Foreground" Value="{DynamicResource ForegroundA}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=IsGapItem}" Value="True">
+                    <Setter Property="FontStyle" Value="Italic" />
+                    <Setter Property="Foreground" Value="{DynamicResource ForegroundA}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </potato:DSWindow.Resources>
     <behaviors:Interaction.Triggers>
         <behaviors:KeyTrigger Modifiers="{Binding RegisteredHotKey.RegisteredModifierKeys}" Key="{Binding RegisteredHotKey.RegisteredKey}" FiredOn="KeyDown">
@@ -109,6 +122,10 @@
                                                 <Setter Property="FontStyle" Value="Italic" />
                                                 <Setter Property="Foreground" Value="{DynamicResource ForegroundA}" />
                                             </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=IsGapItem}" Value="True">
+                                                <Setter Property="FontStyle" Value="Italic" />
+                                                <Setter Property="Foreground" Value="{DynamicResource ForegroundA}" />
+                                            </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </TextBlock.Style>
@@ -116,17 +133,20 @@
                         </Border>
                         <Label Grid.Column="1">
                             <Label.Style>
-                                <Style TargetType="Label" BasedOn="{StaticResource DefaultLabel}">
+                                <Style TargetType="Label" BasedOn="{StaticResource DefaultTimeLabel}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Path=IsBreak}" Value="True">
                                             <Setter Property="fa:Content.Icon" Value="SolidMugHot" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=IsGapItem}" Value="True">
+                                            <Setter Property="fa:Content.Icon" Value="SolidArrowsLeftRightToLine" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Label.Style>
                         </Label>
-                        <Label Grid.Column="2" Content="{Binding TrackingTime}" />
-                        <Label Grid.Column="3" Content="{Binding Hours}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" />
+                        <Label Grid.Column="2" Content="{Binding TrackingTime}" Style="{DynamicResource DefaultTimeLabel}" />
+                        <Label Grid.Column="3" Content="{Binding Hours}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" Style="{DynamicResource DefaultTimeLabel}" />
                         <potato:DSButton Grid.Column="4" fa:Content.Icon="SolidGlobe" Padding="5,0,5,0" Style="{DynamicResource TransparentAccentButton}" Visibility="Collapsed" x:Name="btnBrowser"
                                 Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type potato:DSWindow}}, Path=DataContext.OpenJiraIssueCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" />
@@ -135,9 +155,15 @@
                                 CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" />
                     </Grid>
                     <DataTemplate.Triggers>
-                        <Trigger SourceName="grdTime" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="btnDelete" Property="Visibility" Value="Visible"/>
-                        </Trigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding ElementName=grdTime, Path=IsMouseOver}" Value="True" />
+                                <Condition Binding="{Binding IsGapItem}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter TargetName="btnDelete" Property="Visibility" Value="Visible"/>
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding ElementName=grdTime, Path=IsMouseOver}" Value="True" />

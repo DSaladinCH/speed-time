@@ -123,6 +123,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
   </data>
+  <data name="gap-text" xml:space="preserve">
+    <value>Hueco de {0} hora</value>
+  </data>
   <data name="hotkey.press-key" xml:space="preserve">
     <value>Presiona la Tecla...</value>
   </data>
@@ -158,6 +161,9 @@
   </data>
   <data name="settings.integrations.title" xml:space="preserve">
     <value>Integraciones</value>
+  </data>
+  <data name="settings.show-gaps" xml:space="preserve">
+    <value>Mostrar Huecos</value>
   </data>
   <data name="settings.task-linking" xml:space="preserve">
     <value>Conexión de tareas</value>

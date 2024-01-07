@@ -56,7 +56,6 @@ namespace DSaladin.SpeedTime.Converter
                 parsedDate = new(parsedDate.Year, currentDate.Month, parsedDate.Day);
 
             return parsedDate;
-
         }
     }
 }

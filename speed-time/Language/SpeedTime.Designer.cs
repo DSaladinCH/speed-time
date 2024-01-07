@@ -79,6 +79,15 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Gap of {0}h.
+        /// </summary>
+        public static string gap_text {
+            get {
+                return ResourceManager.GetString("gap-text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Press Key....
         /// </summary>
         public static string hotkey_press_key {
@@ -183,6 +192,15 @@ namespace DSaladin.SpeedTime.Language {
         public static string settings_integrations_title {
             get {
                 return ResourceManager.GetString("settings.integrations.title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Gaps.
+        /// </summary>
+        public static string settings_show_gaps {
+            get {
+                return ResourceManager.GetString("settings.show-gaps", resourceCulture);
             }
         }
         
