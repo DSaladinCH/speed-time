@@ -310,7 +310,7 @@ namespace DSaladin.SpeedTime.ViewModel
                     continue;
 
                 TimeSpan gapTime = trackedTimes[i + 1].TrackingStarted - trackedTimes[i].TrackingStopped;
-                if (gapTime.TotalHours < 0)
+                if (gapTime.TotalHours <= 0)
                     continue;
 
                 TrackTime gap = new(trackedTimes[i].TrackingStopped, string.Format(Language.SpeedTime.gap_text, gapTime.TotalHours.ToString("N2")), false)
