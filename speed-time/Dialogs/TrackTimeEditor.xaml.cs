@@ -67,6 +67,11 @@ namespace DSaladin.SpeedTime.Dialogs
             };
         }
 
+        public TrackTimeEditor(DateTime startDate): this()
+        {
+            SelectedDate = startDate;
+        }
+
         private void SaveAndClose()
         {
             if (string.IsNullOrEmpty(TrackTimeTitle))

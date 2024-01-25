@@ -1,4 +1,5 @@
-﻿using DSaladin.SpeedTime.Dialogs;
+﻿using DSaladin.FancyPotato;
+using DSaladin.SpeedTime.Dialogs;
 using DSaladin.SpeedTime.Properties;
 using System;
 using System.Collections.Generic;
@@ -14,19 +15,14 @@ namespace DSaladin.SpeedTime.Model
 {
     internal class FileDataService : IDataService
     {
-        private const string PUBLISHER = "DSaladin";
-        private const string APPNAME = "speed-time";
-        private const string FILENAME = "usersettings.json";
+        private const string CONFIG_NAME = "usersettings.json";
 
         public async Task LoadSettings()
         {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string filePath = Path.Combine(appDataPath, PUBLISHER, APPNAME, FILENAME);
-
             SettingsModel? settings = null;
             try
             {
-                FileStream stream = File.OpenRead(filePath);
+                FileStream stream = File.OpenRead(DSApplication.GetSettingsFilePath(CONFIG_NAME));
                 settings = await JsonSerializer.DeserializeAsync<SettingsModel>(stream);
                 stream.Close();
             }
@@ -44,11 +40,10 @@ namespace DSaladin.SpeedTime.Model
             var stream = new MemoryStream();
             await JsonSerializer.SerializeAsync(stream, SettingsModel.Instance);
 
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string appFolderPath = Path.Combine(appDataPath, PUBLISHER, APPNAME);
-            Directory.CreateDirectory(appFolderPath);
+            string filePath = DSApplication.GetSettingsFilePath(CONFIG_NAME);
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
 
-            File.WriteAllText(Path.Combine(appFolderPath, FILENAME), Encoding.UTF8.GetString(stream.ToArray()));
+            File.WriteAllText(filePath, Encoding.UTF8.GetString(stream.ToArray()));
             stream.Close();
         }
     }

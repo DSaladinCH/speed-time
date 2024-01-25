@@ -154,7 +154,7 @@ namespace DSaladin.SpeedTime.ViewModel
                     return;
 
                 IsTrackTimeEditorOpen = true;
-                TrackTime? newTime = await ShowDialog<TrackTime>(new TrackTimeEditor());
+                TrackTime? newTime = await ShowDialog<TrackTime>(new TrackTimeEditor(CurrentDateTime));
                 IsTrackTimeEditorOpen = false;
 
                 if (newTime is not null)
