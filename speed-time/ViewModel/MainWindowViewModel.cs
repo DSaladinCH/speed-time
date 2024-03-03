@@ -341,8 +341,12 @@ namespace DSaladin.SpeedTime.ViewModel
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         CurrentTime?.UpdateTrackingToNow();
-                        NotifyPropertyChanged(nameof(TotalHours));
-                        NotifyPropertyChanged(nameof(TotalWeekHoursDisplay));
+
+                        if (CurrentTime is not null)
+                        {
+                            NotifyPropertyChanged(nameof(TotalHours));
+                            NotifyPropertyChanged(nameof(TotalWeekHoursDisplay));
+                        }
                     });
                 }
                 catch { }
