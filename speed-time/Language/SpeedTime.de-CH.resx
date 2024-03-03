@@ -123,6 +123,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
+  <data name="full-date-format" xml:space="preserve">
+    <value>dd. MMM yyyy</value>
+  </data>
   <data name="gap-text" xml:space="preserve">
     <value>Lücke von {0} Std.</value>
   </data>
@@ -221,9 +224,6 @@
   </data>
   <data name="timeeditor.title" xml:space="preserve">
     <value>Zeit Editor</value>
-  </data>
-  <data name="times.current-date-format" xml:space="preserve">
-    <value>dd. MMM yyyy</value>
   </data>
   <data name="times.current.hours" xml:space="preserve">
     <value>Zeit: {0:N2}h</value>

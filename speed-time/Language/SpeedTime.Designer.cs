@@ -79,6 +79,15 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MMM dd, yyyy.
+        /// </summary>
+        public static string full_date_format {
+            get {
+                return ResourceManager.GetString("full-date-format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Gap of {0}h.
         /// </summary>
         public static string gap_text {
@@ -372,15 +381,6 @@ namespace DSaladin.SpeedTime.Language {
         public static string timeeditor_title {
             get {
                 return ResourceManager.GetString("timeeditor.title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MMM dd, yyyy.
-        /// </summary>
-        public static string times_current_date_format {
-            get {
-                return ResourceManager.GetString("times.current-date-format", resourceCulture);
             }
         }
         
