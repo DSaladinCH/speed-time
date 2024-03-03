@@ -84,7 +84,7 @@ namespace DSaladin.SpeedTime.ViewModel
 
         public string CurrentDateTimeFormat
         {
-            get => ((App)Application.Current).FormatDate(CurrentDateTime, Language.SpeedTime.ResourceManager.GetString("times.current-date-format", ((App)Application.Current).CurrentDateLanguage)!);
+            get => ((App)Application.Current).FormatDate(CurrentDateTime, Language.SpeedTime.ResourceManager.GetString("full-date-format", ((App)Application.Current).CurrentDateLanguage)!);
         }
 
         public bool IsCurrentlyTracking { get => CurrentTime != null; }
