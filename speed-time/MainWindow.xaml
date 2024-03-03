@@ -40,51 +40,45 @@
     </behaviors:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60" />
+            <RowDefinition Height="50" />
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="50" />
+            <RowDefinition Height="45" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Margin="10,5,10,5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="65" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="{Binding CurrentTime.Title, TargetNullValue=''}" ContentStringFormat="{x:Static language:SpeedTime.times_current_title}"
-                   d:Content="Searching bugs" Style="{DynamicResource Title3Label}" />
-            <Label Grid.Column="1" Content="{Binding CurrentTime.Hours, TargetNullValue=''}" ContentStringFormat="{x:Static language:SpeedTime.times_current_hours}"
+            <TextBlock Grid.Column="0" Text="{Binding CurrentTime.Title, TargetNullValue=''}" Style="{DynamicResource DefaultTextBlock}"
+                       d:Text="Searching bugs" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+            <Label Grid.Column="1" Content="{Binding CurrentTime.Hours, TargetNullValue=''}" ContentStringFormat=" {0:N2}h"
                    d:Content="1.25" Style="{DynamicResource Title4Label}" HorizontalAlignment="Right" />
         </Grid>
-        <Line X1='0'
-         X2='{Binding ActualWidth, Mode=OneWay, 
-              RelativeSource={RelativeSource FindAncestor,
-              AncestorType={x:Type local:MainWindow}}}'
-          Y1='60' 
-          Y2='60'
-          Stroke="{DynamicResource BackgroundC}"
-          StrokeThickness='3' />
+        <Line X1='0' X2='{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}'
+              Y1='50' Y2='50' Stroke="{DynamicResource BackgroundC}" StrokeThickness='3' />
         <Grid Grid.Row="1" Margin="0,5,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <potato:DSButton fa:Content.Icon="SolidAnglesLeft" Style="{DynamicResource TransparentAccentButton}" Width="35" Padding="0,0,0,0"
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5,0,0,0">
+                <potato:DSButton fa:Content.Icon="SolidAnglesLeft" Style="{DynamicResource TransparentAccentButton}" Width="30" Padding="0,0,0,0"
                                  Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="-7" />
-                <potato:DSButton fa:Content.Icon="SolidAngleLeft" Style="{DynamicResource TransparentAccentButton}" Width="35" Padding="0,0,0,0"
+                <potato:DSButton fa:Content.Icon="SolidAngleLeft" Style="{DynamicResource TransparentAccentButton}" Width="30" Padding="0,0,0,0"
                                  Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="-1" />
-                <Label Content="{Binding CurrentDateTime, Converter={StaticResource DateTimeConverter}, ConverterParameter={x:Static language:SpeedTime.times_current_date_format}}" d:Content="01. Jan 2023"
+                <Label Content="{Binding CurrentDateTimeFormat}" d:Content="01. Jan 2023"
                        Width="100" HorizontalContentAlignment="Center">
                     <Label.InputBindings>
                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding CurrentDateTimeDoubleClickCommand}" />
                     </Label.InputBindings>
                 </Label>
-                <potato:DSButton fa:Content.Icon="SolidAngleRight" Style="{DynamicResource TransparentAccentButton}" Width="35" Padding="0,0,0,0"
+                <potato:DSButton fa:Content.Icon="SolidAngleRight" Style="{DynamicResource TransparentAccentButton}" Width="30" Padding="0,0,0,0"
                                  Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="1" />
-                <potato:DSButton fa:Content.Icon="SolidAnglesRight" Style="{DynamicResource TransparentAccentButton}" Width="35" Padding="0,0,0,0"
+                <potato:DSButton fa:Content.Icon="SolidAnglesRight" Style="{DynamicResource TransparentAccentButton}" Width="30" Padding="0,0,0,0"
                                  Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="7" />
             </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,3,10,3">
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,3,5,3">
                 <potato:DSButton Grid.Column="2" fa:Content.Icon="BrandsAtlassian" FontSize="20" Padding="0,0,0,0" Margin="5,0,0,0"
                                  Style="{DynamicResource TransparentAccentButton}" Command="{Binding UpdateJiraCommand}" Width="30"
                                  Visibility="{Binding Source={x:Static model:SettingsModel.Instance}, Path=JiraIsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -95,11 +89,11 @@
                         Command="{Binding StopCurrentTrackingCommand}" Width="30" IsEnabled="{Binding IsCurrentlyTracking}" />
             </StackPanel>
         </Grid>
-        <ListView x:Name="lst_times" Grid.Row="2" Margin="10,5,10,0" ItemsSource="{Binding TrackedTimesViewSource.View}"
+        <ListView x:Name="lst_times" Grid.Row="2" Margin="5,5,5,0" ItemsSource="{Binding TrackedTimesViewSource.View}"
                   ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type model:TrackTime}">
-                    <Grid x:Name="grdTime" Margin="5,0,5,0" HorizontalAlignment="Stretch" Background="Transparent">
+                    <Grid x:Name="grdTime" Margin="9,0,5,0" HorizontalAlignment="Stretch" Background="Transparent">
                         <Grid.InputBindings>
                             <MouseBinding Gesture="LeftDoubleClick"
                                           Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type potato:DSWindow}}, Path=DataContext.TrackTimeDoubleClickCommand}"
@@ -107,50 +101,66 @@
                         </Grid.InputBindings>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="25" />
                             <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="60" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0" Background="#00FFFFFF">
-                            <TextBlock Text="{Binding Title}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock" BasedOn="{StaticResource DefaultTextBlock}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=IsBreak}" Value="True">
-                                                <Setter Property="FontStyle" Value="Italic" />
-                                                <Setter Property="Foreground" Value="{DynamicResource ForegroundA}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Path=IsGapItem}" Value="True">
-                                                <Setter Property="FontStyle" Value="Italic" />
-                                                <Setter Property="Foreground" Value="{DynamicResource ForegroundA}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
+                            <Grid VerticalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource DefaultTextBlock}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=IsBreak}" Value="True">
+                                                    <Setter Property="FontStyle" Value="Italic" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource ForegroundA}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=IsGapItem}" Value="True">
+                                                    <Setter Property="FontStyle" Value="Italic" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource ForegroundA}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <Label Grid.Column="1" Width="30" Padding="5,0,5,0">
+                                    <Label.Style>
+                                        <Style TargetType="Label" BasedOn="{StaticResource DefaultTimeLabel}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=IsBreak}" Value="True">
+                                                    <Setter Property="fa:Content.Icon" Value="SolidMugHot" />
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=IsGapItem}" Value="True">
+                                                    <Setter Property="fa:Content.Icon" Value="SolidArrowsLeftRightToLine" />
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Path=IsBreak}" Value="False" />
+                                                        <Condition Binding="{Binding Path=IsGapItem}" Value="False" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <MultiDataTrigger.Setters>
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </MultiDataTrigger.Setters>
+                                                </MultiDataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Label.Style>
+                                </Label>
+                            </Grid>
                         </Border>
-                        <Label Grid.Column="1">
-                            <Label.Style>
-                                <Style TargetType="Label" BasedOn="{StaticResource DefaultTimeLabel}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=IsBreak}" Value="True">
-                                            <Setter Property="fa:Content.Icon" Value="SolidMugHot" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=IsGapItem}" Value="True">
-                                            <Setter Property="fa:Content.Icon" Value="SolidArrowsLeftRightToLine" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Label.Style>
-                        </Label>
-                        <Label Grid.Column="2" Content="{Binding TrackingTime}" Style="{DynamicResource DefaultTimeLabel}" />
-                        <Label Grid.Column="3" Content="{Binding Hours}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" Style="{DynamicResource DefaultTimeLabel}" />
-                        <potato:DSButton Grid.Column="4" fa:Content.Icon="SolidGlobe" Padding="5,0,5,0" Style="{DynamicResource TransparentAccentButton}" Visibility="Collapsed" x:Name="btnBrowser"
+                        <Label Grid.Column="1" Content="{Binding TrackingTime}" Style="{DynamicResource DefaultTimeLabel}" />
+                        <Label Grid.Column="2" Content="{Binding Hours}" ContentStringFormat=" {0:N2}h" HorizontalContentAlignment="Right" Style="{DynamicResource DefaultTimeLabel}" />
+                        <potato:DSButton Grid.Column="3" fa:Content.Icon="SolidGlobe" Padding="5,0,5,0" Style="{DynamicResource TransparentAccentButton}" Visibility="Collapsed" x:Name="btnBrowser"
                                 Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type potato:DSWindow}}, Path=DataContext.OpenJiraIssueCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" />
-                        <potato:DSButton Grid.Column="5" fa:Content.Icon="SolidTrash" Padding="5,0,5,0" Style="{DynamicResource TransparentAccentErrorButton}" Visibility="Collapsed" x:Name="btnDelete"
+                        <potato:DSButton Grid.Column="4" fa:Content.Icon="SolidTrash" Padding="5,0,5,0" Style="{DynamicResource TransparentAccentErrorButton}" Visibility="Collapsed" x:Name="btnDelete"
                                 Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type potato:DSWindow}}, Path=DataContext.TrackTimeDeleteCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" />
                     </Grid>
@@ -182,19 +192,19 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
+            <StackPanel Orientation="Horizontal" Margin="5,0,5,5">
                 <potato:DSButton Style="{DynamicResource TransparentAccentButton}" fa:Content.Icon="SolidGear" FontSize="20"
-                                 Padding="0,0,0,0" Width="40" Command="{Binding OpenUserSettingsCommand}" />
+                                 Padding="0,0,0,0" Margin="0,0,2,0" Width="40" Command="{Binding OpenUserSettingsCommand}" />
                 <potato:DSButton Style="{DynamicResource TransparentAccentButton}" fa:Content.Icon="SolidChartArea" FontSize="20"
                                  Padding="0,0,0,0" Width="40" Command="{Binding OpenTimeStatisticsCommand}" />
             </StackPanel>
-            <StackPanel Grid.Column="1" Margin="10,10,10,0">
+            <StackPanel Grid.Column="1" Margin="10,7,10,0">
                 <Separator Background="{DynamicResource BackgroundC}" Width="265" HorizontalAlignment="Right" />
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="105" />
-                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="55" />
                         <ColumnDefinition Width="100" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="1" Content="{Binding TotalWeekHoursDisplay}" Foreground="{DynamicResource ForegroundA}" />

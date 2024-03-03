@@ -139,7 +139,7 @@
     <value>Pause</value>
   </data>
   <data name="quicktimetracker.last-entry" xml:space="preserve">
-    <value>Letzter Eintrag: {0}</value>
+    <value>Letzter Eintrag um {0}</value>
   </data>
   <data name="quicktimetracker.placeholder" xml:space="preserve">
     <value>Der Titel deiner Arbeit</value>
@@ -152,6 +152,9 @@
   </data>
   <data name="settings.behavior.title" xml:space="preserve">
     <value>Verhalten</value>
+  </data>
+  <data name="settings.date-language" xml:space="preserve">
+    <value>Datums Sprache</value>
   </data>
   <data name="settings.hotkey-add-entry" xml:space="preserve">
     <value>Neuer Eintrag Hotkey</value>
@@ -188,6 +191,9 @@
   </data>
   <data name="settings.workdays" xml:space="preserve">
     <value>Arbeitstage</value>
+  </data>
+  <data name="statistics.daily-date-format" xml:space="preserve">
+    <value>dd. MMM</value>
   </data>
   <data name="statistics.grouping.month-daily" xml:space="preserve">
     <value>Monat - Täglich</value>

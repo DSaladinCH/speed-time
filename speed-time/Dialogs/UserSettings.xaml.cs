@@ -80,7 +80,7 @@ namespace DSaladin.SpeedTime.Dialogs
                 return;
             }
 
-            Close(SpeedTime.Language.SpeedTime.Culture.Name != SettingsModel.Instance.SelectedUiLanguage);
+            Close(((App)Application.Current).CurrentUiLanguage.Name != SettingsModel.Instance.SelectedUiLanguage);
         }
 
         private void QuickEntry_OnLoadHotKey(object sender, HotKeyArgs e)

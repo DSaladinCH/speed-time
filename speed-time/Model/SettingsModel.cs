@@ -76,6 +76,17 @@ namespace DSaladin.SpeedTime.Model
             }
         }
 
+        private string selectedDateLanguage = "";
+        public string SelectedDateLanguage
+        {
+            get { return selectedDateLanguage; }
+            set
+            {
+                selectedDateLanguage = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private bool jiraZeroOnDelete;
         public bool JiraZeroOnDelete
         {
@@ -108,6 +119,9 @@ namespace DSaladin.SpeedTime.Model
 
             if (!AvailableLanguages.Exists(l => l.Id == Instance.SelectedUiLanguage))
                 Instance.SelectedUiLanguage = AvailableLanguages[0].Id;
+
+            if (!AvailableLanguages.Exists(l => l.Id == Instance.SelectedDateLanguage))
+                Instance.SelectedDateLanguage = AvailableLanguages[0].Id;
 
             if (Instance.RegisteredHotKeys is null)
             {

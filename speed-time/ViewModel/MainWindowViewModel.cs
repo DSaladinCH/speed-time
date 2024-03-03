@@ -82,6 +82,11 @@ namespace DSaladin.SpeedTime.ViewModel
             }
         }
 
+        public string CurrentDateTimeFormat
+        {
+            get => ((App)Application.Current).FormatDate(CurrentDateTime, Language.SpeedTime.ResourceManager.GetString("times.current-date-format", ((App)Application.Current).CurrentDateLanguage)!);
+        }
+
         public bool IsCurrentlyTracking { get => CurrentTime != null; }
 
         public bool IsTrackTimeEditorOpen { get; set; }
@@ -274,8 +279,8 @@ namespace DSaladin.SpeedTime.ViewModel
             // bind to the source
             TrackedTimesViewSource = new();
             TrackedTimesViewSource.Filter += (s, e) => e.Accepted = (e.Item as TrackTime)!.TrackingStarted.Date == CurrentDateTime.Date;
-            TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStarted", ListSortDirection.Descending));
-            TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStopped", ListSortDirection.Descending));
+            //TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStarted", ListSortDirection.Descending));
+            //TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStopped", ListSortDirection.Descending));
             TrackedTimes = App.dbContext.TrackedTimes.Local.ToObservableCollection();
             App.dbContext.SavedChanges += (s, e) => UpdateView();
 
@@ -291,14 +296,14 @@ namespace DSaladin.SpeedTime.ViewModel
 
         private void UpdateTrackedTimes()
         {
-            List<TrackTime> trackedTimes = [.. App.dbContext.TrackedTimes.Local.Where(tt => tt.TrackingStarted.Date == currentDateTime.Date).OrderBy(tt => tt.TrackingStarted)];
+            List<TrackTime> trackedTimes = [.. App.dbContext.TrackedTimes.Local
+                .Where(tt => tt.TrackingStarted.Date == currentDateTime.Date)
+                .OrderBy(tt => tt.TrackingStarted)
+                .ThenBy(tt => tt.TrackingStopped)];
             ObservableCollection<TrackTime>? displayItems = TrackedTimesViewSource.Source as ObservableCollection<TrackTime>;
 
             if (displayItems is null)
-            {
                 displayItems = [];
-                TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty, displayItems);
-            }
 
             displayItems.Clear();
 
@@ -321,6 +326,9 @@ namespace DSaladin.SpeedTime.ViewModel
                 gap.StopTime(trackedTimes[i + 1].TrackingStarted);
                 displayItems.Add(gap);
             }
+
+            displayItems = new(displayItems.Reverse());
+            TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty, displayItems);
         }
 
         async Task UpdateCurrentTime()
@@ -333,8 +341,12 @@ namespace DSaladin.SpeedTime.ViewModel
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         CurrentTime?.UpdateTrackingToNow();
-                        NotifyPropertyChanged(nameof(TotalHours));
-                        NotifyPropertyChanged(nameof(TotalWeekHoursDisplay));
+
+                        if (CurrentTime is not null)
+                        {
+                            NotifyPropertyChanged(nameof(TotalHours));
+                            NotifyPropertyChanged(nameof(TotalWeekHoursDisplay));
+                        }
                     });
                 }
                 catch { }

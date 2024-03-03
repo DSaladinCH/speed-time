@@ -87,6 +87,8 @@ namespace DSaladin.SpeedTime.Model
 
         public TrackTime(DateTime trackingStarted, string title, bool isBreak)
         {
+            trackingStarted = new(trackingStarted.Year, trackingStarted.Month, trackingStarted.Day, trackingStarted.Hour, trackingStarted.Minute, 0);
+
             TrackingStarted = trackingStarted;
             Title = title;
             IsBreak = isBreak;
@@ -97,6 +99,7 @@ namespace DSaladin.SpeedTime.Model
             if (TrackingStarted.Date != stopTime.Date)
                 stopTime = TrackingStarted.Date.Add(new(23, 59, 59));
 
+            stopTime = new(stopTime.Year, stopTime.Month, stopTime.Day, stopTime.Hour, stopTime.Minute, 0);
             TrackingStopped = stopTime;
         }
 
@@ -106,7 +109,6 @@ namespace DSaladin.SpeedTime.Model
                 stopTime = new(23, 59, 59);
 
             stopTime ??= DateTime.Now.TimeOfDay;
-
             TrackingStopped = TrackingStarted.Date.Add(new TimeSpan(((TimeSpan)stopTime).Hours, ((TimeSpan)stopTime).Minutes, 0));
         }
 

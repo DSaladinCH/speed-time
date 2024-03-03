@@ -139,7 +139,7 @@
     <value>Break</value>
   </data>
   <data name="quicktimetracker.last-entry" xml:space="preserve">
-    <value>Last Entry: {0}</value>
+    <value>Last Entry at {0}</value>
   </data>
   <data name="quicktimetracker.placeholder" xml:space="preserve">
     <value>The title of your work</value>
@@ -152,6 +152,9 @@
   </data>
   <data name="settings.behavior.title" xml:space="preserve">
     <value>Behavior</value>
+  </data>
+  <data name="settings.date-language" xml:space="preserve">
+    <value>Date Language</value>
   </data>
   <data name="settings.hotkey-add-entry" xml:space="preserve">
     <value>Add Entry Hotkey</value>
@@ -188,6 +191,9 @@
   </data>
   <data name="settings.workdays" xml:space="preserve">
     <value>Workdays</value>
+  </data>
+  <data name="statistics.daily-date-format" xml:space="preserve">
+    <value>MMM dd</value>
   </data>
   <data name="statistics.grouping.month-daily" xml:space="preserve">
     <value>Month - Daily</value>

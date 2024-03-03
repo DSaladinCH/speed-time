@@ -45,18 +45,27 @@ namespace DSaladin.SpeedTime
         private TrackTime? trackTimeBeforePause;
         private TrackTime? trackTimePause;
 
+        public CultureInfo CurrentUiLanguage { get; private set; }
+        public CultureInfo CurrentDateLanguage { get; private set; }
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             await dbContext.Database.MigrateAsync();
             await DataService.LoadSettings();
 
             if (string.IsNullOrEmpty(SettingsModel.Instance.SelectedUiLanguage))
-                Language.SpeedTime.Culture = new CultureInfo(Thread.CurrentThread.CurrentCulture.Name);
+                CurrentUiLanguage = new CultureInfo(Thread.CurrentThread.CurrentCulture.Name);
             else
-                Language.SpeedTime.Culture = new CultureInfo(SettingsModel.Instance.SelectedUiLanguage);
+                CurrentUiLanguage = new CultureInfo(SettingsModel.Instance.SelectedUiLanguage);
 
-            Thread.CurrentThread.CurrentCulture = Language.SpeedTime.Culture;
-            Thread.CurrentThread.CurrentUICulture = Language.SpeedTime.Culture;
+            if (string.IsNullOrEmpty(SettingsModel.Instance.SelectedDateLanguage))
+                CurrentDateLanguage = new CultureInfo(Thread.CurrentThread.CurrentCulture.Name);
+            else
+                CurrentDateLanguage = new CultureInfo(SettingsModel.Instance.SelectedDateLanguage);
+
+            Language.SpeedTime.Culture = CurrentUiLanguage;
+            Thread.CurrentThread.CurrentCulture = CurrentUiLanguage;
+            Thread.CurrentThread.CurrentUICulture = CurrentUiLanguage;
 
             TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
             if (lastTrackedTime is not null && !lastTrackedTime.IsTimeStopped)
@@ -126,6 +135,12 @@ namespace DSaladin.SpeedTime
             return LvcColor.FromArgb(alpha, red, green, blue);
         }
 
+        internal string FormatDate(DateTime dateTime, string formatString)
+        {
+            
+            return dateTime.ToString(formatString, CurrentUiLanguage);
+        }
+
         internal bool RegisterQuickTimeHotkey(HotKey newHotKey)
         {
             if (currentQuickTimeHotKey is not null)
@@ -157,11 +172,11 @@ namespace DSaladin.SpeedTime
         {
             if (e.HotKey.Equals(currentQuickTimeHotKey))
             {
-                TrackTime? trackTime = QuickTimeTracker.Open(await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync());
+                TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.TrackingStarted).ThenBy(tt => tt.TrackingStopped).LastOrDefaultAsync();
+                TrackTime? trackTime = QuickTimeTracker.Open(lastTrackedTime);
                 if (trackTime is null)
                     return;
 
-                TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
                 if (lastTrackedTime is not null && !lastTrackedTime.IsTimeStopped)
                 {
                     lastTrackedTime.StopTime();
