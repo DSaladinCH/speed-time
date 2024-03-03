@@ -63,9 +63,9 @@ namespace DSaladin.SpeedTime.Dialogs
             Version = string.Join('.', components.Take(nonZeroIndex + 1));
 
             if (releaseDate.Year == DateTime.Now.Year)
-                ReleaseDate = releaseDate.ToString("M", SpeedTime.Language.SpeedTime.Culture);
+                ReleaseDate = ((App)Application.Current).FormatDate(releaseDate, "M");
             else
-                ReleaseDate = releaseDate.ToString("D", SpeedTime.Language.SpeedTime.Culture);
+                ReleaseDate = ((App)Application.Current).FormatDate(releaseDate, "D");
 
             DenyCommand = new((_) => Close(false));
             DownloadCommand = new((_) => Close(true));

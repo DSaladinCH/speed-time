@@ -50,7 +50,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="65" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="{Binding CurrentTime.Title, TargetNullValue=''}"
+            <TextBlock Grid.Column="0" Text="{Binding CurrentTime.Title, TargetNullValue=''}" Style="{DynamicResource DefaultTextBlock}"
                        d:Text="Searching bugs" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
             <Label Grid.Column="1" Content="{Binding CurrentTime.Hours, TargetNullValue=''}" ContentStringFormat=" {0:N2}h"
                    d:Content="1.25" Style="{DynamicResource Title4Label}" HorizontalAlignment="Right" />
@@ -67,7 +67,7 @@
                                  Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="-7" />
                 <potato:DSButton fa:Content.Icon="SolidAngleLeft" Style="{DynamicResource TransparentAccentButton}" Width="35" Padding="0,0,0,0"
                                  Command="{Binding ChangeCurrentDateTimeCommand}" CommandParameter="-1" />
-                <Label Content="{Binding CurrentDateTime, Converter={StaticResource DateTimeConverter}, ConverterParameter={x:Static language:SpeedTime.times_current_date_format}}" d:Content="01. Jan 2023"
+                <Label Content="{Binding CurrentDateTimeFormat}" d:Content="01. Jan 2023"
                        Width="100" HorizontalContentAlignment="Center">
                     <Label.InputBindings>
                         <MouseBinding Gesture="LeftDoubleClick" Command="{Binding CurrentDateTimeDoubleClickCommand}" />

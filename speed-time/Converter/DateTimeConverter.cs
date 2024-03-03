@@ -22,7 +22,7 @@ namespace DSaladin.SpeedTime.Converter
                 return value;
 
             SourceValue = (DateTime)value;
-            return ((DateTime)value).ToString((string)parameter, Language.SpeedTime.Culture);
+            return ((App)Application.Current).FormatDate((DateTime)value, (string)parameter);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -11,6 +11,7 @@ using System.Resources;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 
 namespace DSaladin.SpeedTime.Converter
@@ -32,7 +33,7 @@ namespace DSaladin.SpeedTime.Converter
             FieldInfo? fi = value.GetType().GetField(value.ToString());
 
             if (fi is not null && fi.GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attributes && attributes.Any())
-                return Language.SpeedTime.ResourceManager.GetString(attributes.First().Description, Language.SpeedTime.Culture) ?? value.ToString();
+                return Language.SpeedTime.ResourceManager.GetString(attributes.First().Description, ((App)Application.Current).CurrentUiLanguage) ?? value.ToString();
 
             return value.ToString();
         }

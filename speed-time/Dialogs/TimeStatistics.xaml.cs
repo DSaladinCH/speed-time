@@ -59,7 +59,7 @@ namespace DSaladin.SpeedTime.Dialogs
 
         private Axis[] xAxes =
         {
-            new DateTimeAxis(TimeSpan.FromDays(2), date => date.ToString("M", SpeedTime.Language.SpeedTime.Culture.DateTimeFormat))
+            new DateTimeAxis(TimeSpan.FromDays(2), date => ((App)Application.Current).FormatDate(date, "M"))
         };
         public Axis[] XAxes
         {
@@ -171,7 +171,11 @@ namespace DSaladin.SpeedTime.Dialogs
                 await LoadData();
             });
 
-            Loaded += async (s, e) => await LoadData();
+            Loaded += async (s, e) =>
+            {
+                UpdateDatesAfterGrouping();
+                await LoadData();
+            };
         }
 
         private void UpdateDatesAfterGrouping()
@@ -189,20 +193,21 @@ namespace DSaladin.SpeedTime.Dialogs
                     break;
             }
 
+            string dailyFormat = SpeedTime.Language.SpeedTime.ResourceManager.GetString("statistics.daily-date-format", ((App)Application.Current).CurrentDateLanguage)!;
             switch (RangeGrouping)
             {
                 case StatisticsGrouping.WeekDaily:
-                    XAxes = new Axis[] { new DateTimeAxis(TimeSpan.FromDays(2), date => date.ToString("M", SpeedTime.Language.SpeedTime.Culture.DateTimeFormat)) };
+                    XAxes = [new DateTimeAxis(TimeSpan.FromDays(2), date => ((App)Application.Current).FormatDate(date, dailyFormat))];
                     break;
                 case StatisticsGrouping.MonthDaily:
-                    XAxes = new Axis[] { new DateTimeAxis(TimeSpan.FromDays(7), date => date.ToString("M", SpeedTime.Language.SpeedTime.Culture.DateTimeFormat)) };
+                    XAxes = [new DateTimeAxis(TimeSpan.FromDays(7), date => ((App)Application.Current).FormatDate(date, dailyFormat))];
                     break;
                 case StatisticsGrouping.MonthWeekly:
-                    XAxes = new Axis[] { new DateTimeAxis(TimeSpan.FromDays(7),
+                    XAxes = [ new DateTimeAxis(TimeSpan.FromDays(7),
                         date => string.Format(SpeedTime.Language.SpeedTime.statistics_week_placeholder, GetIso8601WeekOfYear(date))) {
                             LabelsAlignment = LiveChartsCore.Drawing.Align.End
                         }
-                    };
+                    ];
                     break;
             }
         }
@@ -216,7 +221,7 @@ namespace DSaladin.SpeedTime.Dialogs
                     break;
                 case StatisticsGrouping.MonthDaily:
                 case StatisticsGrouping.MonthWeekly:
-                    RangeDisplay = StartDate.ToString("MMMM", SpeedTime.Language.SpeedTime.Culture.DateTimeFormat);
+                    RangeDisplay = ((App)Application.Current).FormatDate(StartDate, "MMMM");
                     break;
             }
 
@@ -284,7 +289,7 @@ namespace DSaladin.SpeedTime.Dialogs
 
         private int GetIso8601WeekOfYear(DateTime date)
         {
-            System.Globalization.Calendar calendar = CultureInfo.InvariantCulture.Calendar;
+            System.Globalization.Calendar calendar = ((App)Application.Current).CurrentDateLanguage.Calendar;
 
             // ISO 8601 specifies that the first week of the year is the one with January 4th
             // or the week that includes the first Thursday of the year
@@ -293,7 +298,7 @@ namespace DSaladin.SpeedTime.Dialogs
                 date = date.AddDays(3);
 
             // Return the week of our adjusted day
-            return calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+            return calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, ((App)Application.Current).CurrentDateLanguage.DateTimeFormat.FirstDayOfWeek);
         }
 
         public enum StatisticsGrouping

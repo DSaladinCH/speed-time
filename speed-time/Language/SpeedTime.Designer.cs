@@ -169,6 +169,15 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Date Language.
+        /// </summary>
+        public static string settings_date_language {
+            get {
+                return ResourceManager.GetString("settings.date-language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Entry Hotkey.
         /// </summary>
         public static string settings_hotkey_add_entry {
@@ -273,6 +282,15 @@ namespace DSaladin.SpeedTime.Language {
         public static string settings_workdays {
             get {
                 return ResourceManager.GetString("settings.workdays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MMM dd.
+        /// </summary>
+        public static string statistics_daily_date_format {
+            get {
+                return ResourceManager.GetString("statistics.daily-date-format", resourceCulture);
             }
         }
         

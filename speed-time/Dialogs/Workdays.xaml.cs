@@ -96,13 +96,13 @@ namespace DSaladin.SpeedTime.Dialogs
             }
         }
 
-        public string MondayTitle { get => SpeedTime.Language.SpeedTime.Culture.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Monday); }
-        public string TuesdayTitle { get => SpeedTime.Language.SpeedTime.Culture.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Tuesday); }
-        public string WednesdayTitle { get => SpeedTime.Language.SpeedTime.Culture.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Wednesday); }
-        public string ThursdayTitle { get => SpeedTime.Language.SpeedTime.Culture.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Thursday); }
-        public string FridayTitle { get => SpeedTime.Language.SpeedTime.Culture.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Friday); }
-        public string SaturdayTitle { get => SpeedTime.Language.SpeedTime.Culture.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Saturday); }
-        public string SundayTitle { get => SpeedTime.Language.SpeedTime.Culture.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Sunday); }
+        public string MondayTitle { get => ((App)Application.Current).CurrentDateLanguage.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Monday); }
+        public string TuesdayTitle { get => ((App)Application.Current).CurrentDateLanguage.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Tuesday); }
+        public string WednesdayTitle { get => ((App)Application.Current).CurrentDateLanguage.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Wednesday); }
+        public string ThursdayTitle { get => ((App)Application.Current).CurrentDateLanguage.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Thursday); }
+        public string FridayTitle { get => ((App)Application.Current).CurrentDateLanguage.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Friday); }
+        public string SaturdayTitle { get => ((App)Application.Current).CurrentDateLanguage.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Saturday); }
+        public string SundayTitle { get => ((App)Application.Current).CurrentDateLanguage.DateTimeFormat.GetAbbreviatedDayName(DayOfWeek.Sunday); }
 
         public double TotalWorkHours { get => MondayHours + TuesdayHours + WednesdayHours + ThursdayHours + FridayHours + SaturdayHours + SundayHours; }
         public string TotalWorkHoursDisplay { get => $"{SpeedTime.Language.SpeedTime.workdays_total_hours}: {TotalWorkHours:N2}h"; }

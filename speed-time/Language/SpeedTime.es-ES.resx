@@ -153,6 +153,9 @@
   <data name="settings.behavior.title" xml:space="preserve">
     <value>Comportamiento</value>
   </data>
+  <data name="settings.date-language" xml:space="preserve">
+    <value>Fecha Lengua</value>
+  </data>
   <data name="settings.hotkey-add-entry" xml:space="preserve">
     <value>Atajo para Nueva Entrada</value>
   </data>
@@ -188,6 +191,9 @@
   </data>
   <data name="settings.workdays" xml:space="preserve">
     <value>Días laborables</value>
+  </data>
+  <data name="statistics.daily-date-format" xml:space="preserve">
+    <value>dd MMM</value>
   </data>
   <data name="statistics.grouping.month-daily" xml:space="preserve">
     <value>Mes - Diario</value>
