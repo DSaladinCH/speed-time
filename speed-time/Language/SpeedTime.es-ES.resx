@@ -139,7 +139,7 @@
     <value>Romper</value>
   </data>
   <data name="quicktimetracker.last-entry" xml:space="preserve">
-    <value>Última entrada: {0}</value>
+    <value>Última entrada en {0}</value>
   </data>
   <data name="quicktimetracker.placeholder" xml:space="preserve">
     <value>El título de su trabajo</value>

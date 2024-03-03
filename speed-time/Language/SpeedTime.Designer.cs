@@ -124,7 +124,7 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Last Entry: {0}.
+        ///   Looks up a localized string similar to Last Entry at {0}.
         /// </summary>
         public static string quicktimetracker_last_entry {
             get {

@@ -84,8 +84,9 @@
             </Grid.ColumnDefinitions>
             <CheckBox x:Name="ckb_break" Grid.Column="0" Content="{x:Static language:SpeedTime.quicktimetracker_break}" Margin="5,0,0,0" IsChecked="{Binding IsBreak}" />
             <CheckBox x:Name="ckb_isAFK" Grid.Column="1" Content="{x:Static language:SpeedTime.quicktimetracker_afk}" Margin="5,0,0,0" IsChecked="{Binding IsAFK}" />
-            <Label Grid.Column="2" Content="{Binding LastTrackTime.TrackingStarted, Converter={StaticResource DateTimeConverter}, ConverterParameter='HH:mm'}"
-                   ContentStringFormat="{x:Static language:SpeedTime.quicktimetracker_last_entry}" Foreground="{DynamicResource ForegroundA}" HorizontalContentAlignment="Right" />
+            <Label Grid.Column="2" Content="{Binding LastTrackTime.TrackingStopped, Converter={StaticResource DateTimeConverter}, ConverterParameter='HH:mm'}"
+                   Margin="0,0,5,0" ContentStringFormat="{x:Static language:SpeedTime.quicktimetracker_last_entry}" Foreground="{DynamicResource ForegroundA}"
+                   HorizontalContentAlignment="Right" />
         </Grid>
     </Grid>
 </potato:DSWindow>

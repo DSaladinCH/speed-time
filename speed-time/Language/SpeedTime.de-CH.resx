@@ -139,7 +139,7 @@
     <value>Pause</value>
   </data>
   <data name="quicktimetracker.last-entry" xml:space="preserve">
-    <value>Letzter Eintrag: {0}</value>
+    <value>Letzter Eintrag um {0}</value>
   </data>
   <data name="quicktimetracker.placeholder" xml:space="preserve">
     <value>Der Titel deiner Arbeit</value>

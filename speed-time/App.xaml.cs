@@ -172,11 +172,11 @@ namespace DSaladin.SpeedTime
         {
             if (e.HotKey.Equals(currentQuickTimeHotKey))
             {
-                TrackTime? trackTime = QuickTimeTracker.Open(await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync());
+                TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.TrackingStarted).ThenBy(tt => tt.TrackingStopped).LastOrDefaultAsync();
+                TrackTime? trackTime = QuickTimeTracker.Open(lastTrackedTime);
                 if (trackTime is null)
                     return;
 
-                TrackTime? lastTrackedTime = await dbContext.TrackedTimes.OrderBy(tt => tt.Id).LastOrDefaultAsync();
                 if (lastTrackedTime is not null && !lastTrackedTime.IsTimeStopped)
                 {
                     lastTrackedTime.StopTime();

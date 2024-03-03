@@ -139,7 +139,7 @@
     <value>Break</value>
   </data>
   <data name="quicktimetracker.last-entry" xml:space="preserve">
-    <value>Last Entry: {0}</value>
+    <value>Last Entry at {0}</value>
   </data>
   <data name="quicktimetracker.placeholder" xml:space="preserve">
     <value>The title of your work</value>
