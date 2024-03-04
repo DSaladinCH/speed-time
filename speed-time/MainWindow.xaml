@@ -51,7 +51,8 @@
                 <ColumnDefinition Width="65" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="{Binding CurrentTime.Title, TargetNullValue=''}" Style="{DynamicResource DefaultTextBlock}"
-                       d:Text="Searching bugs" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                       d:Text="Searching bugs" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                       Padding="4,4,4,4" />
             <Label Grid.Column="1" Content="{Binding CurrentTime.Hours, TargetNullValue=''}" ContentStringFormat=" {0:N2}h"
                    d:Content="1.25" Style="{DynamicResource Title4Label}" HorizontalAlignment="Right" />
         </Grid>

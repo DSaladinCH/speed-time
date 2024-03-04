@@ -116,6 +116,9 @@ namespace DSaladin.SpeedTime.ViewModel
 
             TabButtonCommand = new((_) =>
             {
+                if (TrackedTimesViewSource.View.Cast<object>().Count() == 0)
+                    return;
+
                 WorkTitle = TrackedTimesViewSource.View.Cast<TrackTime>().ElementAt(SuggestionSelectedIndex).Title;
             });
 

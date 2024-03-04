@@ -3,16 +3,50 @@
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
                         xmlns:potato="https://dsaladin.dev/products/fancypotato/wpf/xaml"
+                        xmlns:localBehaviors="clr-namespace:DSaladin.SpeedTime.Behavior"
                         xmlns:fa="https://dsaladin.dev/products/fontawesome/wpf/xaml"
                         xmlns:converter="clr-namespace:DSaladin.SpeedTime.Converter"
                         xmlns:language="clr-namespace:DSaladin.SpeedTime.Language"
+                        xmlns:model="clr-namespace:DSaladin.SpeedTime.Model"
                         xmlns:local="clr-namespace:DSaladin.SpeedTime.Dialogs"
                         d:DataContext="{d:DesignInstance local:TrackTimeEditor}"
                         mc:Ignorable="d" 
                         d:DesignHeight="300" d:DesignWidth="450" MaxHeight="300" MaxWidth="400">
     <potato:DSDialogControl.Resources>
         <converter:DateTimeTimeConverter x:Key="DateTimeTimeConverter" />
+
+        <DataTemplate x:Key="ItemTemplate" DataType="{x:Type model:TrackTime}">
+            <Grid>
+                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Padding="5,0,5,0" TextTrimming="CharacterEllipsis" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SelectedTemplate" DataType="{x:Type model:TrackTime}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="45" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding Title}" VerticalAlignment="Center" Padding="5,0,5,0" TextTrimming="CharacterEllipsis" />
+                <potato:DSButton Grid.Column="1" Content="⮐" FontSize="16" Padding="0,0,0,0" Margin="0,0,2,0" />
+            </Grid>
+        </DataTemplate>
+
+        <Style TargetType="{x:Type ListViewItem}" x:Key="ContainerStyle" BasedOn="{StaticResource DefaultListViewItem}">
+            <Setter Property="ContentTemplate" Value="{StaticResource ItemTemplate}" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Margin" Value="0,2,0,2" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="ContentTemplate" Value="{StaticResource SelectedTemplate}" />
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="ContentTemplate" Value="{StaticResource SelectedTemplate}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </potato:DSDialogControl.Resources>
     <potato:DSDialogControl.InputBindings>
         <KeyBinding Key="Esc" Command="{Binding SaveAndCloseCommand}" />
@@ -37,7 +71,7 @@
                     Click="Close_Click" />
             <Label Grid.Column="1" Content="{x:Static language:SpeedTime.timeeditor_title}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" />
             <potato:DSTextBox Style="{DynamicResource TransparentTextBox}" Grid.Column="1" Grid.RowSpan="2" FontSize="11" FontWeight="Bold"
-                              HorizontalAlignment="Center" VerticalAlignment="Bottom" SelectAllOnFocus="True">
+                              HorizontalAlignment="Center" VerticalAlignment="Bottom" SelectAllOnFocus="True" TabIndex="-1">
                 <potato:DSTextBox.Text>
                     <Binding Path="SelectedDate">
                         <Binding.Converter>
@@ -47,20 +81,40 @@
                 </potato:DSTextBox.Text>
             </potato:DSTextBox>
         </Grid>
-        <Grid Grid.Row="1" Margin="15,0,15,15">
+        <Grid Grid.Row="1" Margin="15,0,15,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50" />
+                <RowDefinition Height="Auto" MaxHeight="165" />
                 <RowDefinition Height="50" />
                 <RowDefinition Height="50" />
-                <RowDefinition Height="50" />
+                <RowDefinition Height="60" />
             </Grid.RowDefinitions>
-            <potato:DSTextBox x:Name="tbx_title" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,5,0,5" Text="{Binding TrackTimeTitle}" SelectAllOnFocus="True" />
-            <Grid Grid.Row="1" Margin="90,0,90,0">
+            <potato:DSTextBox x:Name="tbx_title" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,5,0,5" TabIndex="0"
+                              Text="{Binding TrackTimeTitle, UpdateSourceTrigger=PropertyChanged}" SelectAllOnFocus="True" LostFocus="Title_LostFocus">
+                <potato:DSTextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding EnterButtonCommand}" />
+                    <KeyBinding Key="Tab" Command="{Binding TabButtonCommand}" />
+                    <KeyBinding Key="Esc" Command="{Binding EscButtonCommand}" />
+                    <KeyBinding Key="Up" Command="{Binding UpButtonCommand}" />
+                    <KeyBinding Key="Down" Command="{Binding DownButtonCommand}" />
+                </potato:DSTextBox.InputBindings>
+            </potato:DSTextBox>
+
+            <ListView Grid.Row="1" ItemsSource="{Binding TrackedTimesViewSource.View, Mode=OneWay, NotifyOnTargetUpdated=True}" ScrollViewer.CanContentScroll="False"
+                      Height="{Binding SuggestionsHeight}" IsSynchronizedWithCurrentItem="True" Margin="5,0,5,0" SelectedIndex="{Binding SuggestionSelectedIndex}"
+                      ItemContainerStyle="{DynamicResource ContainerStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <behaviors:Interaction.Behaviors>
+                    <localBehaviors:SelectFirstItemOnTargetUpdated />
+                    <localBehaviors:ScrollToSelectedIndex />
+                </behaviors:Interaction.Behaviors>
+            </ListView>
+
+            <Grid Grid.Row="2" Margin="90,0,90,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <potato:DSTextBox x:Name="tbx_startTime" Grid.Column="0" Margin="10,5,10,5" HorizontalContentAlignment="Center" SelectAllOnFocus="True">
+                <potato:DSTextBox x:Name="tbx_startTime" Grid.Column="0" Margin="10,5,10,5" HorizontalContentAlignment="Center" SelectAllOnFocus="True" TabIndex="1">
                     <potato:DSTextBox.Text>
                         <Binding Path="TrackingStarted" ConverterParameter="HH:mm">
                             <Binding.Converter>
@@ -69,7 +123,7 @@
                         </Binding>
                     </potato:DSTextBox.Text>
                 </potato:DSTextBox>
-                <potato:DSTextBox x:Name="tbx_endTime" Grid.Column="1" Margin="10,5,10,5" HorizontalContentAlignment="Center" SelectAllOnFocus="True">
+                <potato:DSTextBox x:Name="tbx_endTime" Grid.Column="1" Margin="10,5,10,5" HorizontalContentAlignment="Center" SelectAllOnFocus="True" TabIndex="2">
                     <potato:DSTextBox.Text>
                         <Binding Path="TrackingStopped" ConverterParameter="HH:mm">
                             <Binding.Converter>
@@ -79,9 +133,10 @@
                     </potato:DSTextBox.Text>
                 </potato:DSTextBox>
             </Grid>
-            <CheckBox x:Name="ckb_break" Grid.Row="2" Content="{x:Static language:SpeedTime.timeeditor_break}" Margin="5,0,0,0" IsChecked="{Binding IsBreak}" HorizontalAlignment="Center" />
-            <potato:DSButton Grid.Row="3" Content="{x:Static language:SpeedTime.Cancel}" Style="{DynamicResource AccentErrorButton}" Width="100" Margin="0,10,0,0"
-                    HorizontalAlignment="Left" Command="{Binding CancelAndCloseCommand}" />
+            <CheckBox x:Name="ckb_break" Grid.Row="3" Content="{x:Static language:SpeedTime.timeeditor_break}" Margin="5,0,0,0" IsChecked="{Binding IsBreak}" HorizontalAlignment="Center"
+                      TabIndex="4" />
+            <potato:DSButton Grid.Row="4" Content="{x:Static language:SpeedTime.Cancel}" Style="{DynamicResource AccentErrorButton}" Width="100" Margin="0,20,0,0"
+                    HorizontalAlignment="Left" Command="{Binding CancelAndCloseCommand}" TabIndex="5" />
         </Grid>
     </Grid>
 </potato:DSDialogControl>
