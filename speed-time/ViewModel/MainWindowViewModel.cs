@@ -284,6 +284,12 @@ namespace DSaladin.SpeedTime.ViewModel
             TrackedTimes = App.dbContext.TrackedTimes.Local.ToObservableCollection();
             App.dbContext.SavedChanges += (s, e) => UpdateView();
 
+            ((DSWindow)sender).PreviewKeyDown += (s, e) =>
+            {
+                if (e.Key == RegisteredHotKey.RegisteredKey && Keyboard.Modifiers == RegisteredHotKey.RegisteredModifierKeys)
+                    AddTrackingCommand.Execute(null);
+            };
+
             UpdateView();
         }
 
