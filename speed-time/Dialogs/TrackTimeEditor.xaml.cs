@@ -3,6 +3,7 @@ using DSaladin.FancyPotato.CustomControls;
 using DSaladin.SpeedTime.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,12 +41,57 @@ namespace DSaladin.SpeedTime.Dialogs
             }
         }
 
-        public string TrackTimeTitle { get; set; } = "";
+        private string trackTimeTitle = "";
+        public string TrackTimeTitle
+        {
+            get { return trackTimeTitle; }
+            set
+            {
+                trackTimeTitle = value;
+                NotifyPropertyChanged();
+                RefreshSuggestions();
+            }
+        }
+
+        private bool IsSuggestionsOpen = false;
+
         public DateTime SelectedDate { get; set; } = DateTime.Today;
         public DateTime TrackingStarted { get; set; } = DateTime.Today;
         public DateTime TrackingStopped { get; set; }
         public bool IsBreak { get; set; }
 
+        public double SuggestionsHeight
+        {
+            get
+            {
+                if (!IsSuggestionsOpen)
+                    return 0;
+
+                if (TrackedTimesViewSource.View is null || string.IsNullOrEmpty(TrackTimeTitle) || TrackedTimesViewSource.View.Cast<object>().Count() == 0)
+                    return 0;
+
+                return 165;
+            }
+        }
+
+        public CollectionViewSource TrackedTimesViewSource { get; private set; } = new();
+
+        private int suggestionSelectedIndex = -1;
+        public int SuggestionSelectedIndex
+        {
+            get => suggestionSelectedIndex;
+            set
+            {
+                suggestionSelectedIndex = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public RelayCommand EnterButtonCommand { get; set; }
+        public RelayCommand TabButtonCommand { get; set; }
+        public RelayCommand EscButtonCommand { get; set; }
+        public RelayCommand UpButtonCommand { get; set; }
+        public RelayCommand DownButtonCommand { get; set; }
         public RelayCommand SaveAndCloseCommand { get; set; }
         public RelayCommand CancelAndCloseCommand { get; set; }
 
@@ -62,14 +108,103 @@ namespace DSaladin.SpeedTime.Dialogs
 
             Loaded += (s, e) =>
             {
+                TrackedTimesViewSource = new();
+                TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty, App.dbContext.TrackedTimes.Local.DistinctBy(t => t.Title));
+                TrackedTimesViewSource.Filter += TrackedTimesViewSource_Filter;
+                TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStarted", ListSortDirection.Descending));
+                TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStopped", ListSortDirection.Descending));
+
                 tbx_title.Focus();
                 tbx_title.SelectAll();
             };
+
+            EnterButtonCommand = new((_) =>
+            {
+                IsSuggestionsOpen = false;
+                NotifyPropertyChanged(nameof(SuggestionsHeight));
+
+                if (TrackedTimesViewSource.View.Cast<object>().Count() == 0)
+                {
+                    TitleMoveNext();
+                    return;
+                }
+
+                string newTitle = TrackedTimesViewSource.View.Cast<TrackTime>().ElementAt(SuggestionSelectedIndex).Title;
+
+                if (TrackTimeTitle == newTitle)
+                {
+                    TitleMoveNext();
+                    return;
+                }
+
+                TrackTimeTitle = newTitle;
+                IsSuggestionsOpen = false;
+                NotifyPropertyChanged(nameof(SuggestionsHeight));
+            });
+
+            TabButtonCommand = new((_) =>
+            {
+                IsSuggestionsOpen = false;
+                NotifyPropertyChanged(nameof(SuggestionsHeight));
+                TitleMoveNext();
+            });
+
+            EscButtonCommand = new((_) =>
+            {
+                TrackTimeTitle = TrackTime.Title;
+                SaveAndClose();
+            });
+
+            UpButtonCommand = new((_) =>
+            {
+                if (SuggestionSelectedIndex <= 0)
+                    return;
+
+                SuggestionSelectedIndex--;
+            });
+
+            DownButtonCommand = new((_) =>
+            {
+                if (SuggestionSelectedIndex >= TrackedTimesViewSource.View.Cast<object>().Count() - 1)
+                    return;
+
+                SuggestionSelectedIndex++;
+            });
         }
 
-        public TrackTimeEditor(DateTime startDate): this()
+        public TrackTimeEditor(DateTime startDate) : this()
         {
             SelectedDate = startDate;
+        }
+
+        private void TitleMoveNext()
+        {
+            TraversalRequest request = new(FocusNavigationDirection.Next) { Wrapped = true };
+            tbx_title.MoveFocus(request);
+        }
+
+        private void Title_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TrackTime.Title = TrackTimeTitle;
+        }
+
+        private void TrackedTimesViewSource_Filter(object sender, FilterEventArgs e)
+        {
+            CollectionViewSource viewSource = (CollectionViewSource)sender;
+            e.Accepted = (e.Item as TrackTime)!.Title.Contains(TrackTimeTitle, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void RefreshSuggestions()
+        {
+            if (TrackedTimesViewSource.View is null)
+                return;
+
+            TrackedTimesViewSource.View.Refresh();
+
+            IsSuggestionsOpen = true;
+            NotifyPropertyChanged(nameof(TrackedTimesViewSource));
+            NotifyPropertyChanged(nameof(SuggestionsHeight));
+            //NotifyPropertyChanged(nameof(WindowHeight));
         }
 
         private void SaveAndClose()
