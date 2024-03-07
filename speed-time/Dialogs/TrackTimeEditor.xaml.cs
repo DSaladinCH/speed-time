@@ -1,11 +1,14 @@
 ﻿using DSaladin.FancyPotato;
 using DSaladin.FancyPotato.CustomControls;
 using DSaladin.SpeedTime.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,7 +35,7 @@ namespace DSaladin.SpeedTime.Dialogs
             set
             {
                 trackTime = value;
-                TrackTimeTitle = value.Title;
+                trackTimeTitle = value.Title;
                 SelectedDate = value.TrackingStarted;
                 TrackingStarted = value.TrackingStarted;
                 TrackingStopped = value.TrackingStopped;
@@ -49,7 +52,7 @@ namespace DSaladin.SpeedTime.Dialogs
             {
                 trackTimeTitle = value;
                 NotifyPropertyChanged();
-                RefreshSuggestions();
+                DebounceRefreshSuggestions();
             }
         }
 
@@ -95,6 +98,8 @@ namespace DSaladin.SpeedTime.Dialogs
         public RelayCommand SaveAndCloseCommand { get; set; }
         public RelayCommand CancelAndCloseCommand { get; set; }
 
+        private CancellationTokenSource refreshCancellationToken = new();
+
         public TrackTimeEditor(TrackTime? trackTime = null)
         {
             InitializeComponent();
@@ -106,13 +111,16 @@ namespace DSaladin.SpeedTime.Dialogs
             SaveAndCloseCommand = new((_) => SaveAndClose());
             CancelAndCloseCommand = new((_) => CancelAndClose());
 
-            Loaded += (s, e) =>
+            Loaded += async (s, e) =>
             {
                 TrackedTimesViewSource = new();
-                TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty, App.dbContext.TrackedTimes.Local.DistinctBy(t => t.Title));
+                TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty,
+                    (await App.dbContext.TrackedTimes.OrderByDescending(t => t.Id).AsNoTracking()
+                        .Take(SettingsModel.Instance.SearchNumberOfItems).ToListAsync())
+                            .Select(t => new TitleMatch() { Title = t.Title }));
+
                 TrackedTimesViewSource.Filter += TrackedTimesViewSource_Filter;
-                TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStarted", ListSortDirection.Descending));
-                TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStopped", ListSortDirection.Descending));
+                TrackedTimesViewSource.SortDescriptions.Add(new("MatchPercentage", ListSortDirection.Descending));
 
                 tbx_title.Focus();
                 tbx_title.SelectAll();
@@ -129,7 +137,7 @@ namespace DSaladin.SpeedTime.Dialogs
                     return;
                 }
 
-                string newTitle = TrackedTimesViewSource.View.Cast<TrackTime>().ElementAt(SuggestionSelectedIndex).Title;
+                string newTitle = TrackedTimesViewSource.View.Cast<TitleMatch>().ElementAt(SuggestionSelectedIndex).Title;
 
                 if (TrackTimeTitle == newTitle)
                 {
@@ -190,21 +198,43 @@ namespace DSaladin.SpeedTime.Dialogs
 
         private void TrackedTimesViewSource_Filter(object sender, FilterEventArgs e)
         {
-            CollectionViewSource viewSource = (CollectionViewSource)sender;
-            e.Accepted = (e.Item as TrackTime)!.Title.Contains(TrackTimeTitle, StringComparison.OrdinalIgnoreCase);
+            TitleMatch titleMatch = (e.Item as TitleMatch)!;
+            e.Accepted = titleMatch.MatchPercentage > 0;
+        }
+
+        private async void DebounceRefreshSuggestions(int debounceTime = 200)
+        {
+            refreshCancellationToken.Cancel();
+            refreshCancellationToken = new();
+
+            try
+            {
+                await Task.Delay(debounceTime, refreshCancellationToken.Token);
+                RefreshSuggestions();
+            }
+            catch (TaskCanceledException) { }
         }
 
         private void RefreshSuggestions()
         {
-            if (TrackedTimesViewSource.View is null)
-                return;
+            Debug.WriteLine("Refreshing");
 
-            TrackedTimesViewSource.View.Refresh();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (TrackedTimesViewSource.View is null)
+                    return;
 
-            IsSuggestionsOpen = true;
-            NotifyPropertyChanged(nameof(TrackedTimesViewSource));
-            NotifyPropertyChanged(nameof(SuggestionsHeight));
-            //NotifyPropertyChanged(nameof(WindowHeight));
+                List<TitleMatch> matches = TrackedTimesViewSource.View.SourceCollection.Cast<TitleMatch>().ToList();
+                foreach (TitleMatch titleMatch in matches)
+                    titleMatch.CalculateMatchPercentage(TrackTimeTitle);
+
+                TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty, matches);
+                TrackedTimesViewSource.View.Refresh();
+
+                IsSuggestionsOpen = true;
+                NotifyPropertyChanged(nameof(TrackedTimesViewSource));
+                NotifyPropertyChanged(nameof(SuggestionsHeight));
+            });
         }
 
         private void SaveAndClose()

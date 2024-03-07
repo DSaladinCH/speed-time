@@ -168,6 +168,9 @@
   <data name="settings.integrations.title" xml:space="preserve">
     <value>Integraciones</value>
   </data>
+  <data name="settings.search-number-items" xml:space="preserve">
+    <value>Buscar: Nº de Entradas</value>
+  </data>
   <data name="settings.show-gaps" xml:space="preserve">
     <value>Mostrar Huecos</value>
   </data>

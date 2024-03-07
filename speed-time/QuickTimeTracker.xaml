@@ -21,20 +21,29 @@
     <potato:DSWindow.Resources>
         <converter:DateTimeConverter x:Key="DateTimeConverter" />
 
-        <DataTemplate x:Key="ItemTemplate" DataType="{x:Type model:TrackTime}">
-            <Grid>
-                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Padding="5,0,5,0" TextTrimming="CharacterEllipsis" />
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="SelectedTemplate" DataType="{x:Type model:TrackTime}">
+        <DataTemplate x:Key="ItemTemplate" DataType="{x:Type model:TitleMatch}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="55" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding Title}" VerticalAlignment="Center" Padding="5,0,5,0" TextTrimming="CharacterEllipsis" />
+                <TextBlock Grid.Column="1" Text="{Binding MatchPercentage, StringFormat={}{0:#.00}%}" VerticalAlignment="Center"
+                   Padding="5,0,5,0" Foreground="{DynamicResource ForegroundA}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SelectedTemplate" DataType="{x:Type model:TitleMatch}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="55" />
                     <ColumnDefinition Width="45" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding Title}" VerticalAlignment="Center" Padding="5,0,5,0" TextTrimming="CharacterEllipsis" />
-                <potato:DSButton Grid.Column="1" Content="⭾" FontSize="16" Padding="0,0,0,0" Margin="0,0,2,0" />
+                <TextBlock Grid.Column="1" Text="{Binding MatchPercentage, StringFormat={}{0:#.00}%}" VerticalAlignment="Center"
+                   Padding="5,0,5,0" Foreground="{DynamicResource ForegroundA}" />
+                <potato:DSButton Grid.Column="2" Content="⭾" FontSize="16" Padding="0,0,0,0" Margin="0,0,2,0" />
             </Grid>
         </DataTemplate>
 

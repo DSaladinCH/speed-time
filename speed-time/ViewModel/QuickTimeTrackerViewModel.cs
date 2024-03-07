@@ -15,6 +15,8 @@ using System.Windows.Data;
 using System.Diagnostics;
 using DSaladin.FancyPotato;
 using DSaladin.SpeedTime.Model;
+using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace DSaladin.SpeedTime.ViewModel
 {
@@ -28,7 +30,7 @@ namespace DSaladin.SpeedTime.ViewModel
             {
                 workTitle = value;
                 NotifyPropertyChanged();
-                RefreshSuggestions();
+                DebounceRefreshSuggestions();
             }
         }
 
@@ -110,6 +112,8 @@ namespace DSaladin.SpeedTime.ViewModel
         public RelayCommand UpButtonCommand { get; set; }
         public RelayCommand DownButtonCommand { get; set; }
 
+        private CancellationTokenSource refreshCancellationToken = new();
+
         public QuickTimeTrackerViewModel(TrackTime? lastTrackTime)
         {
             LastTrackTime = lastTrackTime;
@@ -119,7 +123,7 @@ namespace DSaladin.SpeedTime.ViewModel
                 if (TrackedTimesViewSource.View.Cast<object>().Count() == 0)
                     return;
 
-                WorkTitle = TrackedTimesViewSource.View.Cast<TrackTime>().ElementAt(SuggestionSelectedIndex).Title;
+                WorkTitle = TrackedTimesViewSource.View.Cast<TitleMatch>().ElementAt(SuggestionSelectedIndex).Title;
             });
 
             UpButtonCommand = new((_) =>
@@ -146,29 +150,57 @@ namespace DSaladin.SpeedTime.ViewModel
             window.KeyUp += QuickTimeTracker_KeyUp;
         }
 
-        public override void WindowLoaded(object sender, RoutedEventArgs eventArgs)
+        public override async void WindowLoaded(object sender, RoutedEventArgs eventArgs)
         {
             TrackedTimesViewSource = new();
-            TrackedTimesViewSource.Source = App.dbContext.TrackedTimes.Local.DistinctBy(t => t.Title);
+            TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty,
+                    (await App.dbContext.TrackedTimes.OrderByDescending(t => t.Id).AsNoTracking()
+                        .Take(SettingsModel.Instance.SearchNumberOfItems).ToListAsync())
+                            .Select(t => new TitleMatch() { Title = t.Title }));
+
             TrackedTimesViewSource.Filter += TrackedTimesViewSource_Filter;
-            TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStarted", ListSortDirection.Descending));
-            TrackedTimesViewSource.SortDescriptions.Add(new("TrackingStopped", ListSortDirection.Descending));
-            //TrackedTimes = App.dbContext.TrackedTimes.Local.ToObservableCollection();
+            TrackedTimesViewSource.SortDescriptions.Add(new("MatchPercentage", ListSortDirection.Descending));
         }
 
         private void TrackedTimesViewSource_Filter(object sender, FilterEventArgs e)
         {
-            CollectionViewSource viewSource = (CollectionViewSource)sender;
-            e.Accepted = (e.Item as TrackTime)!.Title.Contains(WorkTitle, StringComparison.OrdinalIgnoreCase);
+            TitleMatch titleMatch = (e.Item as TitleMatch)!;
+            e.Accepted = titleMatch.MatchPercentage > 0;
+        }
+
+        private async void DebounceRefreshSuggestions(int debounceTime = 200)
+        {
+            refreshCancellationToken.Cancel();
+            refreshCancellationToken = new();
+
+            try
+            {
+                await Task.Delay(debounceTime, refreshCancellationToken.Token);
+                RefreshSuggestions();
+            }
+            catch (TaskCanceledException) { }
         }
 
         private void RefreshSuggestions()
         {
-            TrackedTimesViewSource.View.Refresh();
+            Debug.WriteLine("Refreshing");
 
-            NotifyPropertyChanged(nameof(TrackedTimesViewSource));
-            NotifyPropertyChanged(nameof(SuggestionsHeight));
-            NotifyPropertyChanged(nameof(WindowHeight));
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (TrackedTimesViewSource.View is null)
+                    return;
+
+                List<TitleMatch> matches = TrackedTimesViewSource.View.SourceCollection.Cast<TitleMatch>().ToList();
+                foreach (TitleMatch titleMatch in matches)
+                    titleMatch.CalculateMatchPercentage(WorkTitle);
+
+                TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty, matches);
+                TrackedTimesViewSource.View.Refresh();
+
+                NotifyPropertyChanged(nameof(TrackedTimesViewSource));
+                NotifyPropertyChanged(nameof(SuggestionsHeight));
+                NotifyPropertyChanged(nameof(WindowHeight));
+            });
         }
 
         [LibraryImport("user32.dll")]
