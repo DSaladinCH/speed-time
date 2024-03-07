@@ -56,6 +56,17 @@ namespace DSaladin.SpeedTime.Model
             }
         }
 
+        private int searchNumberOfItems = 100;
+        public int SearchNumberOfItems
+        {
+            get { return searchNumberOfItems; }
+            set
+            {
+                searchNumberOfItems = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public Workdays Workdays { get; set; } = new();
 
         public static List<UiLanguage> AvailableLanguages { get; } = new()
@@ -165,7 +176,7 @@ namespace DSaladin.SpeedTime.Model
 
         public bool IsHotKeyUsed(RegisteredHotKey.HotKeyType checkForHotKeyType, Key key, ModifierKeys modifierKeys)
         {
-            if (key == Key.None ||modifierKeys == ModifierKeys.None)
+            if (key == Key.None || modifierKeys == ModifierKeys.None)
                 return false;
 
             RegisteredHotKeys ??= [];

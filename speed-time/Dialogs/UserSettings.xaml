@@ -147,6 +147,8 @@
                                                   Value="{Binding Source={x:Static models:SettingsModel.Instance}, Path=AutoAddBreak}"/>
                         <settings:CheckBoxSetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_show_gaps}"
                                                   Value="{Binding Source={x:Static models:SettingsModel.Instance}, Path=ShowGapsBetweenTimes}"/>
+                        <settings:NumberTextBoxSetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_search_number_items}"
+                                                       Value="{Binding Source={x:Static models:SettingsModel.Instance}, Path=SearchNumberOfItems}" />
                         <settings:ActionSetting Category="Behavior" OptionName="{x:Static language:SpeedTime.settings_workdays}"
                                                 ActionText="{x:Static language:SpeedTime.open}"
                                                 ActionCommand="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:UserSettings}}, Path=WorkdaysCommand}" />

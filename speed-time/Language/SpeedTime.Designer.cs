@@ -214,6 +214,15 @@ namespace DSaladin.SpeedTime.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search: No. of Entries.
+        /// </summary>
+        public static string settings_search_number_items {
+            get {
+                return ResourceManager.GetString("settings.search-number-items", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Gaps.
         /// </summary>
         public static string settings_show_gaps {
