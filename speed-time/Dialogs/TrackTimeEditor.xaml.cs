@@ -70,7 +70,7 @@ namespace DSaladin.SpeedTime.Dialogs
                 if (!IsSuggestionsOpen)
                     return 0;
 
-                if (TrackedTimesViewSource.View is null || string.IsNullOrEmpty(TrackTimeTitle) || TrackedTimesViewSource.View.Cast<object>().Count() == 0)
+                if (TrackedTimesViewSource.View is null || string.IsNullOrEmpty(TrackTimeTitle) || !TrackedTimesViewSource.View.Cast<object>().Any())
                     return 0;
 
                 return 165;
@@ -116,6 +116,13 @@ namespace DSaladin.SpeedTime.Dialogs
                 TrackedTimesViewSource = new();
                 TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty,
                     (await App.dbContext.TrackedTimes.OrderByDescending(t => t.Id).AsNoTracking()
+                        .GroupBy(t => t.Title)
+                        .Select(group => new
+                        {
+                            Title = group.Key,
+                            Id = group.Max(t => t.Id)
+                        })
+                        .OrderByDescending(t => t.Id)
                         .Take(SettingsModel.Instance.SearchNumberOfItems).ToListAsync())
                             .Select(t => new TitleMatch() { Title = t.Title }));
 
@@ -131,7 +138,7 @@ namespace DSaladin.SpeedTime.Dialogs
                 IsSuggestionsOpen = false;
                 NotifyPropertyChanged(nameof(SuggestionsHeight));
 
-                if (TrackedTimesViewSource.View.Cast<object>().Count() == 0)
+                if (!TrackedTimesViewSource.View.Cast<object>().Any())
                 {
                     TitleMoveNext();
                     return;
@@ -187,8 +194,12 @@ namespace DSaladin.SpeedTime.Dialogs
 
         private void TitleMoveNext()
         {
+            refreshCancellationToken.Cancel();
+            refreshCancellationToken = new();
+
             TraversalRequest request = new(FocusNavigationDirection.Next) { Wrapped = true };
             tbx_title.MoveFocus(request);
+
         }
 
         private void Title_LostFocus(object sender, RoutedEventArgs e)
