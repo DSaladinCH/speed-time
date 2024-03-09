@@ -120,7 +120,7 @@ namespace DSaladin.SpeedTime.ViewModel
 
             TabButtonCommand = new((_) =>
             {
-                if (TrackedTimesViewSource.View.Cast<object>().Count() == 0)
+                if (!TrackedTimesViewSource.View.Cast<object>().Any())
                     return;
 
                 WorkTitle = TrackedTimesViewSource.View.Cast<TitleMatch>().ElementAt(SuggestionSelectedIndex).Title;
@@ -155,6 +155,13 @@ namespace DSaladin.SpeedTime.ViewModel
             TrackedTimesViewSource = new();
             TrackedTimesViewSource.SetCurrentValue(CollectionViewSource.SourceProperty,
                     (await App.dbContext.TrackedTimes.OrderByDescending(t => t.Id).AsNoTracking()
+                        .GroupBy(t => t.Title)
+                        .Select(group => new
+                        {
+                            Title = group.Key,
+                            Id = group.Max(t => t.Id)
+                        })
+                        .OrderByDescending(t => t.Id)
                         .Take(SettingsModel.Instance.SearchNumberOfItems).ToListAsync())
                             .Select(t => new TitleMatch() { Title = t.Title }));
 
