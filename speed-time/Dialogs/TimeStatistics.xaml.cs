@@ -254,12 +254,12 @@ namespace DSaladin.SpeedTime.Dialogs
                         currentStartOfWeek = currentStartOfWeek.AddDays(-1);
                     }
 
-                    while (currentStartOfWeek <= EndDate)
+                    for (DateTime current = StartDate; current <= EndDate; current = current.AddDays(7))
                     {
-                        DateTime currentEndOfWeek = currentStartOfWeek.AddDays(6);  // Move to Sunday
+                        DateTime currentEndOfWeek = current.AddDays(6);  // Move to Sunday
 
                         // Adjust dates to fit within the range
-                        DateTime effectiveStart = (currentStartOfWeek < StartDate) ? StartDate : currentStartOfWeek;
+                        DateTime effectiveStart = (current < StartDate) ? StartDate : current;
                         DateTime effectiveEnd = (currentEndOfWeek > EndDate) ? EndDate : currentEndOfWeek;
 
                         double targetWorkhours = SettingsModel.Instance.Workdays.GetWorkHoursForRange(effectiveStart, effectiveEnd);
@@ -269,11 +269,8 @@ namespace DSaladin.SpeedTime.Dialogs
                         if (targetWorkhours == 0 && actualWorkhours == 0)
                             continue;
 
-                        actualWork.Add(new(currentStartOfWeek, actualWorkhours));
-                        targetWork.Add(new(currentStartOfWeek, targetWorkhours));
-
-                        // Move to the start of the next week
-                        currentStartOfWeek = currentStartOfWeek.AddDays(7);
+                        actualWork.Add(new(current, actualWorkhours));
+                        targetWork.Add(new(current, targetWorkhours));
                     }
                     break;
             }
